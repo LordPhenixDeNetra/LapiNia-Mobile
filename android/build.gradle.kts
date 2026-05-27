@@ -5,10 +5,7 @@ allprojects {
     }
 }
 
-val newBuildDir: Directory =
-    rootProject.layout.buildDirectory
-        .dir("../build")
-        .get()
+val newBuildDir: Directory = rootProject.layout.projectDirectory.dir("../build")
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
@@ -17,6 +14,12 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+subprojects {
+    tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
+        options.compilerArgs.add("-Xlint:-options")
+    }
 }
 
 tasks.register<Delete>("clean") {
