@@ -15,28 +15,32 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  String _selectedCountryCode = '+221';
-
-  final Map<String, String> _countryCodes = {
-    '+221': 'Sénégal',
-    '+223': 'Mali',
-    '+225': 'Côte d\'Ivoire',
-    '+226': 'Burkina Faso',
-    '+224': 'Guinée',
-    '+237': 'Cameroun',
-  };
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isSignUp = false;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  void _submitPhone() {
+  void _submit() {
     if (_formKey.currentState!.validate()) {
-      final phone = '$_selectedCountryCode${_phoneController.text}';
-      context.read<AuthBloc>().add(AuthPhoneSubmitted(phone: phone));
+      final email = _emailController.text.trim();
+      final password = _passwordController.text;
+      context.read<AuthBloc>().add(
+            _isSignUp
+                ? AuthEmailPasswordSignUpRequested(
+                    email: email,
+                    password: password,
+                  )
+                : AuthEmailPasswordSignInRequested(
+                    email: email,
+                    password: password,
+                  ),
+          );
     }
   }
 
@@ -44,8 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthOtpSent) {
-          context.push('/otp?phone=${state.phone}');
+        if (state is AuthAuthenticated) {
+          context.go('/dashboard');
+        } else if (state is AuthEmailConfirmationRequired) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Compte cree. Verifiez votre email: ${state.email}',
+              ),
+              backgroundColor: AppColors.alert,
+            ),
+          );
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -82,58 +95,60 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Entrez votre numéro de téléphone',
+                    _isSignUp
+                        ? 'Creez votre compte'
+                        : 'Connectez-vous avec votre email',
                     style: AppTypography.body1.copyWith(
                       color: AppColors.textDark.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 48),
                   Text(
-                    'Indicatif pays',
-                    style: AppTypography.label.copyWith(
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedCountryCode,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.public),
-                    ),
-                    items: _countryCodes.entries.map((entry) {
-                      return DropdownMenuItem(
-                        value: entry.key,
-                        child: Text('${entry.key} (${entry.value})'),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCountryCode = value!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Numéro de téléphone',
+                    'Email',
                     style: AppTypography.label.copyWith(
                       color: AppColors.textDark,
                     ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: '77 000 00 00',
-                      prefixIcon: const Icon(Icons.phone),
-                      prefixText: '$_selectedCountryCode ',
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      hintText: 'vous@exemple.com',
+                      prefixIcon: Icon(Icons.email),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre numéro';
+                        return 'Veuillez entrer votre email';
                       }
-                      if (value.length < 8) {
-                        return 'Numéro trop court';
+                      final v = value.trim();
+                      if (!v.contains('@') || !v.contains('.')) {
+                        return 'Email invalide';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Mot de passe',
+                    style: AppTypography.label.copyWith(
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      hintText: '••••••••',
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer votre mot de passe';
+                      }
+                      if (value.length < 6) {
+                        return 'Mot de passe trop court';
                       }
                       return null;
                     },
@@ -141,9 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Spacer(),
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
-                      final isLoading = state is AuthOtpSending;
+                      final isLoading = state is AuthLoading;
                       return ElevatedButton(
-                        onPressed: isLoading ? null : _submitPhone,
+                        onPressed: isLoading ? null : _submit,
                         child: isLoading
                             ? const SizedBox(
                                 height: 24,
@@ -153,11 +168,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Recevoir le code SMS'),
+                            : Text(_isSignUp ? 'Creer un compte' : 'Se connecter'),
                       );
                     },
                   ),
                   const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSignUp = !_isSignUp;
+                      });
+                    },
+                    child: Text(
+                      _isSignUp
+                          ? 'J\'ai deja un compte'
+                          : 'Creer un compte',
+                      style: AppTypography.body2.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),

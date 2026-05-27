@@ -7,6 +7,10 @@ part 'ia_state.dart';
 
 class IABloc extends Bloc<IAEvent, IAState> {
   final SupabaseClient supabaseClient;
+  static const bool _functionsEnabled = bool.fromEnvironment(
+    'SUPABASE_FUNCTIONS_ENABLED',
+    defaultValue: false,
+  );
 
   IABloc({required this.supabaseClient}) : super(IAInitial()) {
     on<ChatMessageSent>(_onMessageSent);
@@ -27,6 +31,21 @@ class IABloc extends Bloc<IAEvent, IAState> {
     try {
       final messages = [...currentMessages, event.message];
       emit(IAMessagesLoaded(messages: messages, isGenerating: true));
+
+      if (!_functionsEnabled) {
+        final aiMessage = ChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          content:
+              'Fonction IA non disponible (non deployee). Activez SUPABASE_FUNCTIONS_ENABLED=true une fois vos Edge Functions en place.',
+          isFromUser: false,
+          timestamp: DateTime.now(),
+        );
+        emit(IAMessagesLoaded(
+          messages: [...messages, aiMessage],
+          isGenerating: false,
+        ));
+        return;
+      }
       
       final response = await supabaseClient.functions.invoke(
         'ai-router',
@@ -51,7 +70,15 @@ class IABloc extends Bloc<IAEvent, IAState> {
         isGenerating: false,
       ));
     } catch (e) {
-      emit(IAError(message: e.toString()));
+      final messages = [...currentMessages, event.message];
+      final aiMessage = ChatMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        content:
+            'Fonction IA indisponible pour le moment (verifiez que les Edge Functions sont deployees et accessibles).',
+        isFromUser: false,
+        timestamp: DateTime.now(),
+      );
+      emit(IAMessagesLoaded(messages: [...messages, aiMessage]));
     }
   }
 
@@ -61,6 +88,13 @@ class IABloc extends Bloc<IAEvent, IAState> {
   ) async {
     emit(IALoading());
     try {
+      if (!_functionsEnabled) {
+        emit(const IAError(
+          message:
+              'Diagnostic indisponible (fonction non deployee). Activez SUPABASE_FUNCTIONS_ENABLED=true une fois deploye.',
+        ));
+        return;
+      }
       final response = await supabaseClient.functions.invoke(
         'diagnose-symptoms',
         body: {
@@ -82,6 +116,13 @@ class IABloc extends Bloc<IAEvent, IAState> {
   ) async {
     emit(IALoading());
     try {
+      if (!_functionsEnabled) {
+        emit(const IAError(
+          message:
+              'Calcul de ration indisponible (fonction non deployee). Activez SUPABASE_FUNCTIONS_ENABLED=true une fois deploye.',
+        ));
+        return;
+      }
       final response = await supabaseClient.functions.invoke(
         'calculate-ration',
         body: {

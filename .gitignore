@@ -31,6 +31,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/supabase.env.json
+/assets/data/supabase.local.json
 /coverage/
 
 # Symbolication related

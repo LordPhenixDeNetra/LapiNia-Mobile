@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/auth/otp_screen.dart';
 import '../screens/auth/onboarding_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/lapins/lapin_list_screen.dart';
@@ -27,8 +26,7 @@ class AppRouter {
       final authState = context.read<AuthBloc>().state;
       final isAuthenticated = authState is AuthAuthenticated;
       final isOnAuthRoute = state.matchedLocation == '/welcome' ||
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/otp';
+          state.matchedLocation == '/login';
 
       if (!isAuthenticated && !isOnAuthRoute) {
         return '/welcome';
@@ -48,13 +46,6 @@ class AppRouter {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/otp',
-        builder: (context, state) {
-          final phone = state.uri.queryParameters['phone'] ?? '';
-          return OtpScreen(phone: phone);
-        },
       ),
       GoRoute(
         path: '/onboarding',

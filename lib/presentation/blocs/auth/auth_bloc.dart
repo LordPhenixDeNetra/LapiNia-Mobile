@@ -10,8 +10,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.supabaseClient}) : super(AuthInitial()) {
     on<AuthCheckRequested>(_onCheckRequested);
-    on<AuthPhoneSubmitted>(_onPhoneSubmitted);
-    on<AuthOtpSubmitted>(_onOtpSubmitted);
+    on<AuthEmailPasswordSignInRequested>(_onEmailPasswordSignInRequested);
+    on<AuthEmailPasswordSignUpRequested>(_onEmailPasswordSignUpRequested);
     on<AuthSignOutRequested>(_onSignOutRequested);
     on<AuthUserProfileUpdated>(_onUserProfileUpdated);
   }
@@ -38,37 +38,48 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onPhoneSubmitted(
-    AuthPhoneSubmitted event,
+  Future<void> _onEmailPasswordSignInRequested(
+    AuthEmailPasswordSignInRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthOtpSending());
+    emit(AuthLoading());
     try {
-      await supabaseClient.auth.signInWithOtp(
-        phone: event.phone,
+      final response = await supabaseClient.auth.signInWithPassword(
+        email: event.email,
+        password: event.password,
       );
-      emit(AuthOtpSent(phone: event.phone));
+      final user = response.user;
+      if (user == null) {
+        emit(const AuthError(message: 'Connexion echouee'));
+        return;
+      }
+      emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }
   }
 
-  Future<void> _onOtpSubmitted(
-    AuthOtpSubmitted event,
+  Future<void> _onEmailPasswordSignUpRequested(
+    AuthEmailPasswordSignUpRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
     try {
-      final response = await supabaseClient.auth.verifyOTP(
-        phone: event.phone,
-        token: event.token,
-        type: OtpType.sms,
+      final response = await supabaseClient.auth.signUp(
+        email: event.email,
+        password: event.password,
       );
-      if (response.user != null) {
-        emit(AuthAuthenticated(user: response.user!));
-      } else {
-        emit(const AuthError(message: 'OTP verification failed'));
+      final user = response.user;
+      final session = response.session;
+      if (user == null) {
+        emit(const AuthError(message: 'Creation de compte echouee'));
+        return;
       }
+      if (session == null) {
+        emit(AuthEmailConfirmationRequired(email: event.email));
+        return;
+      }
+      emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthError(message: e.toString()));
     }

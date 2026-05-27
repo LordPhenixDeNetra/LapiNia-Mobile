@@ -13,15 +13,13 @@ class AuthLoading extends AuthState {}
 
 class AuthUnauthenticated extends AuthState {}
 
-class AuthOtpSending extends AuthState {}
+class AuthEmailConfirmationRequired extends AuthState {
+  final String email;
 
-class AuthOtpSent extends AuthState {
-  final String phone;
-
-  const AuthOtpSent({required this.phone});
+  const AuthEmailConfirmationRequired({required this.email});
 
   @override
-  List<Object?> get props => [phone];
+  List<Object?> get props => [email];
 }
 
 class AuthAuthenticated extends AuthState {
