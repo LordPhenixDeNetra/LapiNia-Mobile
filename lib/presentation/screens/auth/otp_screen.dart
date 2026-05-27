@@ -135,7 +135,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 Text(
                   'Entrez le code à 6 chiffres envoyé à\n${widget.phone}',
                   style: AppTypography.body1.copyWith(
-                    color: AppColors.textDark.withOpacity(0.7),
+                    color: AppColors.textDark.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 48),

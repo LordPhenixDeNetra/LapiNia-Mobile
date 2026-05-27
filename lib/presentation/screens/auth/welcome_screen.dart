@@ -44,7 +44,7 @@ class WelcomeScreen extends StatelessWidget {
                 'Votre assistant intelligent\nd\'élevage cunicole',
                 textAlign: TextAlign.center,
                 style: AppTypography.body1.copyWith(
-                  color: AppColors.textDark.withOpacity(0.7),
+                  color: AppColors.textDark.withValues(alpha: 0.7),
                 ),
               ),
               const Spacer(),
@@ -66,7 +66,7 @@ class WelcomeScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.alert.withOpacity(0.1),
+                  color: AppColors.alert.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

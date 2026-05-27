@@ -25,7 +25,6 @@ class _SaillieFormScreenState extends State<SaillieFormScreen> {
   DateTime _dateSaillie = DateTime.now();
   List<Lapin> _femelles = [];
   List<Lapin> _males = [];
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -52,7 +51,7 @@ class _SaillieFormScreenState extends State<SaillieFormScreen> {
       },
       child: BlocBuilder<LapinBloc, LapinState>(
         builder: (context, state) {
-          if (state is LapinsLoading || _isLoading) {
+          if (state is LapinsLoading) {
             return Scaffold(
               appBar: AppBar(title: const Text('Nouvelle saillie')),
               body: const Center(child: CircularProgressIndicator()),
@@ -185,7 +184,7 @@ class _SaillieFormScreenState extends State<SaillieFormScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -272,10 +271,10 @@ class _SaillieFormScreenState extends State<SaillieFormScreen> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withOpacity(0.2)
+                      ? Colors.white.withValues(alpha: 0.2)
                       : (isMale
-                          ? AppColors.maleColor.withOpacity(0.1)
-                          : AppColors.femelleColor.withOpacity(0.1)),
+                          ? AppColors.maleColor.withValues(alpha: 0.1)
+                          : AppColors.femelleColor.withValues(alpha: 0.1)),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -300,7 +299,7 @@ class _SaillieFormScreenState extends State<SaillieFormScreen> {
                       lapin.race?.nom ?? 'Race inconnue',
                       style: AppTypography.caption.copyWith(
                         color: isSelected
-                            ? Colors.white.withOpacity(0.8)
+                            ? Colors.white.withValues(alpha: 0.8)
                             : AppColors.greyMedium,
                       ),
                     ),

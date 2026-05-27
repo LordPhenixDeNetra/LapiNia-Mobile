@@ -7,8 +7,6 @@ import '../../../core/constants/app_typography.dart';
 import '../../blocs/lapin/lapin_bloc.dart';
 import '../../blocs/portee/portee_bloc.dart';
 import '../../blocs/alerte/alerte_bloc.dart';
-import '../../widgets/common/loading_widget.dart';
-import '../../widgets/common/error_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -41,7 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -111,7 +109,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
@@ -133,7 +131,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             'La température prévue cette semaine est élevée. Assurez-vous que vos lapins ont accès à de l\'eau fraîche en quantité suffisante et à un espace ombragé.',
             style: AppTypography.body2.copyWith(
-              color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 12),
@@ -148,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text(
                 '32°C prévu',
                 style: AppTypography.caption.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -177,7 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (porteeState is PorteesLoaded) {
               nbLapereauxAttendus = porteeState.portees
                   .where((p) => p.statut.dbValue == 'EN_GESTATION')
-                  .fold(0, (sum, p) => sum + (p.mere.race?.taillePorteeMoyenne?.toInt() ?? 7));
+                  .fold(0, (sum, p) => sum + (p.mere?.race?.taillePorteeMoyenne?.toInt() ?? 7));
             }
 
             return Row(
@@ -442,7 +440,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: AppColors.statutGestation.withOpacity(0.1),
+                            color: AppColors.statutGestation.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: const Icon(

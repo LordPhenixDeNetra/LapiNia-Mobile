@@ -38,7 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   ];
 
-  Map<String, dynamic> _answers = {};
+  final Map<String, dynamic> _answers = {};
 
   @override
   void dispose() {

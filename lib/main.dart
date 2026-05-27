@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'core/constants/app_colors.dart';
 import 'core/constants/app_typography.dart';
@@ -33,7 +32,7 @@ void main() async {
     apiCall: _apiCall,
   );
   
-  runApp(lapiNiaApp(
+  runApp(LapiNiaApp(
     connectivityChecker: connectivityChecker,
     syncManager: syncManager,
   ));
@@ -50,11 +49,11 @@ Future<dynamic> _apiCall(String table, MutationType op, String payload, String i
   );
 }
 
-class lapiNiaApp extends StatelessWidget {
+class LapiNiaApp extends StatelessWidget {
   final ConnectivityChecker connectivityChecker;
   final SyncManager syncManager;
 
-  const lapiNiaApp({
+  const LapiNiaApp({
     super.key,
     required this.connectivityChecker,
     required this.syncManager,

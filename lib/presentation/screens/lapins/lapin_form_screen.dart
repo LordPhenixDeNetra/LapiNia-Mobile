@@ -8,7 +8,6 @@ import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
 import '../../blocs/lapin/lapin_bloc.dart';
-import '../../blocs/auth/auth_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LapinFormScreen extends StatefulWidget {
@@ -168,7 +167,7 @@ class _LapinFormScreenState extends State<LapinFormScreen> {
                       ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
-                        value: _selectedRaceId,
+                        initialValue: _selectedRaceId,
                         decoration: const InputDecoration(
                           labelText: 'Race',
                           prefixIcon: Icon(Icons.category),
@@ -234,7 +233,7 @@ class _LapinFormScreenState extends State<LapinFormScreen> {
                       ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<StatutLapin>(
-                        value: _statut,
+                        initialValue: _statut,
                         decoration: const InputDecoration(
                           labelText: 'Statut',
                           prefixIcon: Icon(Icons.info_outline),

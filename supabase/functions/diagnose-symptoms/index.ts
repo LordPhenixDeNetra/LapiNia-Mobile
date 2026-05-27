@@ -36,6 +36,7 @@ const MALADIES_PROBABLES = [
     traitement: 'Toltrazuril 2.5% (0.3 ml/kg oral, 2 jours) ou Sulfadimidine',
     medicaments: ['Toltrazuril', 'Sulfadimidine'],
     delaiAbattage: 21,
+    gravite: 'CRITIQUE' as const,
   },
   {
     nom: 'Pasteurellose',
@@ -44,6 +45,7 @@ const MALADIES_PROBABLES = [
     traitement: 'Enrofloxacine 10% (0.5 ml/L eau, 5 jours)',
     medicaments: ['Enrofloxacine', 'Oxytétracycline'],
     delaiAbattage: 14,
+    gravite: 'ÉLEVÉ' as const,
   },
   {
     nom: 'Gale auriculaire',
@@ -52,6 +54,7 @@ const MALADIES_PROBABLES = [
     traitement: 'Ivermectine 1% (0.2 ml/kg injectable, répéter 7 jours)',
     medicaments: ['Ivermectine'],
     delaiAbattage: 28,
+    gravite: 'MODÉRÉ' as const,
   },
   {
     nom: 'Stase gastro-intestinale',
@@ -60,6 +63,7 @@ const MALADIES_PROBABLES = [
     traitement: 'Méloxicam + massage ventre + prokinétiques',
     medicaments: ['Méloxicam', 'Probiotiques'],
     delaiAbattage: 7,
+    gravite: 'ÉLEVÉ' as const,
   },
   {
     nom: 'Enterite mucoïde',
@@ -68,10 +72,11 @@ const MALADIES_PROBABLES = [
     traitement: 'Fenbendazole + réhydratation + probiotiques',
     medicaments: ['Fenbendazole', 'Kaolin-pectine'],
     delaiAbattage: 14,
+    gravite: 'MODÉRÉ' as const,
   },
 ];
 
-serve(async (req) => {
+serve(async (req: Request) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -83,7 +88,7 @@ serve(async (req) => {
 
   try {
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { lapinId, symptomes, userId } = await req.json();
+    const { lapinId, symptomes, userId } = await req.json() as any;
     
     let lapinInfo: any = {};
     if (lapinId) {
@@ -160,7 +165,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

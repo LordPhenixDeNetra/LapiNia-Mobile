@@ -23,10 +23,15 @@ class SanteBloc extends Bloc<SanteEvent, SanteState> {
   ) async {
     emit(SanteLoading());
     try {
+      final userId = supabaseClient.auth.currentUser?.id;
+      if (userId == null) {
+        emit(const SanteError(message: 'User not authenticated'));
+        return;
+      }
       final response = await supabaseClient
           .from('sante')
           .select('*, lapins(*), medicaments(*)')
-          .eq('user_id', supabaseClient.auth.currentUser?.id)
+          .eq('user_id', userId)
           .order('created_at', ascending: false);
       
       final evenements = (response as List)

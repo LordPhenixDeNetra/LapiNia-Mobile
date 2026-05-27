@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import 'dart:io';
 
 import 'idempotency_key.dart';
@@ -133,7 +132,9 @@ class LocalDatabase implements Disposable {
   LocalDatabase() {
     _db = LazyDatabase(() async {
       final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'lapinia_local.sqlite'));
+      final file = File(
+        '${dbFolder.path}${Platform.pathSeparator}lapinia_local.sqlite',
+      );
       return NativeDatabase.createInBackground(file);
     });
   }

@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/models/portee.dart';
-import '../../../core/models/lapin.dart';
 
 part 'portee_event.dart';
 part 'portee_state.dart';

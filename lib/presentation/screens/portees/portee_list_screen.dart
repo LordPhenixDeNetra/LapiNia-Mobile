@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/models/portee.dart';
 import '../../blocs/portee/portee_bloc.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -125,7 +126,7 @@ class _PorteeListScreenState extends State<PorteeListScreen>
     );
   }
 
-  Widget _buildPorteeCard(portee) {
+  Widget _buildPorteeCard(Portee portee) {
     final joursEcoules = portee.joursGestationEcoules ?? 0;
     final joursRestants = 31 - joursEcoules;
 
@@ -145,7 +146,7 @@ class _PorteeListScreenState extends State<PorteeListScreen>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: AppColors.statutGestation.withOpacity(0.1),
+                      color: AppColors.statutGestation.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: const Icon(

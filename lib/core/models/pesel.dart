@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../constants/enums.dart';
 import 'lapin.dart';
 
 class Pesee extends Equatable {

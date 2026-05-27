@@ -79,7 +79,6 @@ class LapinBloc extends Bloc<LapinEvent, LapinState> {
   ) async {
     emit(LapinSaving());
     try {
-      final idempotencyKey = IdempotencyKey.generate();
       final userId = supabaseClient.auth.currentUser?.id;
       
       if (userId == null) {
@@ -179,7 +178,7 @@ class LapinBloc extends Bloc<LapinEvent, LapinState> {
         return;
       }
 
-      final PeseeData = {
+      final peseeData = {
         'id': IdempotencyKey.generate(),
         'lapin_id': event.lapinId,
         'user_id': userId,
@@ -189,7 +188,7 @@ class LapinBloc extends Bloc<LapinEvent, LapinState> {
 
       await supabaseClient
           .from('pesees')
-          .insert(PeseeData);
+          .insert(peseeData);
 
       await supabaseClient
           .from('lapins')

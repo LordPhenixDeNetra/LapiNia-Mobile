@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/models/portee.dart';
 import '../../blocs/portee/portee_bloc.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -65,7 +64,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  Widget _buildTimelineCard(portee) {
+  Widget _buildTimelineCard(Portee portee) {
     final joursEcoules = portee.joursGestationEcoules ?? 0;
 
     return Container(
@@ -167,7 +166,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  Widget _buildInfoCard(portee) {
+  Widget _buildInfoCard(Portee portee) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -246,7 +245,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  Widget _buildActionsCard(portee) {
+  Widget _buildActionsCard(Portee portee) {
     final joursEcoules = portee.joursGestationEcoules ?? 0;
 
     return Container(
@@ -276,7 +275,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.alert.withOpacity(0.1),
+                color: AppColors.alert.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -311,7 +310,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  Widget _buildLactationCard(portee) {
+  Widget _buildLactationCard(Portee portee) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -380,7 +379,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -398,7 +397,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  void _showMiseBasDialog(portee) {
+  void _showMiseBasDialog(Portee portee) {
     final nbVivantsController = TextEditingController();
     final nbMortsController = TextEditingController();
     final poidsController = TextEditingController();
@@ -465,7 +464,7 @@ class _PorteeDetailScreenState extends State<PorteeDetailScreen> {
     );
   }
 
-  void _showSevrageDialog(portee) {
+  void _showSevrageDialog(Portee portee) {
     showDialog(
       context: context,
       builder: (context) {

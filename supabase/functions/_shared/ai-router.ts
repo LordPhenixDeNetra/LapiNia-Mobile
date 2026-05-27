@@ -1,17 +1,13 @@
-import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+import OpenAI from 'https://esm.sh/openai@4';
+import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0';
 
 interface AIProvider {
   complete(prompt: string, maxTokens?: number): Promise<string>;
 }
 
 class ClaudeProvider implements AIProvider {
-  private client: Anthropic;
+  private client: any;
   
   constructor(apiKey: string) {
     this.client = new Anthropic({ apiKey });
@@ -28,7 +24,7 @@ class ClaudeProvider implements AIProvider {
 }
 
 class MistralProvider implements AIProvider {
-  private client: OpenAI;
+  private client: any;
   
   constructor(apiKey: string) {
     this.client = new OpenAI({ apiKey: apiKey, baseURL: 'https://api.mistral.ai/v1' });
@@ -158,7 +154,7 @@ Réponds en JSON: {composants: [{aliment, quantite_g, note}], alertes_stock: [],
 
 const aiRouter = new AIRouter();
 
-serve(async (req) => {
+serve(async (req: Request) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
@@ -169,7 +165,7 @@ serve(async (req) => {
   }
 
   try {
-    const { action, prompt, complexity, symptomes, lapinInfo, temperature } = await req.json();
+    const { action, prompt, complexity, symptomes, lapinInfo, temperature } = await req.json() as any;
     
     let result: any;
     
@@ -191,7 +187,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

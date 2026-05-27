@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/models/lapin.dart';
 import '../../blocs/lapin/lapin_bloc.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -63,7 +64,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
                             colors: [
                               isMale ? AppColors.maleColor : AppColors.femelleColor,
                               (isMale ? AppColors.maleColor : AppColors.femelleColor)
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -78,7 +79,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
                                 width: 80,
                                 height: 80,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(40),
                                 ),
                                 child: Icon(
@@ -97,7 +98,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
                               Text(
                                 lapin.race?.nom ?? 'Race inconnue',
                                 style: AppTypography.body2.copyWith(
-                                  color: Colors.white.withOpacity(0.8),
+                                  color: Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
                             ],
@@ -176,7 +177,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
     );
   }
 
-  Widget _buildCroissanceTab(lapin) {
+  Widget _buildCroissanceTab(Lapin lapin) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -217,7 +218,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
     );
   }
 
-  Widget _buildGrowthChart(lapin) {
+  Widget _buildGrowthChart(Lapin lapin) {
     return LineChart(
       LineChartData(
         gridData: FlGridData(show: true),
@@ -278,7 +279,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
               FlSpot(16, 4500),
             ],
             isCurved: true,
-            color: AppColors.graphiqueCible.withOpacity(0.5),
+            color: AppColors.graphiqueCible.withValues(alpha: 0.5),
             barWidth: 2,
             dashArray: [5, 5],
             dotData: FlDotData(show: false),
@@ -288,7 +289,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
     );
   }
 
-  Widget _buildSanteTab(lapin) {
+  Widget _buildSanteTab(Lapin lapin) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -336,7 +337,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
     );
   }
 
-  Widget _buildPorteesTab(lapin) {
+  Widget _buildPorteesTab(Lapin lapin) {
     if (lapin.sexe == SexeLapin.male) {
       return Center(
         child: Column(
@@ -386,7 +387,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
     );
   }
 
-  Widget _buildInfosTab(lapin) {
+  Widget _buildInfosTab(Lapin lapin) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -455,7 +456,7 @@ class _LapinDetailScreenState extends State<LapinDetailScreen>
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(icon, color: color),

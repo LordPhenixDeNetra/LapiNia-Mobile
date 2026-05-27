@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/models/lapin.dart';
 import '../../blocs/lapin/lapin_bloc.dart';
 import '../../widgets/common/loading_widget.dart';
 
@@ -199,7 +200,7 @@ class _LapinListScreenState extends State<LapinListScreen> {
     );
   }
 
-  Widget _buildLapinCard(lapin) {
+  Widget _buildLapinCard(Lapin lapin) {
     final isMale = lapin.sexe == SexeLapin.male;
 
     return Card(
@@ -216,8 +217,8 @@ class _LapinListScreenState extends State<LapinListScreen> {
                 height: 60,
                 decoration: BoxDecoration(
                   color: isMale
-                      ? AppColors.maleColor.withOpacity(0.1)
-                      : AppColors.femelleColor.withOpacity(0.1),
+                      ? AppColors.maleColor.withValues(alpha: 0.1)
+                      : AppColors.femelleColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Icon(

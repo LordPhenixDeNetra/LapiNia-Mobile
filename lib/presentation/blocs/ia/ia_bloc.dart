@@ -18,9 +18,14 @@ class IABloc extends Bloc<IAEvent, IAState> {
     ChatMessageSent event,
     Emitter<IAState> emit,
   ) async {
-    emit(IALoading());
+    final currentMessages = state is IAMessagesLoaded
+        ? (state as IAMessagesLoaded).messages
+        : state is IALoading
+            ? (state as IALoading).messages
+            : <ChatMessage>[];
+    emit(IALoading(messages: currentMessages));
     try {
-      final messages = [...state.messages, event.message];
+      final messages = [...currentMessages, event.message];
       emit(IAMessagesLoaded(messages: messages, isGenerating: true));
       
       final response = await supabaseClient.functions.invoke(

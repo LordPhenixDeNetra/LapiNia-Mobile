@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Entrez votre numéro de téléphone',
                     style: AppTypography.body1.copyWith(
-                      color: AppColors.textDark.withOpacity(0.7),
+                      color: AppColors.textDark.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 48),
@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    value: _selectedCountryCode,
+                    initialValue: _selectedCountryCode,
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.public),
                     ),

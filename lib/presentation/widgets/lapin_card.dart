@@ -36,8 +36,8 @@ class LapinCard extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   color: isMale
-                      ? AppColors.maleColor.withOpacity(0.1)
-                      : AppColors.femelleColor.withOpacity(0.1),
+                      ? AppColors.maleColor.withValues(alpha: 0.1)
+                      : AppColors.femelleColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Icon(
