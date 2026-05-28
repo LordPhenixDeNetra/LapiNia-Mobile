@@ -236,6 +236,25 @@ class LapiNiaApp extends HookConsumerWidget {
       error: AppColors.danger,
       surface: isDark ? const Color(0xFF121212) : AppColors.white,
     );
+    final themedTextTheme = baseTextTheme
+        .apply(
+          bodyColor: colorScheme.onSurface,
+          displayColor: colorScheme.onSurface,
+        )
+        .copyWith(
+          headlineLarge: GoogleFonts.poppins(textStyle: AppTypography.headline1),
+          headlineMedium: GoogleFonts.poppins(textStyle: AppTypography.headline2),
+          headlineSmall: GoogleFonts.poppins(textStyle: AppTypography.headline3),
+          titleLarge: GoogleFonts.poppins(textStyle: AppTypography.headline3),
+          titleMedium: baseTextTheme.titleMedium,
+          titleSmall: baseTextTheme.titleSmall,
+          bodyLarge: baseTextTheme.bodyLarge,
+          bodyMedium: baseTextTheme.bodyMedium,
+          bodySmall: baseTextTheme.bodySmall,
+          labelLarge: baseTextTheme.labelLarge,
+          labelMedium: baseTextTheme.labelMedium,
+          labelSmall: baseTextTheme.labelSmall,
+        );
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
@@ -299,8 +318,14 @@ class LapiNiaApp extends HookConsumerWidget {
           borderSide: const BorderSide(color: AppColors.danger),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        labelStyle: AppTypography.body2,
-        hintStyle: AppTypography.body2,
+        labelStyle: AppTypography.body2.copyWith(color: colorScheme.onSurfaceVariant),
+        hintStyle: AppTypography.body2.copyWith(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
+        ),
+        helperStyle: AppTypography.caption.copyWith(color: colorScheme.onSurfaceVariant),
+        errorStyle: AppTypography.caption.copyWith(color: colorScheme.error),
+        prefixIconColor: colorScheme.onSurfaceVariant,
+        suffixIconColor: colorScheme.onSurfaceVariant,
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,
@@ -331,20 +356,7 @@ class LapiNiaApp extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      textTheme: baseTextTheme.copyWith(
-        headlineLarge: GoogleFonts.poppins(textStyle: AppTypography.headline1),
-        headlineMedium: GoogleFonts.poppins(textStyle: AppTypography.headline2),
-        headlineSmall: GoogleFonts.poppins(textStyle: AppTypography.headline3),
-        titleLarge: GoogleFonts.poppins(textStyle: AppTypography.headline3),
-        titleMedium: baseTextTheme.titleMedium,
-        titleSmall: baseTextTheme.titleSmall,
-        bodyLarge: baseTextTheme.bodyLarge,
-        bodyMedium: baseTextTheme.bodyMedium,
-        bodySmall: baseTextTheme.bodySmall,
-        labelLarge: baseTextTheme.labelLarge,
-        labelMedium: baseTextTheme.labelMedium,
-        labelSmall: baseTextTheme.labelSmall,
-      ),
+      textTheme: themedTextTheme,
     );
   }
 }

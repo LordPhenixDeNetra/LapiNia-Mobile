@@ -266,6 +266,7 @@
 - **UI**
 - [x] Fix overflow clavier sur l’écran Connexion (Login) — scroll + padding clavier
 - [x] Fix overflow sur Onboarding (questions) — page scrollable si écran petit
+- [x] Fix thème sombre/clair — couleurs de textes & champs (inputs) sur écrans concernés (ex: Connexion)
 - [x] Dashboard UX — sections Alertes/Prochaines portées harmonisées (Loading/Empty/Error) + lien “Voir tout” vers écran Alertes
 - [x] Écran “Alertes” — filtre (Non lues/Toutes) + actions rapides (action faite / marquer comme lue)
 - [x] Écran “Plus” — hub : Alertes + Aliments + Réglages
