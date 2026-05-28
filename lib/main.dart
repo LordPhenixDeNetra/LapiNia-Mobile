@@ -237,23 +237,15 @@ class LapiNiaApp extends HookConsumerWidget {
       surface: isDark ? const Color(0xFF121212) : AppColors.white,
     );
     final themedTextTheme = baseTextTheme
-        .apply(
-          bodyColor: colorScheme.onSurface,
-          displayColor: colorScheme.onSurface,
-        )
         .copyWith(
           headlineLarge: GoogleFonts.poppins(textStyle: AppTypography.headline1),
           headlineMedium: GoogleFonts.poppins(textStyle: AppTypography.headline2),
           headlineSmall: GoogleFonts.poppins(textStyle: AppTypography.headline3),
           titleLarge: GoogleFonts.poppins(textStyle: AppTypography.headline3),
-          titleMedium: baseTextTheme.titleMedium,
-          titleSmall: baseTextTheme.titleSmall,
-          bodyLarge: baseTextTheme.bodyLarge,
-          bodyMedium: baseTextTheme.bodyMedium,
-          bodySmall: baseTextTheme.bodySmall,
-          labelLarge: baseTextTheme.labelLarge,
-          labelMedium: baseTextTheme.labelMedium,
-          labelSmall: baseTextTheme.labelSmall,
+        )
+        .apply(
+          bodyColor: colorScheme.onSurface,
+          displayColor: colorScheme.onSurface,
         );
     return ThemeData(
       useMaterial3: true,
@@ -320,7 +312,7 @@ class LapiNiaApp extends HookConsumerWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         labelStyle: AppTypography.body2.copyWith(color: colorScheme.onSurfaceVariant),
         hintStyle: AppTypography.body2.copyWith(
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.75),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
         ),
         helperStyle: AppTypography.caption.copyWith(color: colorScheme.onSurfaceVariant),
         errorStyle: AppTypography.caption.copyWith(color: colorScheme.error),
@@ -348,9 +340,10 @@ class LapiNiaApp extends HookConsumerWidget {
         }),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.greyLight,
-        selectedColor: AppColors.primary,
-        labelStyle: AppTypography.label,
+        backgroundColor:
+            isDark ? colorScheme.surfaceContainerHighest : AppColors.greyLight,
+        selectedColor: colorScheme.primary,
+        labelStyle: AppTypography.label.copyWith(color: colorScheme.onSurface),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
