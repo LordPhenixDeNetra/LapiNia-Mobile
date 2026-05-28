@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/constants/app_colors.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 
 class LoadingWidget extends StatelessWidget {
   final String? message;
@@ -9,20 +8,21 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation(AppColors.primary),
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(colorScheme.primary),
           ),
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(
               message!,
-              style: const TextStyle(
-                color: AppColors.greyMedium,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
             ),
           ],
         ],
@@ -49,6 +49,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -58,13 +59,13 @@ class EmptyStateWidget extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: AppColors.greyLight,
+              color: colorScheme.outline,
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppColors.greyMedium,
+                    color: colorScheme.onSurface,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -73,7 +74,7 @@ class EmptyStateWidget extends StatelessWidget {
               Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.greyMedium,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -104,29 +105,31 @@ class ErrorDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               size: 64,
-              color: AppColors.danger,
+              color: colorScheme.error,
             ),
             const SizedBox(height: 16),
             Text(
-              'Erreur',
+              l10n.errorUnknown,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppColors.danger,
+                    color: colorScheme.error,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.greyMedium,
+                    color: colorScheme.onSurfaceVariant,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -134,7 +137,7 @@ class ErrorDisplayWidget extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: onRetry,
-                child: const Text('Réessayer'),
+                child: Text(l10n.retry),
               ),
             ],
           ],
@@ -149,23 +152,21 @@ class OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: AppColors.alert,
+      color: colorScheme.errorContainer,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.wifi_off,
-            color: Colors.white,
-            size: 16,
-          ),
+          Icon(Icons.wifi_off, color: colorScheme.onErrorContainer, size: 16),
           const SizedBox(width: 8),
           Text(
-            'Mode hors-ligne',
+            l10n.settingsOffline,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white,
+                  color: colorScheme.onErrorContainer,
                 ),
           ),
         ],

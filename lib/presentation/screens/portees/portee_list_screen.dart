@@ -7,6 +7,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/models/portee.dart';
 import '../../providers/portee_provider.dart';
+import '../../widgets/common/connectivity_banner.dart';
+import '../../widgets/common/loading_widget.dart';
 
 class PorteeListScreen extends ConsumerWidget {
   const PorteeListScreen({super.key});
@@ -25,25 +27,26 @@ class PorteeListScreen extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
       body: portees.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        loading: () => const LoadingWidget(),
+        error: (e, _) => ErrorDisplayWidget(
+          message: e.toString(),
+          onRetry: () => ref.read(porteesProvider.notifier).refresh(),
+        ),
         data: (items) {
           if (items.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.child_friendly, size: 64, color: AppColors.greyLight),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.porteesEmpty,
-                      style: AppTypography.headline3.copyWith(color: AppColors.greyMedium),
-                    ),
-                  ],
+            return Column(
+              children: [
+                const ConnectivityBanner(),
+                Expanded(
+                  child: EmptyStateWidget(
+                    icon: Icons.child_friendly,
+                    title: l10n.porteesEmpty,
+                    subtitle: l10n.porteesEmptySubtitle,
+                    buttonText: l10n.porteesEmptyAction,
+                    onButtonPressed: () => context.push('/saillie/new'),
+                  ),
                 ),
-              ),
+              ],
             );
           }
 
@@ -52,9 +55,10 @@ class PorteeListScreen extends ConsumerWidget {
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
-              itemCount: items.length,
+              itemCount: items.length + 1,
               itemBuilder: (context, i) {
-                final portee = items[i];
+                if (i == 0) return const ConnectivityBanner();
+                final portee = items[i - 1];
                 return _PorteeCard(portee: portee);
               },
             ),

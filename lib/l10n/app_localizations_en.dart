@@ -72,6 +72,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteConfirmTitle => 'Delete';
+
+  @override
+  String deleteConfirmBody(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
   String get goToLogin => 'Go to login';
 
   @override
@@ -79,6 +93,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardTitle => 'Home';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navLapins => 'Rabbits';
+
+  @override
+  String get navPortees => 'Litters';
+
+  @override
+  String get navIa => 'AI';
+
+  @override
+  String get navPlus => 'More';
+
+  @override
+  String get plusTitle => 'More';
+
+  @override
+  String get plusAlerts => 'Alerts';
+
+  @override
+  String get plusFeed => 'Feed';
+
+  @override
+  String get plusSettings => 'Settings';
+
+  @override
+  String get alertesTitle => 'Alerts';
+
+  @override
+  String get alertesFilterUnread => 'Unread';
+
+  @override
+  String get alertesFilterAll => 'All';
+
+  @override
+  String get alertesEmptyTitle => 'No alerts';
+
+  @override
+  String get alertesEmptySubtitle => 'Everything looks good for now.';
+
+  @override
+  String get alertesMarkRead => 'Mark as read';
+
+  @override
+  String get alertesActionDone => 'Done';
 
   @override
   String get dashboardAlerts => 'Alerts';
@@ -97,6 +159,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardNoGestation => 'No gestation litter';
+
+  @override
+  String get dashboardUnknownMother => 'Mother';
+
+  @override
+  String dashboardGestationProgress(int elapsed, int remaining) {
+    return 'Day $elapsed — $remaining days left';
+  }
+
+  @override
+  String get dashboardQuickActions => 'Quick actions';
+
+  @override
+  String get quickAddLapin => 'Add a rabbit';
+
+  @override
+  String get quickNewSaillie => 'New mating';
+
+  @override
+  String get quickRecordEvent => 'Record';
+
+  @override
+  String get quickSync => 'Sync';
+
+  @override
+  String quickSyncPending(int count) {
+    return 'Sync ($count)';
+  }
+
+  @override
+  String get quickEventWeight => 'Weight';
+
+  @override
+  String get quickEventHealth => 'Health';
+
+  @override
+  String get quickEventStock => 'Stock';
+
+  @override
+  String get dashboardAiTipTitle => 'Tip of the day';
+
+  @override
+  String get dashboardAiTipBody =>
+      'The forecast temperature is high this week. Make sure your rabbits have plenty of fresh water and a shaded area.';
+
+  @override
+  String get dashboardAiTipWeather => '32°C forecast';
 
   @override
   String get kpiLapins => 'Rabbits';
@@ -161,13 +270,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lapinsTitle => 'My rabbits';
 
   @override
+  String get lapinTitle => 'Rabbit';
+
+  @override
+  String get lapinAddWeightTitle => 'Add a weight';
+
+  @override
+  String get lapinWeightGramLabel => 'Weight (g)';
+
+  @override
+  String get lapinInfoSection => 'Info';
+
+  @override
+  String get lapinNotesSection => 'Notes';
+
+  @override
+  String get lapinFieldRace => 'Breed';
+
+  @override
+  String get lapinFieldSexe => 'Sex';
+
+  @override
+  String get lapinFieldStatut => 'Status';
+
+  @override
+  String get lapinFieldPoids => 'Weight';
+
+  @override
+  String get lapinFieldAge => 'Age';
+
+  @override
+  String get lapinFieldId => 'ID';
+
+  @override
   String get lapinsSearchHint => 'Search a rabbit...';
+
+  @override
+  String get lapinsEmptyTitle => 'No rabbits yet';
+
+  @override
+  String get lapinsEmptySubtitle => 'Add your first rabbit to get started.';
+
+  @override
+  String get lapinsEmptyAction => 'Add a rabbit';
 
   @override
   String get porteesTitle => 'My litters';
 
   @override
   String get porteesEmpty => 'No litter';
+
+  @override
+  String get porteesEmptySubtitle =>
+      'Create your first mating to track a litter.';
+
+  @override
+  String get porteesEmptyAction => 'New mating';
 
   @override
   String get newSaillie => 'New mating';

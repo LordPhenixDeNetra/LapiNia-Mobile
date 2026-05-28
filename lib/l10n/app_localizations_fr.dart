@@ -73,6 +73,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retry => 'Réessayer';
 
   @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get delete => 'Supprimer';
+
+  @override
+  String get deleteConfirmTitle => 'Supprimer';
+
+  @override
+  String deleteConfirmBody(String name) {
+    return 'Supprimer $name ?';
+  }
+
+  @override
   String get goToLogin => 'Aller à la connexion';
 
   @override
@@ -80,6 +94,54 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dashboardTitle => 'Accueil';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navLapins => 'Lapins';
+
+  @override
+  String get navPortees => 'Portées';
+
+  @override
+  String get navIa => 'IA';
+
+  @override
+  String get navPlus => 'Plus';
+
+  @override
+  String get plusTitle => 'Plus';
+
+  @override
+  String get plusAlerts => 'Alertes';
+
+  @override
+  String get plusFeed => 'Aliments';
+
+  @override
+  String get plusSettings => 'Réglages';
+
+  @override
+  String get alertesTitle => 'Alertes';
+
+  @override
+  String get alertesFilterUnread => 'Non lues';
+
+  @override
+  String get alertesFilterAll => 'Toutes';
+
+  @override
+  String get alertesEmptyTitle => 'Aucune alerte';
+
+  @override
+  String get alertesEmptySubtitle => 'Tout est en ordre pour le moment.';
+
+  @override
+  String get alertesMarkRead => 'Marquer comme lue';
+
+  @override
+  String get alertesActionDone => 'Action faite';
 
   @override
   String get dashboardAlerts => 'Alertes';
@@ -98,6 +160,53 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dashboardNoGestation => 'Aucune portée en gestation';
+
+  @override
+  String get dashboardUnknownMother => 'Mère';
+
+  @override
+  String dashboardGestationProgress(int elapsed, int remaining) {
+    return 'J$elapsed — $remaining jours restants';
+  }
+
+  @override
+  String get dashboardQuickActions => 'Actions rapides';
+
+  @override
+  String get quickAddLapin => 'Ajouter un lapin';
+
+  @override
+  String get quickNewSaillie => 'Nouvelle saillie';
+
+  @override
+  String get quickRecordEvent => 'Enregistrer';
+
+  @override
+  String get quickSync => 'Synchroniser';
+
+  @override
+  String quickSyncPending(int count) {
+    return 'Synchroniser ($count)';
+  }
+
+  @override
+  String get quickEventWeight => 'Pesée';
+
+  @override
+  String get quickEventHealth => 'Santé';
+
+  @override
+  String get quickEventStock => 'Stock';
+
+  @override
+  String get dashboardAiTipTitle => 'Conseil du jour';
+
+  @override
+  String get dashboardAiTipBody =>
+      'La température prévue cette semaine est élevée. Assurez-vous que vos lapins ont accès à de l\'eau fraîche en quantité suffisante et à un espace ombragé.';
+
+  @override
+  String get dashboardAiTipWeather => '32°C prévu';
 
   @override
   String get kpiLapins => 'Lapins';
@@ -162,13 +271,63 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lapinsTitle => 'Mes Lapins';
 
   @override
+  String get lapinTitle => 'Lapin';
+
+  @override
+  String get lapinAddWeightTitle => 'Ajouter une pesée';
+
+  @override
+  String get lapinWeightGramLabel => 'Poids (g)';
+
+  @override
+  String get lapinInfoSection => 'Infos';
+
+  @override
+  String get lapinNotesSection => 'Notes';
+
+  @override
+  String get lapinFieldRace => 'Race';
+
+  @override
+  String get lapinFieldSexe => 'Sexe';
+
+  @override
+  String get lapinFieldStatut => 'Statut';
+
+  @override
+  String get lapinFieldPoids => 'Poids';
+
+  @override
+  String get lapinFieldAge => 'Âge';
+
+  @override
+  String get lapinFieldId => 'ID';
+
+  @override
   String get lapinsSearchHint => 'Rechercher un lapin...';
+
+  @override
+  String get lapinsEmptyTitle => 'Aucun lapin';
+
+  @override
+  String get lapinsEmptySubtitle =>
+      'Ajoutez votre premier lapin pour commencer.';
+
+  @override
+  String get lapinsEmptyAction => 'Ajouter un lapin';
 
   @override
   String get porteesTitle => 'Mes Portées';
 
   @override
   String get porteesEmpty => 'Aucune portée';
+
+  @override
+  String get porteesEmptySubtitle =>
+      'Créez votre première saillie pour suivre une portée.';
+
+  @override
+  String get porteesEmptyAction => 'Nouvelle saillie';
 
   @override
   String get newSaillie => 'Nouvelle saillie';

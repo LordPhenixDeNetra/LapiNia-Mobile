@@ -261,7 +261,7 @@
 - [x] **(Flutter · P0)** Auth guard (`go_router` redirect) — routes protégées selon session active
 - [x] **(Flutter · P0)** AppColors — palette complète (`primary #2E7D32`, `alert #E65100`, `danger #B71C1C`, `ia #4A148C`)
 - [x] **(Flutter · P0)** AppTheme — `ThemeData` Poppins + Nunito + couleurs lapiNia + mode sombre
-- [x] **(Flutter · P0)** Bottom Navigation Bar — 5 onglets : 🏠 Accueil · 🐇 Lapins · 🤰 Portées · 🍃 Aliments · 🧠 IA
+- [x] **(Flutter · P0)** Navigation (go_router) — NavigationBar M3 : 🏠 Accueil · 🐇 Lapins · 🤰 Portées · 🧠 IA · ➕ Plus (Aliments/Alertes/Réglages)
 - [x] **(Flutter · P1)** Modèles & sérialisation — `Lapin`, `Portee`, `Pesee`, `EvenementSante`, `Stock`, `Finance`, `Alerte`, `Race` + `fromJson/toJson`
 - [x] **(Flutter · P1)** Gestion erreurs UI — mapping erreurs Supabase (400/401/403/404/409/429/5xx) → messages utilisateur + états (vide / chargement / erreur)
 - [x] **(Flutter · P1)** Téléchargements fichiers — sauvegarde `path_provider` + partage OS `share_plus` (PDF / exports)
@@ -271,6 +271,9 @@
 - **UI**
 - [x] Fix overflow clavier sur l’écran Connexion (Login) — scroll + padding clavier
 - [x] Fix overflow sur Onboarding (questions) — page scrollable si écran petit
+- [x] Dashboard UX — sections Alertes/Prochaines portées harmonisées (Loading/Empty/Error) + lien “Voir tout” vers écran Alertes
+- [x] Écran “Alertes” — filtre (Non lues/Toutes) + actions rapides (action faite / marquer comme lue)
+- [x] Écran “Plus” — hub : Alertes + Aliments + Réglages
 
 - **Onboarding**
 - [x] **(Flutter · P1)** Onboarding étape 2 — objectifs (multi-select) : vente lapereaux / viande / reproducteurs / loisir

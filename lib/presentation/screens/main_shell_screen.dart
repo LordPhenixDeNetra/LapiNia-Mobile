@@ -1,76 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 
 class MainShellScreen extends StatelessWidget {
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
-  const MainShellScreen({super.key, required this.child});
+  const MainShellScreen({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (index) => _onItemTapped(index, context),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Accueil',
+      body: navigationShell,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (index) {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: l10n.navHome,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets_outlined),
-            activeIcon: Icon(Icons.pets),
-            label: 'Lapins',
+          NavigationDestination(
+            icon: const Icon(Icons.pets_outlined),
+            selectedIcon: const Icon(Icons.pets),
+            label: l10n.navLapins,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.child_friendly_outlined),
-            activeIcon: Icon(Icons.child_friendly),
-            label: 'Portées',
+          NavigationDestination(
+            icon: const Icon(Icons.child_friendly_outlined),
+            selectedIcon: const Icon(Icons.child_friendly),
+            label: l10n.navPortees,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grass_outlined),
-            activeIcon: Icon(Icons.grass),
-            label: 'Aliments',
+          NavigationDestination(
+            icon: const Icon(Icons.psychology_outlined),
+            selectedIcon: const Icon(Icons.psychology),
+            label: l10n.navIa,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.psychology_outlined),
-            activeIcon: Icon(Icons.psychology),
-            label: 'IA',
+          NavigationDestination(
+            icon: const Icon(Icons.more_horiz),
+            selectedIcon: const Icon(Icons.more_horiz),
+            label: l10n.navPlus,
           ),
         ],
       ),
     );
-  }
-
-  int _calculateSelectedIndex(BuildContext context) {
-    final location = GoRouterState.of(context).matchedLocation;
-    if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/lapins')) return 1;
-    if (location.startsWith('/portees')) return 2;
-    if (location.startsWith('/aliments')) return 3;
-    if (location.startsWith('/ia')) return 4;
-    return 0;
-  }
-
-  void _onItemTapped(int index, BuildContext context) {
-    switch (index) {
-      case 0:
-        context.go('/dashboard');
-        break;
-      case 1:
-        context.go('/lapins');
-        break;
-      case 2:
-        context.go('/portees');
-        break;
-      case 3:
-        context.go('/aliments');
-        break;
-      case 4:
-        context.go('/ia');
-        break;
-    }
   }
 }

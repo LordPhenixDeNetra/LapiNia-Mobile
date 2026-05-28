@@ -20,6 +20,8 @@ import '../screens/portees/saillie_form_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/aliments/aliments_screen.dart';
 import '../screens/ia/ia_screen.dart';
+import '../screens/plus/plus_screen.dart';
+import '../screens/alertes/alertes_screen.dart';
 import '../screens/settings/settings_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -36,11 +38,19 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _dashboardNavigatorKey = GlobalKey<NavigatorState>();
+final _lapinsNavigatorKey = GlobalKey<NavigatorState>();
+final _porteesNavigatorKey = GlobalKey<NavigatorState>();
+final _iaNavigatorKey = GlobalKey<NavigatorState>();
+final _plusNavigatorKey = GlobalKey<NavigatorState>();
+
 final routerProvider = Provider<GoRouter>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   final onboardingDone = ref.watch(onboardingDoneProvider).asData?.value ?? false;
 
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(supabase.auth.onAuthStateChange),
     redirect: (context, state) {
@@ -87,48 +97,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
       ),
-      ShellRoute(
-        builder: (context, state, child) => MainShellScreen(child: child),
-        routes: [
-          GoRoute(
-            path: '/dashboard',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: DashboardScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/lapins',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LapinListScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/portees',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: PorteeListScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/aliments',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AlimentsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/ia',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: IAScreen(),
-            ),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: '/lapin/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return LapinDetailScreen(lapinId: id);
-        },
-      ),
       GoRoute(
         path: '/lapin/new',
         builder: (context, state) => const LapinFormScreen(),
@@ -141,18 +109,98 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/portee/:id',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return PorteeDetailScreen(porteeId: id);
-        },
-      ),
-      GoRoute(
         path: '/saillie/new',
         builder: (context, state) {
           final mereId = state.uri.queryParameters['mereId'];
           return SaillieFormScreen(mereId: mereId);
         },
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShellScreen(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _dashboardNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/dashboard',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: DashboardScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _lapinsNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/lapins',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: LapinListScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/lapin/:id',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return LapinDetailScreen(lapinId: id);
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _porteesNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/portees',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: PorteeListScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/portee/:id',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return PorteeDetailScreen(porteeId: id);
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _iaNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/ia',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: IAScreen(),
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _plusNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/plus',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: PlusScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/alertes',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: AlertesScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/aliments',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: AlimentsScreen(),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

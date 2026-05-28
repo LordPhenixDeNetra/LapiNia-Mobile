@@ -10,6 +10,7 @@ import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
 import '../../providers/lapin_provider.dart';
 import '../../widgets/common/loading_widget.dart';
+import '../../widgets/common/connectivity_banner.dart';
 
 class LapinListScreen extends HookConsumerWidget {
   const LapinListScreen({super.key});
@@ -40,6 +41,7 @@ class LapinListScreen extends HookConsumerWidget {
       ),
       body: Column(
         children: [
+          const ConnectivityBanner(),
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
@@ -78,24 +80,9 @@ class LapinListScreen extends HookConsumerWidget {
           Expanded(
             child: lapinsState.when(
               loading: () => const LoadingWidget(),
-              error: (e, _) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: AppColors.danger,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(e.toString()),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => ref.read(lapinsProvider.notifier).refresh(),
-                      child: const Text('Réessayer'),
-                    ),
-                  ],
-                ),
+              error: (e, _) => ErrorDisplayWidget(
+                message: e.toString(),
+                onRetry: () => ref.read(lapinsProvider.notifier).refresh(),
               ),
               data: (items) {
                 var lapins = items;
@@ -126,30 +113,12 @@ class LapinListScreen extends HookConsumerWidget {
                 }
 
                 if (lapins.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.pets,
-                          size: 64,
-                          color: AppColors.greyLight,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Aucun lapin trouvé',
-                          style: AppTypography.headline3.copyWith(
-                            color: AppColors.greyMedium,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          onPressed: () => context.push('/lapin/new'),
-                          icon: const Icon(Icons.add),
-                          label: const Text('Ajouter un lapin'),
-                        ),
-                      ],
-                    ),
+                  return EmptyStateWidget(
+                    icon: Icons.pets,
+                    title: l10n.lapinsEmptyTitle,
+                    subtitle: l10n.lapinsEmptySubtitle,
+                    buttonText: l10n.lapinsEmptyAction,
+                    onButtonPressed: () => context.push('/lapin/new'),
                   );
                 }
 

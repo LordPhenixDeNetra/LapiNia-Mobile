@@ -306,13 +306,21 @@ class LapiNiaApp extends HookConsumerWidget {
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
       ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      navigationBarTheme: NavigationBarThemeData(
         backgroundColor: isDark ? const Color(0xFF1A1D23) : AppColors.white,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.greyMedium,
-        type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: AppTypography.caption.copyWith(fontWeight: FontWeight.w600),
-        unselectedLabelStyle: AppTypography.caption,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.12),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppTypography.caption.copyWith(fontWeight: FontWeight.w600);
+          }
+          return AppTypography.caption;
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primary);
+          }
+          return const IconThemeData(color: AppColors.greyMedium);
+        }),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.greyLight,

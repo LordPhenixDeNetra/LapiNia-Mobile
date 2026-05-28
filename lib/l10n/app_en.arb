@@ -27,15 +27,73 @@
   "errorGeneric": "An error occurred.",
   "errorUnknown": "Unknown error",
   "retry": "Retry",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "deleteConfirmTitle": "Delete",
+  "deleteConfirmBody": "Delete {name}?",
+  "@deleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "goToLogin": "Go to login",
   "startupErrorTitle": "Startup error",
   "dashboardTitle": "Home",
+  "navHome": "Home",
+  "navLapins": "Rabbits",
+  "navPortees": "Litters",
+  "navIa": "AI",
+  "navPlus": "More",
+  "plusTitle": "More",
+  "plusAlerts": "Alerts",
+  "plusFeed": "Feed",
+  "plusSettings": "Settings",
+  "alertesTitle": "Alerts",
+  "alertesFilterUnread": "Unread",
+  "alertesFilterAll": "All",
+  "alertesEmptyTitle": "No alerts",
+  "alertesEmptySubtitle": "Everything looks good for now.",
+  "alertesMarkRead": "Mark as read",
+  "alertesActionDone": "Done",
   "dashboardAlerts": "Alerts",
   "dashboardSeeAll": "See all",
   "dashboardNoAlerts": "No alerts",
   "dashboardNextBirths": "Upcoming births",
   "dashboardSeeAllPortees": "See all",
   "dashboardNoGestation": "No gestation litter",
+  "dashboardUnknownMother": "Mother",
+  "dashboardGestationProgress": "Day {elapsed} — {remaining} days left",
+  "@dashboardGestationProgress": {
+    "placeholders": {
+      "elapsed": {
+        "type": "int"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardQuickActions": "Quick actions",
+  "quickAddLapin": "Add a rabbit",
+  "quickNewSaillie": "New mating",
+  "quickRecordEvent": "Record",
+  "quickSync": "Sync",
+  "quickSyncPending": "Sync ({count})",
+  "@quickSyncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickEventWeight": "Weight",
+  "quickEventHealth": "Health",
+  "quickEventStock": "Stock",
+  "dashboardAiTipTitle": "Tip of the day",
+  "dashboardAiTipBody": "The forecast temperature is high this week. Make sure your rabbits have plenty of fresh water and a shaded area.",
+  "dashboardAiTipWeather": "32°C forecast",
   "kpiLapins": "Rabbits",
   "kpiGestantes": "Pregnant",
   "kpiAttendus": "Expected",
@@ -63,9 +121,25 @@
   "themeLight": "Light",
   "themeDark": "Dark",
   "lapinsTitle": "My rabbits",
+  "lapinTitle": "Rabbit",
+  "lapinAddWeightTitle": "Add a weight",
+  "lapinWeightGramLabel": "Weight (g)",
+  "lapinInfoSection": "Info",
+  "lapinNotesSection": "Notes",
+  "lapinFieldRace": "Breed",
+  "lapinFieldSexe": "Sex",
+  "lapinFieldStatut": "Status",
+  "lapinFieldPoids": "Weight",
+  "lapinFieldAge": "Age",
+  "lapinFieldId": "ID",
   "lapinsSearchHint": "Search a rabbit...",
+  "lapinsEmptyTitle": "No rabbits yet",
+  "lapinsEmptySubtitle": "Add your first rabbit to get started.",
+  "lapinsEmptyAction": "Add a rabbit",
   "porteesTitle": "My litters",
   "porteesEmpty": "No litter",
+  "porteesEmptySubtitle": "Create your first mating to track a litter.",
+  "porteesEmptyAction": "New mating",
   "newSaillie": "New mating",
   "save": "Save",
   "validationEmailRequired": "Please enter your email",

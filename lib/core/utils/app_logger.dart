@@ -33,7 +33,7 @@ class AppLogger {
     Map<String, Object?>? data,
   }) {
     final payload = <String, Object?>{
-      if (data != null) ...data,
+      ...?data,
       if (error != null) 'error': error.toString(),
     };
     dev.log(
@@ -45,4 +45,3 @@ class AppLogger {
     );
   }
 }
-

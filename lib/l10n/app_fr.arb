@@ -27,15 +27,73 @@
   "errorGeneric": "Une erreur est survenue.",
   "errorUnknown": "Erreur inconnue",
   "retry": "Réessayer",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "deleteConfirmTitle": "Supprimer",
+  "deleteConfirmBody": "Supprimer {name} ?",
+  "@deleteConfirmBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "goToLogin": "Aller à la connexion",
   "startupErrorTitle": "Erreur au démarrage",
   "dashboardTitle": "Accueil",
+  "navHome": "Accueil",
+  "navLapins": "Lapins",
+  "navPortees": "Portées",
+  "navIa": "IA",
+  "navPlus": "Plus",
+  "plusTitle": "Plus",
+  "plusAlerts": "Alertes",
+  "plusFeed": "Aliments",
+  "plusSettings": "Réglages",
+  "alertesTitle": "Alertes",
+  "alertesFilterUnread": "Non lues",
+  "alertesFilterAll": "Toutes",
+  "alertesEmptyTitle": "Aucune alerte",
+  "alertesEmptySubtitle": "Tout est en ordre pour le moment.",
+  "alertesMarkRead": "Marquer comme lue",
+  "alertesActionDone": "Action faite",
   "dashboardAlerts": "Alertes",
   "dashboardSeeAll": "Voir tout",
   "dashboardNoAlerts": "Aucune alerte",
   "dashboardNextBirths": "Prochaines mises bas",
   "dashboardSeeAllPortees": "Voir tout",
   "dashboardNoGestation": "Aucune portée en gestation",
+  "dashboardUnknownMother": "Mère",
+  "dashboardGestationProgress": "J{elapsed} — {remaining} jours restants",
+  "@dashboardGestationProgress": {
+    "placeholders": {
+      "elapsed": {
+        "type": "int"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardQuickActions": "Actions rapides",
+  "quickAddLapin": "Ajouter un lapin",
+  "quickNewSaillie": "Nouvelle saillie",
+  "quickRecordEvent": "Enregistrer",
+  "quickSync": "Synchroniser",
+  "quickSyncPending": "Synchroniser ({count})",
+  "@quickSyncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickEventWeight": "Pesée",
+  "quickEventHealth": "Santé",
+  "quickEventStock": "Stock",
+  "dashboardAiTipTitle": "Conseil du jour",
+  "dashboardAiTipBody": "La température prévue cette semaine est élevée. Assurez-vous que vos lapins ont accès à de l'eau fraîche en quantité suffisante et à un espace ombragé.",
+  "dashboardAiTipWeather": "32°C prévu",
   "kpiLapins": "Lapins",
   "kpiGestantes": "Gestantes",
   "kpiAttendus": "Attendus",
@@ -63,9 +121,25 @@
   "themeLight": "Clair",
   "themeDark": "Sombre",
   "lapinsTitle": "Mes Lapins",
+  "lapinTitle": "Lapin",
+  "lapinAddWeightTitle": "Ajouter une pesée",
+  "lapinWeightGramLabel": "Poids (g)",
+  "lapinInfoSection": "Infos",
+  "lapinNotesSection": "Notes",
+  "lapinFieldRace": "Race",
+  "lapinFieldSexe": "Sexe",
+  "lapinFieldStatut": "Statut",
+  "lapinFieldPoids": "Poids",
+  "lapinFieldAge": "Âge",
+  "lapinFieldId": "ID",
   "lapinsSearchHint": "Rechercher un lapin...",
+  "lapinsEmptyTitle": "Aucun lapin",
+  "lapinsEmptySubtitle": "Ajoutez votre premier lapin pour commencer.",
+  "lapinsEmptyAction": "Ajouter un lapin",
   "porteesTitle": "Mes Portées",
   "porteesEmpty": "Aucune portée",
+  "porteesEmptySubtitle": "Créez votre première saillie pour suivre une portée.",
+  "porteesEmptyAction": "Nouvelle saillie",
   "newSaillie": "Nouvelle saillie",
   "save": "Enregistrer",
   "validationEmailRequired": "Veuillez entrer votre email",

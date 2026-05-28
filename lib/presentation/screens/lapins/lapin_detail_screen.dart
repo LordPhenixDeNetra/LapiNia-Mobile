@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/models/lapin.dart';
 import '../../providers/lapin_provider.dart';
+import '../../widgets/common/connectivity_banner.dart';
+import '../../widgets/common/loading_widget.dart';
 
 class LapinDetailScreen extends ConsumerWidget {
   final String lapinId;
@@ -14,22 +16,23 @@ class LapinDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final lapinAsync = ref.watch(lapinDetailProvider(lapinId));
 
     Future<void> deleteLapin(Lapin lapin) async {
       final ok = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Supprimer'),
-          content: Text('Supprimer ${lapin.nom} ?'),
+          title: Text(l10n.deleteConfirmTitle),
+          content: Text(l10n.deleteConfirmBody(lapin.nom)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annuler'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Supprimer'),
+              child: Text(l10n.delete),
             ),
           ],
         ),
@@ -46,24 +49,22 @@ class LapinDetailScreen extends ConsumerWidget {
       final poids = await showDialog<int?>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Ajouter une pesée'),
+          title: Text(l10n.lapinAddWeightTitle),
           content: TextField(
             controller: poidsController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Poids (g)',
-            ),
+            decoration: InputDecoration(labelText: l10n.lapinWeightGramLabel),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, int.tryParse(poidsController.text));
               },
-              child: const Text('Enregistrer'),
+              child: Text(l10n.save),
             ),
           ],
         ),
@@ -79,11 +80,14 @@ class LapinDetailScreen extends ConsumerWidget {
 
     return lapinAsync.when(
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: LoadingWidget(),
       ),
       error: (e, _) => Scaffold(
-        appBar: AppBar(title: const Text('Lapin')),
-        body: Center(child: Text(e.toString())),
+        appBar: AppBar(title: Text(l10n.lapinTitle)),
+        body: ErrorDisplayWidget(
+          message: e.toString(),
+          onRetry: () => ref.invalidate(lapinDetailProvider(lapinId)),
+        ),
       ),
       data: (lapin) {
         final poidsKg = lapin.poidsKg;
@@ -104,31 +108,34 @@ class LapinDetailScreen extends ConsumerWidget {
           floatingActionButton: FloatingActionButton.extended(
             onPressed: recordPesee,
             icon: const Icon(Icons.scale),
-            label: const Text('Peser'),
+            label: Text(l10n.quickEventWeight),
           ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              const ConnectivityBanner(),
+              const SizedBox(height: 12),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Infos', style: AppTypography.subtitle1),
+                      Text(l10n.lapinInfoSection, style: AppTypography.subtitle1),
                       const SizedBox(height: 12),
-                      _row('Race', lapin.race?.nom ?? '—'),
-                      _row('Sexe', lapin.sexe.label),
-                      _row('Statut', lapin.statut.label),
+                      _row(context, l10n.lapinFieldRace, lapin.race?.nom ?? '—'),
+                      _row(context, l10n.lapinFieldSexe, lapin.sexe.label),
+                      _row(context, l10n.lapinFieldStatut, lapin.statut.label),
                       _row(
-                        'Poids',
+                        context,
+                        l10n.lapinFieldPoids,
                         poidsKg != null
                             ? '${poidsKg.toStringAsFixed(2)} kg'
                             : '—',
                       ),
-                      _row('Âge', lapin.ageFormate ?? '—'),
+                      _row(context, l10n.lapinFieldAge, lapin.ageFormate ?? '—'),
                       if (lapin.numeroIdentification != null)
-                        _row('ID', lapin.numeroIdentification!),
+                        _row(context, l10n.lapinFieldId, lapin.numeroIdentification!),
                     ],
                   ),
                 ),
@@ -141,7 +148,7 @@ class LapinDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Notes', style: AppTypography.subtitle1),
+                        Text(l10n.lapinNotesSection, style: AppTypography.subtitle1),
                         const SizedBox(height: 8),
                         Text(lapin.notes!, style: AppTypography.body2),
                       ],
@@ -156,7 +163,8 @@ class LapinDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _row(String label, String value) {
+  Widget _row(BuildContext context, String label, String value) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -165,14 +173,14 @@ class LapinDetailScreen extends ConsumerWidget {
             flex: 2,
             child: Text(
               label,
-              style: AppTypography.body2.copyWith(color: AppColors.greyMedium),
+              style: AppTypography.body2.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value,
-              style: AppTypography.body2.copyWith(color: AppColors.textDark),
+              style: AppTypography.body2.copyWith(color: colorScheme.onSurface),
             ),
           ),
         ],

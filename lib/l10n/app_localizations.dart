@@ -218,6 +218,30 @@ abstract class AppLocalizations {
   /// **'Réessayer'**
   String get retry;
 
+  /// No description provided for @cancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get delete;
+
+  /// No description provided for @deleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get deleteConfirmTitle;
+
+  /// No description provided for @deleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer {name} ?'**
+  String deleteConfirmBody(String name);
+
   /// No description provided for @goToLogin.
   ///
   /// In fr, this message translates to:
@@ -235,6 +259,102 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Accueil'**
   String get dashboardTitle;
+
+  /// No description provided for @navHome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navLapins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapins'**
+  String get navLapins;
+
+  /// No description provided for @navPortees.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portées'**
+  String get navPortees;
+
+  /// No description provided for @navIa.
+  ///
+  /// In fr, this message translates to:
+  /// **'IA'**
+  String get navIa;
+
+  /// No description provided for @navPlus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus'**
+  String get navPlus;
+
+  /// No description provided for @plusTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus'**
+  String get plusTitle;
+
+  /// No description provided for @plusAlerts.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes'**
+  String get plusAlerts;
+
+  /// No description provided for @plusFeed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aliments'**
+  String get plusFeed;
+
+  /// No description provided for @plusSettings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réglages'**
+  String get plusSettings;
+
+  /// No description provided for @alertesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alertes'**
+  String get alertesTitle;
+
+  /// No description provided for @alertesFilterUnread.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non lues'**
+  String get alertesFilterUnread;
+
+  /// No description provided for @alertesFilterAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get alertesFilterAll;
+
+  /// No description provided for @alertesEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune alerte'**
+  String get alertesEmptyTitle;
+
+  /// No description provided for @alertesEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout est en ordre pour le moment.'**
+  String get alertesEmptySubtitle;
+
+  /// No description provided for @alertesMarkRead.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer comme lue'**
+  String get alertesMarkRead;
+
+  /// No description provided for @alertesActionDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Action faite'**
+  String get alertesActionDone;
 
   /// No description provided for @dashboardAlerts.
   ///
@@ -271,6 +391,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune portée en gestation'**
   String get dashboardNoGestation;
+
+  /// No description provided for @dashboardUnknownMother.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mère'**
+  String get dashboardUnknownMother;
+
+  /// No description provided for @dashboardGestationProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'J{elapsed} — {remaining} jours restants'**
+  String dashboardGestationProgress(int elapsed, int remaining);
+
+  /// No description provided for @dashboardQuickActions.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actions rapides'**
+  String get dashboardQuickActions;
+
+  /// No description provided for @quickAddLapin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un lapin'**
+  String get quickAddLapin;
+
+  /// No description provided for @quickNewSaillie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle saillie'**
+  String get quickNewSaillie;
+
+  /// No description provided for @quickRecordEvent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get quickRecordEvent;
+
+  /// No description provided for @quickSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser'**
+  String get quickSync;
+
+  /// No description provided for @quickSyncPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchroniser ({count})'**
+  String quickSyncPending(int count);
+
+  /// No description provided for @quickEventWeight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée'**
+  String get quickEventWeight;
+
+  /// No description provided for @quickEventHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Santé'**
+  String get quickEventHealth;
+
+  /// No description provided for @quickEventStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stock'**
+  String get quickEventStock;
+
+  /// No description provided for @dashboardAiTipTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseil du jour'**
+  String get dashboardAiTipTitle;
+
+  /// No description provided for @dashboardAiTipBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La température prévue cette semaine est élevée. Assurez-vous que vos lapins ont accès à de l\'eau fraîche en quantité suffisante et à un espace ombragé.'**
+  String get dashboardAiTipBody;
+
+  /// No description provided for @dashboardAiTipWeather.
+  ///
+  /// In fr, this message translates to:
+  /// **'32°C prévu'**
+  String get dashboardAiTipWeather;
 
   /// No description provided for @kpiLapins.
   ///
@@ -392,11 +596,95 @@ abstract class AppLocalizations {
   /// **'Mes Lapins'**
   String get lapinsTitle;
 
+  /// No description provided for @lapinTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapin'**
+  String get lapinTitle;
+
+  /// No description provided for @lapinAddWeightTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une pesée'**
+  String get lapinAddWeightTitle;
+
+  /// No description provided for @lapinWeightGramLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids (g)'**
+  String get lapinWeightGramLabel;
+
+  /// No description provided for @lapinInfoSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Infos'**
+  String get lapinInfoSection;
+
+  /// No description provided for @lapinNotesSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get lapinNotesSection;
+
+  /// No description provided for @lapinFieldRace.
+  ///
+  /// In fr, this message translates to:
+  /// **'Race'**
+  String get lapinFieldRace;
+
+  /// No description provided for @lapinFieldSexe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sexe'**
+  String get lapinFieldSexe;
+
+  /// No description provided for @lapinFieldStatut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get lapinFieldStatut;
+
+  /// No description provided for @lapinFieldPoids.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids'**
+  String get lapinFieldPoids;
+
+  /// No description provided for @lapinFieldAge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Âge'**
+  String get lapinFieldAge;
+
+  /// No description provided for @lapinFieldId.
+  ///
+  /// In fr, this message translates to:
+  /// **'ID'**
+  String get lapinFieldId;
+
   /// No description provided for @lapinsSearchHint.
   ///
   /// In fr, this message translates to:
   /// **'Rechercher un lapin...'**
   String get lapinsSearchHint;
+
+  /// No description provided for @lapinsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun lapin'**
+  String get lapinsEmptyTitle;
+
+  /// No description provided for @lapinsEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez votre premier lapin pour commencer.'**
+  String get lapinsEmptySubtitle;
+
+  /// No description provided for @lapinsEmptyAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un lapin'**
+  String get lapinsEmptyAction;
 
   /// No description provided for @porteesTitle.
   ///
@@ -409,6 +697,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune portée'**
   String get porteesEmpty;
+
+  /// No description provided for @porteesEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créez votre première saillie pour suivre une portée.'**
+  String get porteesEmptySubtitle;
+
+  /// No description provided for @porteesEmptyAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle saillie'**
+  String get porteesEmptyAction;
 
   /// No description provided for @newSaillie.
   ///
