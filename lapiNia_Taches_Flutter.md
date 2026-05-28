@@ -29,11 +29,6 @@
 ---
  
 **Onboarding**
-- [ ] **(Flutter · P1)** Onboarding étape 1 — nombre de lapins (< 10 / 10–50 / 50–200 / > 200)
-- [ ] **(Flutter · P1)** Onboarding étape 3 — région (sélecteur pays + ville)
-- [ ] **(Flutter · P1)** Onboarding étape 4 — races possédées (multiselect sur `GET /rest/v1/races`)
-- [ ] **(Flutter · P1)** Onboarding étape 5 — niveau d'expérience (débutant / intermédiaire / expert)
-- [ ] **(Flutter · P1)** Conseil IA post-onboarding (`POST /functions/v1/daily-advice`) — premier conseil personnalisé basé sur le profil
 - [ ] **(Flutter · P2)** Plan guard — UI conditionnelle selon `plan` (gratuit / éleveur / pro) sur chaque fonctionnalité premium
 ---
  
@@ -276,7 +271,12 @@
 - [x] Écran “Plus” — hub : Alertes + Aliments + Réglages
 
 - **Onboarding**
+- [x] **(Flutter · P1)** Onboarding étape 1 — nombre de lapins (< 10 / 10–50 / 50–200 / > 200)
 - [x] **(Flutter · P1)** Onboarding étape 2 — objectifs (multi-select) : vente lapereaux / viande / reproducteurs / loisir
+- [x] **(Flutter · P1)** Onboarding étape 3 — région (sélecteur pays + ville)
+- [x] **(Flutter · P1)** Onboarding étape 4 — races possédées (multiselect sur `GET /rest/v1/races`)
+- [x] **(Flutter · P1)** Onboarding étape 5 — niveau d'expérience (débutant / intermédiaire / expert)
+- [x] **(Flutter · P1)** Conseil IA post-onboarding — écran dédié + tentative `daily-advice` + fallback local
 
 - **Maintenance**
 - [x] Mise à jour Flutter SDK + dépendances (go_router, Riverpod, Drift, etc.)

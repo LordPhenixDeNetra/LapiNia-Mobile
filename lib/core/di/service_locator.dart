@@ -7,6 +7,7 @@ import '../utils/connectivity_checker.dart';
 import '../utils/sync_manager.dart';
 import '../../data/local_db/app_database.dart';
 import '../../data/local_db/local_cache_service.dart';
+import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
@@ -42,6 +43,9 @@ Future<void> setupServiceLocator({
     ),
   );
   serviceLocator.registerSingleton<OnboardingService>(OnboardingService());
+  serviceLocator.registerSingleton<OnboardingProfileService>(
+    OnboardingProfileService(),
+  );
   serviceLocator.registerSingleton<ThemeService>(ThemeService());
   serviceLocator.registerSingleton<FileShareService>(FileShareService());
 }

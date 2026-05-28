@@ -63,6 +63,97 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get onboardingRabbitsCountTitle => 'How many rabbits do you have?';
+
+  @override
+  String get onboardingRabbitsCountLt10 => 'Less than 10';
+
+  @override
+  String get onboardingRabbitsCount10to50 => '10 to 50';
+
+  @override
+  String get onboardingRabbitsCount50to200 => '50 to 200';
+
+  @override
+  String get onboardingRabbitsCountGt200 => 'More than 200';
+
+  @override
+  String get onboardingGoalsTitle => 'What is your main goal?';
+
+  @override
+  String get onboardingGoalSellKits => 'Sell kits';
+
+  @override
+  String get onboardingGoalMeat => 'Family meat';
+
+  @override
+  String get onboardingGoalBreeders => 'Breeders';
+
+  @override
+  String get onboardingGoalHobby => 'Hobby';
+
+  @override
+  String get onboardingRegionTitle => 'Your region?';
+
+  @override
+  String get onboardingCountryLabel => 'Country';
+
+  @override
+  String get onboardingCityLabel => 'City';
+
+  @override
+  String get onboardingCityHint => 'e.g. Dakar';
+
+  @override
+  String get onboardingRacesTitle => 'Which breeds do you have?';
+
+  @override
+  String get onboardingRacesSkip => 'You can fill this in later.';
+
+  @override
+  String get onboardingExperienceTitle => 'Your experience level?';
+
+  @override
+  String get onboardingExperienceBeginner => 'Beginner';
+
+  @override
+  String get onboardingExperienceIntermediate => 'Intermediate';
+
+  @override
+  String get onboardingExperienceExpert => 'Expert';
+
+  @override
+  String get onboardingAdviceTitle => 'Your first tip';
+
+  @override
+  String get onboardingAdviceSubtitle => 'Tip of the day';
+
+  @override
+  String get onboardingAdviceContinue => 'Continue';
+
+  @override
+  String get onboardingAdviceFallbackSell =>
+      'Start by tracking pregnant does and keep a simple routine: fresh water, consistent feed, and a kidding calendar.';
+
+  @override
+  String get onboardingAdviceFallbackMeat =>
+      'For steady meat production, track weight and secure feeding: stable ration, clean water, and daily observation.';
+
+  @override
+  String get onboardingAdviceFallbackBreeders =>
+      'To improve your herd, keep genealogy up to date and avoid inbreeding: track parents, dates, and litter performance.';
+
+  @override
+  String get onboardingAdviceFallbackGeneric =>
+      'Start simple: add your rabbits, record matings, then rely on alerts so you don’t miss anything.';
+
+  @override
   String get errorGeneric => 'An error occurred.';
 
   @override

@@ -200,6 +200,180 @@ abstract class AppLocalizations {
   /// **'Compte créé. Vérifiez votre email: {email}'**
   String signUpCheckEmail(String email);
 
+  /// No description provided for @onboardingNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingRabbitsCountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Combien de lapins avez-vous ?'**
+  String get onboardingRabbitsCountTitle;
+
+  /// No description provided for @onboardingRabbitsCountLt10.
+  ///
+  /// In fr, this message translates to:
+  /// **'Moins de 10'**
+  String get onboardingRabbitsCountLt10;
+
+  /// No description provided for @onboardingRabbitsCount10to50.
+  ///
+  /// In fr, this message translates to:
+  /// **'10 à 50'**
+  String get onboardingRabbitsCount10to50;
+
+  /// No description provided for @onboardingRabbitsCount50to200.
+  ///
+  /// In fr, this message translates to:
+  /// **'50 à 200'**
+  String get onboardingRabbitsCount50to200;
+
+  /// No description provided for @onboardingRabbitsCountGt200.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus de 200'**
+  String get onboardingRabbitsCountGt200;
+
+  /// No description provided for @onboardingGoalsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quel est votre objectif principal ?'**
+  String get onboardingGoalsTitle;
+
+  /// No description provided for @onboardingGoalSellKits.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vente lapereaux'**
+  String get onboardingGoalSellKits;
+
+  /// No description provided for @onboardingGoalMeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Viande familiale'**
+  String get onboardingGoalMeat;
+
+  /// No description provided for @onboardingGoalBreeders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reproducteurs'**
+  String get onboardingGoalBreeders;
+
+  /// No description provided for @onboardingGoalHobby.
+  ///
+  /// In fr, this message translates to:
+  /// **'Loisir'**
+  String get onboardingGoalHobby;
+
+  /// No description provided for @onboardingRegionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre région ?'**
+  String get onboardingRegionTitle;
+
+  /// No description provided for @onboardingCountryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pays'**
+  String get onboardingCountryLabel;
+
+  /// No description provided for @onboardingCityLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ville'**
+  String get onboardingCityLabel;
+
+  /// No description provided for @onboardingCityHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex: Dakar'**
+  String get onboardingCityHint;
+
+  /// No description provided for @onboardingRacesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelles races avez-vous ?'**
+  String get onboardingRacesTitle;
+
+  /// No description provided for @onboardingRacesSkip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous pourrez renseigner cette information plus tard.'**
+  String get onboardingRacesSkip;
+
+  /// No description provided for @onboardingExperienceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre niveau d\'expérience ?'**
+  String get onboardingExperienceTitle;
+
+  /// No description provided for @onboardingExperienceBeginner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Débutant'**
+  String get onboardingExperienceBeginner;
+
+  /// No description provided for @onboardingExperienceIntermediate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Intermédiaire'**
+  String get onboardingExperienceIntermediate;
+
+  /// No description provided for @onboardingExperienceExpert.
+  ///
+  /// In fr, this message translates to:
+  /// **'Expert'**
+  String get onboardingExperienceExpert;
+
+  /// No description provided for @onboardingAdviceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre premier conseil'**
+  String get onboardingAdviceTitle;
+
+  /// No description provided for @onboardingAdviceSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseil du jour'**
+  String get onboardingAdviceSubtitle;
+
+  /// No description provided for @onboardingAdviceContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get onboardingAdviceContinue;
+
+  /// No description provided for @onboardingAdviceFallbackSell.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencez par suivre vos femelles gestantes et préparez une routine simple : eau fraîche, alimentation régulière et calendrier des mises bas.'**
+  String get onboardingAdviceFallbackSell;
+
+  /// No description provided for @onboardingAdviceFallbackMeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour une production viande régulière, suivez le poids (pesées) et sécurisez l’alimentation : ration stable, eau propre, et observation quotidienne.'**
+  String get onboardingAdviceFallbackMeat;
+
+  /// No description provided for @onboardingAdviceFallbackBreeders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour améliorer votre cheptel, tenez à jour la généalogie et évitez la consanguinité : notez parents, dates et performances de chaque portée.'**
+  String get onboardingAdviceFallbackBreeders;
+
+  /// No description provided for @onboardingAdviceFallbackGeneric.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrez simple : ajoutez vos lapins, enregistrez les saillies, puis utilisez les alertes pour ne rien oublier.'**
+  String get onboardingAdviceFallbackGeneric;
+
   /// No description provided for @errorGeneric.
   ///
   /// In fr, this message translates to:

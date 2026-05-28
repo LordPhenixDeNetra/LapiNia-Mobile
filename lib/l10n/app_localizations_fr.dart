@@ -64,6 +64,98 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get onboardingNext => 'Suivant';
+
+  @override
+  String get onboardingStart => 'Commencer';
+
+  @override
+  String get onboardingRabbitsCountTitle => 'Combien de lapins avez-vous ?';
+
+  @override
+  String get onboardingRabbitsCountLt10 => 'Moins de 10';
+
+  @override
+  String get onboardingRabbitsCount10to50 => '10 à 50';
+
+  @override
+  String get onboardingRabbitsCount50to200 => '50 à 200';
+
+  @override
+  String get onboardingRabbitsCountGt200 => 'Plus de 200';
+
+  @override
+  String get onboardingGoalsTitle => 'Quel est votre objectif principal ?';
+
+  @override
+  String get onboardingGoalSellKits => 'Vente lapereaux';
+
+  @override
+  String get onboardingGoalMeat => 'Viande familiale';
+
+  @override
+  String get onboardingGoalBreeders => 'Reproducteurs';
+
+  @override
+  String get onboardingGoalHobby => 'Loisir';
+
+  @override
+  String get onboardingRegionTitle => 'Votre région ?';
+
+  @override
+  String get onboardingCountryLabel => 'Pays';
+
+  @override
+  String get onboardingCityLabel => 'Ville';
+
+  @override
+  String get onboardingCityHint => 'Ex: Dakar';
+
+  @override
+  String get onboardingRacesTitle => 'Quelles races avez-vous ?';
+
+  @override
+  String get onboardingRacesSkip =>
+      'Vous pourrez renseigner cette information plus tard.';
+
+  @override
+  String get onboardingExperienceTitle => 'Votre niveau d\'expérience ?';
+
+  @override
+  String get onboardingExperienceBeginner => 'Débutant';
+
+  @override
+  String get onboardingExperienceIntermediate => 'Intermédiaire';
+
+  @override
+  String get onboardingExperienceExpert => 'Expert';
+
+  @override
+  String get onboardingAdviceTitle => 'Votre premier conseil';
+
+  @override
+  String get onboardingAdviceSubtitle => 'Conseil du jour';
+
+  @override
+  String get onboardingAdviceContinue => 'Continuer';
+
+  @override
+  String get onboardingAdviceFallbackSell =>
+      'Commencez par suivre vos femelles gestantes et préparez une routine simple : eau fraîche, alimentation régulière et calendrier des mises bas.';
+
+  @override
+  String get onboardingAdviceFallbackMeat =>
+      'Pour une production viande régulière, suivez le poids (pesées) et sécurisez l’alimentation : ration stable, eau propre, et observation quotidienne.';
+
+  @override
+  String get onboardingAdviceFallbackBreeders =>
+      'Pour améliorer votre cheptel, tenez à jour la généalogie et évitez la consanguinité : notez parents, dates et performances de chaque portée.';
+
+  @override
+  String get onboardingAdviceFallbackGeneric =>
+      'Démarrez simple : ajoutez vos lapins, enregistrez les saillies, puis utilisez les alertes pour ne rien oublier.';
+
+  @override
   String get errorGeneric => 'Une erreur est survenue.';
 
   @override

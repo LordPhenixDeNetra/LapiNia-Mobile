@@ -10,6 +10,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/onboarding_screen.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
+import '../screens/onboarding/onboarding_advice_screen.dart';
 import '../screens/lapins/lapin_detail_screen.dart';
 import '../screens/lapins/lapin_form_screen.dart';
 import '../screens/lapins/lapin_list_screen.dart';
@@ -92,6 +93,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding-advice',
+        builder: (context, state) => const OnboardingAdviceScreen(),
       ),
       GoRoute(
         path: '/settings',
