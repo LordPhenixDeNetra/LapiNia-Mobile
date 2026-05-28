@@ -43,7 +43,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
       if (!connectivity.isOnline) {
         return cache.getLapins(userId: userId);
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -124,7 +124,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return optimistic;
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -179,7 +179,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return optimistic;
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -222,7 +222,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return;
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 

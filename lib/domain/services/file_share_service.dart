@@ -18,9 +18,8 @@ class FileShareService {
     required String path,
     String? mimeType,
   }) async {
-    await Share.shareXFiles(
-      [XFile(path, mimeType: mimeType)],
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path, mimeType: mimeType)]),
     );
   }
 }
-

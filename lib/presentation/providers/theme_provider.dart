@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../domain/services/theme_service.dart';
 import 'core_providers.dart';
 
 class ThemeModeController extends AsyncNotifier<ThemeMode> {
@@ -23,4 +22,3 @@ class ThemeModeController extends AsyncNotifier<ThemeMode> {
 
 final themeModeProvider =
     AsyncNotifierProvider<ThemeModeController, ThemeMode>(ThemeModeController.new);
-

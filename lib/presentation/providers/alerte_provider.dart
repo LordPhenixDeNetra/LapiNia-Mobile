@@ -31,7 +31,7 @@ class AlertesController extends AsyncNotifier<List<Alerte>> {
           await q.order('priorite').order('created_at', ascending: false);
       return (response as List).map((e) => Alerte.fromJson(e)).toList();
     } catch (e) {
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -51,7 +51,7 @@ class AlertesController extends AsyncNotifier<List<Alerte>> {
       await supabase.from('alertes').update({'lue': true}).eq('id', id);
       await refreshAll();
     } catch (e) {
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -64,7 +64,7 @@ class AlertesController extends AsyncNotifier<List<Alerte>> {
           .eq('id', id);
       await refreshAll();
     } catch (e) {
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 }
@@ -88,6 +88,6 @@ final alertesNonLuesProvider = FutureProvider<List<Alerte>>((ref) async {
 
     return (response as List).map((e) => Alerte.fromJson(e)).toList();
   } catch (e) {
-    throw humanizeError(e as Object);
+    throw humanizeError(e);
   }
 });

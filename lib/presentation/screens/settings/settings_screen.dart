@@ -106,36 +106,28 @@ class SettingsScreen extends ConsumerWidget {
           Text(l10n.settingsTheme, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
-            child: Column(
-              children: [
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.system,
-                  groupValue: themeMode,
-                  title: Text(l10n.themeSystem),
-                  onChanged: (v) {
-                    if (v == null) return;
-                    ref.read(themeModeProvider.notifier).setMode(v);
-                  },
-                ),
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.light,
-                  groupValue: themeMode,
-                  title: Text(l10n.themeLight),
-                  onChanged: (v) {
-                    if (v == null) return;
-                    ref.read(themeModeProvider.notifier).setMode(v);
-                  },
-                ),
-                RadioListTile<ThemeMode>(
-                  value: ThemeMode.dark,
-                  groupValue: themeMode,
-                  title: Text(l10n.themeDark),
-                  onChanged: (v) {
-                    if (v == null) return;
-                    ref.read(themeModeProvider.notifier).setMode(v);
-                  },
-                ),
-              ],
+            child: RadioGroup<ThemeMode>(
+              groupValue: themeMode,
+              onChanged: (v) {
+                if (v == null) return;
+                ref.read(themeModeProvider.notifier).setMode(v);
+              },
+              child: Column(
+                children: [
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.system,
+                    title: Text(l10n.themeSystem),
+                  ),
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.light,
+                    title: Text(l10n.themeLight),
+                  ),
+                  RadioListTile<ThemeMode>(
+                    value: ThemeMode.dark,
+                    title: Text(l10n.themeDark),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -42,7 +42,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
       if (!connectivity.isOnline) {
         return cache.getPortees(userId: userId);
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
@@ -113,7 +113,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
         );
         return;
       }
-      throw humanizeError(e as Object);
+      throw humanizeError(e);
     }
   }
 
