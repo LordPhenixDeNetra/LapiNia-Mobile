@@ -246,7 +246,7 @@
  
 ### En cours
  
-- [ ] **(Flutter · P1)** Onboarding étape 2 — objectif principal (vente lapereaux / viande / reproducteurs / loisir)
+- [ ] *(aucune pour le moment)*
 ---
  
 ### Fait
@@ -271,3 +271,9 @@
 - **UI**
 - [x] Fix overflow clavier sur l’écran Connexion (Login) — scroll + padding clavier
 - [x] Fix overflow sur Onboarding (questions) — page scrollable si écran petit
+
+- **Onboarding**
+- [x] **(Flutter · P1)** Onboarding étape 2 — objectifs (multi-select) : vente lapereaux / viande / reproducteurs / loisir
+
+- **Maintenance**
+- [x] Mise à jour Flutter SDK + dépendances (go_router, Riverpod, Drift, etc.)

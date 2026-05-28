@@ -73,11 +73,12 @@ class SaillieFormScreen extends HookConsumerWidget {
       }
     }
 
-    final femelles = (lapins.valueOrNull ?? const [])
+    final femelles = (lapins.asData?.value ?? const [])
         .where((l) => l.sexe == SexeLapin.femelle && l.statut == StatutLapin.repos)
         .toList();
-    final males =
-        (lapins.valueOrNull ?? const []).where((l) => l.sexe == SexeLapin.male).toList();
+    final males = (lapins.asData?.value ?? const [])
+        .where((l) => l.sexe == SexeLapin.male)
+        .toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,

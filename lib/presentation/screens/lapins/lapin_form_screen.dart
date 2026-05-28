@@ -38,7 +38,7 @@ class LapinFormScreen extends HookConsumerWidget {
     useEffect(() {
       if (!isEditing) return null;
       if (hasHydrated.value) return null;
-      final lapin = lapinDetail?.valueOrNull;
+      final lapin = lapinDetail?.asData?.value;
       if (lapin == null) return null;
 
       hasHydrated.value = true;
@@ -155,7 +155,7 @@ class LapinFormScreen extends HookConsumerWidget {
                         labelText: 'Race',
                         prefixIcon: Icon(Icons.category),
                       ),
-                      items: (races.valueOrNull ?? const [])
+                      items: (races.asData?.value ?? const [])
                           .map(
                             (race) => DropdownMenuItem(
                               value: race.id,

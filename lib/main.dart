@@ -45,7 +45,7 @@ void main() async {
   final syncManager = SyncManager(
     connectivityChecker: connectivityChecker,
     apiCall: _apiCall,
-    database: database,
+    db: database,
   );
 
   await setupServiceLocator(

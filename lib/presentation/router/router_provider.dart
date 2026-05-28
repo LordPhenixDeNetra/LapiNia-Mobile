@@ -37,7 +37,7 @@ class GoRouterRefreshStream extends ChangeNotifier {
 
 final routerProvider = Provider<GoRouter>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
-  final onboardingDone = ref.watch(onboardingDoneProvider).valueOrNull ?? false;
+  final onboardingDone = ref.watch(onboardingDoneProvider).asData?.value ?? false;
 
   return GoRouter(
     initialLocation: '/splash',

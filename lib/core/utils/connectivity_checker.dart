@@ -3,7 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityChecker {
   final Connectivity _connectivity = Connectivity();
-  StreamSubscription<ConnectivityResult>? _subscription;
+  StreamSubscription<List<ConnectivityResult>>? _subscription;
   final _controller = StreamController<bool>.broadcast();
 
   Stream<bool> get onConnectivityChanged => _controller.stream;
@@ -21,9 +21,9 @@ class ConnectivityChecker {
     _subscription = _connectivity.onConnectivityChanged.listen(_updateStatus);
   }
 
-  void _updateStatus(ConnectivityResult result) {
+  void _updateStatus(List<ConnectivityResult> results) {
     final wasOnline = _isOnline;
-    _isOnline = result != ConnectivityResult.none;
+    _isOnline = results.isNotEmpty && !results.contains(ConnectivityResult.none);
     
     if (wasOnline != _isOnline) {
       _controller.add(_isOnline);

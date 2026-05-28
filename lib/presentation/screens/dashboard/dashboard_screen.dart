@@ -155,8 +155,8 @@ class DashboardScreen extends ConsumerWidget {
     required AsyncValue<List<Lapin>> lapins,
     required AsyncValue<List<Portee>> portees,
   }) {
-    final lapinsList = lapins.valueOrNull ?? const [];
-    final porteesList = portees.valueOrNull ?? const [];
+    final lapinsList = lapins.asData?.value ?? const [];
+    final porteesList = portees.asData?.value ?? const [];
 
     final nbLapins = lapinsList.length;
     final nbGestantes = lapinsList

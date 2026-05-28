@@ -9,36 +9,29 @@ import 'connectivity_checker.dart';
 enum MutationType { insert, update, delete }
 
 class SyncManager {
-  final ConnectivityChecker _connectivityChecker;
+  final ConnectivityChecker connectivityChecker;
   final Future<dynamic> Function(
     String table,
     MutationType op,
     String payload,
     String idempotencyKey,
-  ) _apiCall;
-  final AppDatabase _db;
+  ) apiCall;
+  final AppDatabase db;
 
   bool _isSyncing = false;
   static const int _maxRetries = 5;
   static const Duration _retryDelayBase = Duration(seconds: 3);
 
   SyncManager({
-    required ConnectivityChecker connectivityChecker,
-    required Future<dynamic> Function(
-      String table,
-      MutationType op,
-      String payload,
-      String idempotencyKey,
-    ) apiCall,
-    required AppDatabase database,
-  }) : _connectivityChecker = connectivityChecker,
-       _apiCall = apiCall,
-       _db = database {
+    required this.connectivityChecker,
+    required this.apiCall,
+    required this.db,
+  }) {
     _init();
   }
 
   void _init() {
-    _connectivityChecker.onConnectivityChanged.listen((isOnline) {
+    connectivityChecker.onConnectivityChanged.listen((isOnline) {
       if (isOnline && !_isSyncing) {
         unawaited(_processQueue());
       }
@@ -52,7 +45,7 @@ class SyncManager {
   }) async {
     final key = IdempotencyKey.generate();
 
-    await _db.into(_db.syncQueue).insert(
+    await db.into(db.syncQueue).insert(
           SyncQueueCompanion.insert(
             id: key,
             targetTable: tableName,
@@ -64,7 +57,7 @@ class SyncManager {
           mode: InsertMode.insertOrIgnore,
         );
 
-    if (_connectivityChecker.isOnline) {
+    if (connectivityChecker.isOnline) {
       await _processQueue();
     }
   }
@@ -75,34 +68,34 @@ class SyncManager {
     _isSyncing = true;
 
     try {
-      while (_connectivityChecker.isOnline) {
-        final pending = await (_db.select(_db.syncQueue)
+      while (connectivityChecker.isOnline) {
+        final pending = await (db.select(db.syncQueue)
               ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
             .get();
 
         if (pending.isEmpty) return;
 
         for (final row in pending) {
-          if (!_connectivityChecker.isOnline) return;
+          if (!connectivityChecker.isOnline) return;
 
           if (row.retryCount >= _maxRetries) {
-            await (_db.delete(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+            await (db.delete(db.syncQueue)..where((t) => t.id.equals(row.id)))
                 .go();
             continue;
           }
 
           try {
-            await _apiCall(
+            await apiCall(
               row.targetTable,
               MutationType.values.byName(row.operation),
               row.payload,
               row.idempotencyKey,
             );
-            await (_db.delete(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+            await (db.delete(db.syncQueue)..where((t) => t.id.equals(row.id)))
                 .go();
           } catch (e) {
             final nextRetries = row.retryCount + 1;
-            await (_db.update(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+            await (db.update(db.syncQueue)..where((t) => t.id.equals(row.id)))
                 .write(
               SyncQueueCompanion(
                 retryCount: Value(nextRetries),
@@ -119,16 +112,16 @@ class SyncManager {
   }
 
   Future<void> forceSync() async {
-    if (!_connectivityChecker.isOnline) {
+    if (!connectivityChecker.isOnline) {
       throw Exception('Pas de connexion internet');
     }
     await _processQueue();
   }
 
   Future<int> get pendingMutations async {
-    final q = _db.selectOnly(_db.syncQueue)..addColumns([_db.syncQueue.id.count()]);
+    final q = db.selectOnly(db.syncQueue)..addColumns([db.syncQueue.id.count()]);
     final row = await q.getSingle();
-    return row.read(_db.syncQueue.id.count()) ?? 0;
+    return row.read(db.syncQueue.id.count()) ?? 0;
   }
   bool get isSyncing => _isSyncing;
 
