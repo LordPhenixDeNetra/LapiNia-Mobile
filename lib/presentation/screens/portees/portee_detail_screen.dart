@@ -50,7 +50,14 @@ class PorteeDetailScreen extends HookConsumerWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.list),
-                onPressed: () => context.go('/portees'),
+                onPressed: () {
+                  final router = GoRouter.of(context);
+                  if (router.canPop()) {
+                    router.pop();
+                    return;
+                  }
+                  context.go('/portees');
+                },
               ),
             ],
           ),
