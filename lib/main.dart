@@ -72,6 +72,16 @@ Future<_SupabaseConfig> _loadSupabaseConfig() async {
   }
 
   try {
+    final rawEnv = await rootBundle.loadString('assets/data/.env');
+    final env = _parseDotEnv(rawEnv);
+    final url = (env['SUPABASE_URL'] ?? '').trim();
+    final anonKey = (env['SUPABASE_ANON_KEY'] ?? '').trim();
+    if (url.isNotEmpty && anonKey.isNotEmpty) {
+      return _SupabaseConfig(url: url, anonKey: anonKey);
+    }
+  } catch (_) {}
+
+  try {
     final rawConfig = await rootBundle.loadString(
       'assets/data/supabase.local.json',
     );
@@ -83,6 +93,30 @@ Future<_SupabaseConfig> _loadSupabaseConfig() async {
   } catch (_) {
     return const _SupabaseConfig(url: '', anonKey: '');
   }
+}
+
+Map<String, String> _parseDotEnv(String raw) {
+  final result = <String, String>{};
+  final lines = raw.split(RegExp(r'\r?\n'));
+  for (final line in lines) {
+    final trimmed = line.trim();
+    if (trimmed.isEmpty) continue;
+    if (trimmed.startsWith('#')) continue;
+    final idx = trimmed.indexOf('=');
+    if (idx <= 0) continue;
+    final key = trimmed.substring(0, idx).trim();
+    var value = trimmed.substring(idx + 1).trim();
+    if (value.length >= 2) {
+      final first = value[0];
+      final last = value[value.length - 1];
+      if ((first == '"' && last == '"') || (first == "'" && last == "'")) {
+        value = value.substring(1, value.length - 1);
+      }
+    }
+    if (key.isEmpty) continue;
+    result[key] = value;
+  }
+  return result;
 }
 
 class _MissingSupabaseConfigApp extends StatelessWidget {
@@ -109,7 +143,7 @@ class _MissingSupabaseConfigApp extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY soit via `--dart-define`, soit dans `assets/data/supabase.local.json` (fichier local ignore).',
+                  'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY via `--dart-define`, ou dans `assets/data/.env`, ou dans `assets/data/supabase.local.json` (fichier local ignore).',
                   style: AppTypography.body1.copyWith(
                     color: AppColors.textDark.withValues(alpha: 0.7),
                   ),

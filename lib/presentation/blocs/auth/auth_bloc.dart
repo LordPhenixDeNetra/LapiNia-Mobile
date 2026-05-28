@@ -54,8 +54,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
       emit(AuthAuthenticated(user: user));
+    } on AuthException catch (e) {
+      emit(AuthError(message: _humanizeAuthError(e)));
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      emit(AuthError(message: 'Erreur: ${e.toString()}'));
     }
   }
 
@@ -80,8 +82,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
       emit(AuthAuthenticated(user: user));
+    } on AuthException catch (e) {
+      emit(AuthError(message: _humanizeAuthError(e)));
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      emit(AuthError(message: 'Erreur: ${e.toString()}'));
     }
   }
 
@@ -93,8 +97,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await supabaseClient.auth.signOut();
       emit(AuthUnauthenticated());
+    } on AuthException catch (e) {
+      emit(AuthError(message: _humanizeAuthError(e)));
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      emit(AuthError(message: 'Erreur: ${e.toString()}'));
     }
   }
 
@@ -106,5 +112,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final currentState = state as AuthAuthenticated;
       emit(AuthAuthenticated(user: currentState.user));
     }
+  }
+
+  String _humanizeAuthError(AuthException e) {
+    final raw = e.message.trim();
+    final lower = raw.toLowerCase();
+
+    if (lower.contains('error sending confirmation email') ||
+        lower.contains('confirmation email')) {
+      return 'Inscription impossible: Supabase n’arrive pas à envoyer l’email de confirmation (SMTP non configuré ou bloqué). Solution: configurer SMTP sur le serveur Supabase, ou désactiver la confirmation email (auto-confirm).';
+    }
+
+    if (lower.contains('invalid login credentials')) {
+      return 'Email ou mot de passe incorrect.';
+    }
+
+    if (lower.contains('user already registered')) {
+      return 'Ce compte existe déjà. Essayez “Se connecter”.';
+    }
+
+    return raw.isEmpty ? 'Erreur d’authentification.' : raw;
   }
 }

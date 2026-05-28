@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>L’application a besoin d’accéder à la caméra pour scanner des QR codes.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>L’application a besoin d’accéder à vos photos pour sélectionner une image.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>L’application a besoin d’enregistrer des images dans votre photothèque.</string>
 </dict>
 </plist>

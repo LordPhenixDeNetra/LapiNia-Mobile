@@ -1,10 +1,6 @@
 gradle-wrapper.jar
 /.gradle
-{
-  "SUPABASE_URL": "https://votre-supabase.mondomaine.com",
-  "SUPABASE_ANON_KEY": "votre-cle-anon",
-  "SUPABASE_FUNCTIONS_ENABLED": "false"
-}/build/
+/build/
 /captures/
 /gradlew
 /gradlew.bat

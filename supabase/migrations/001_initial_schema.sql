@@ -52,7 +52,8 @@ ALTER TABLE lapins ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policy
 CREATE POLICY "lapins_user_isolation" ON lapins
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 -- Index
 CREATE INDEX idx_lapins_user_id ON lapins(user_id);
@@ -83,7 +84,8 @@ CREATE TABLE IF NOT EXISTS portees (
 
 ALTER TABLE portees ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "portees_user_isolation" ON portees
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_portees_user_id ON portees(user_id);
 CREATE INDEX idx_portees_mere_id ON portees(mere_id);
@@ -109,7 +111,8 @@ CREATE TABLE IF NOT EXISTS lapereaux (
 
 ALTER TABLE lapereaux ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "lapereaux_user_isolation" ON lapereaux
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_lapereaux_portee_id ON lapereaux(portee_id);
 CREATE INDEX idx_lapereaux_user_id ON lapereaux(user_id);
@@ -130,7 +133,8 @@ CREATE TABLE IF NOT EXISTS pesees (
 
 ALTER TABLE pesees ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "pesees_user_isolation" ON pesees
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_pesees_lapin_id ON pesees(lapin_id);
 CREATE INDEX idx_pesees_user_id ON pesees(user_id);
@@ -173,7 +177,8 @@ CREATE TABLE IF NOT EXISTS sante (
 
 ALTER TABLE sante ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "sante_user_isolation" ON sante
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_sante_lapin_id ON sante(lapin_id);
 CREATE INDEX idx_sante_user_id ON sante(user_id);
@@ -197,7 +202,8 @@ CREATE TABLE IF NOT EXISTS stocks (
 
 ALTER TABLE stocks ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "stocks_user_isolation" ON stocks
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_stocks_user_id ON stocks(user_id);
 
@@ -226,7 +232,8 @@ CREATE TABLE IF NOT EXISTS finances (
 
 ALTER TABLE finances ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "finances_user_isolation" ON finances
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_finances_date ON finances(date DESC);
@@ -253,7 +260,8 @@ CREATE TABLE IF NOT EXISTS alertes (
 
 ALTER TABLE alertes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "alertes_user_isolation" ON alertes
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 CREATE INDEX idx_alertes_user_id ON alertes(user_id);
 CREATE INDEX idx_alertes_user_lue ON alertes(user_id, lue);
@@ -273,6 +281,10 @@ CREATE TABLE IF NOT EXISTS genealogie (
 ALTER TABLE genealogie ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "genealogie_user_isolation" ON genealogie
   FOR ALL USING (
+    lapin_id IN (SELECT id FROM lapins WHERE user_id = auth.uid()) AND
+    parent_id IN (SELECT id FROM lapins WHERE user_id = auth.uid())
+  )
+  WITH CHECK (
     lapin_id IN (SELECT id FROM lapins WHERE user_id = auth.uid()) AND
     parent_id IN (SELECT id FROM lapins WHERE user_id = auth.uid())
   );
@@ -296,4 +308,5 @@ CREATE TABLE IF NOT EXISTS sync_queue (
 
 ALTER TABLE sync_queue ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "sync_queue_user_isolation" ON sync_queue
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
