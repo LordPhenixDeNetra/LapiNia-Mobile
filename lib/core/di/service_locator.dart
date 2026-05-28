@@ -12,6 +12,9 @@ import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
 import '../../domain/services/file_share_service.dart';
+import '../../domain/services/daily_advice_service.dart';
+import '../../domain/services/planned_events_service.dart';
+import '../../domain/services/rentability_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -48,4 +51,16 @@ Future<void> setupServiceLocator({
   );
   serviceLocator.registerSingleton<ThemeService>(ThemeService());
   serviceLocator.registerSingleton<FileShareService>(FileShareService());
+  serviceLocator.registerSingleton<DailyAdviceService>(
+    DailyAdviceService(
+      db: serviceLocator<AppDatabase>(),
+      supabase: serviceLocator<SupabaseClient>(),
+    ),
+  );
+  serviceLocator.registerSingleton<PlannedEventsService>(
+    PlannedEventsService(db: serviceLocator<AppDatabase>()),
+  );
+  serviceLocator.registerSingleton<RentabilityService>(
+    RentabilityService(supabase: serviceLocator<SupabaseClient>()),
+  );
 }

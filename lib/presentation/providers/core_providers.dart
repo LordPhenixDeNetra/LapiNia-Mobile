@@ -7,9 +7,12 @@ import '../../core/utils/connectivity_checker.dart';
 import '../../core/utils/sync_manager.dart';
 import '../../data/local_db/app_database.dart';
 import '../../data/local_db/local_cache_service.dart';
+import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/file_share_service.dart';
 import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
+import '../../domain/services/planned_events_service.dart';
+import '../../domain/services/rentability_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
 
@@ -47,6 +50,18 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 
 final localCacheServiceProvider = Provider<LocalCacheService>((ref) {
   return serviceLocator<LocalCacheService>();
+});
+
+final dailyAdviceServiceProvider = Provider<DailyAdviceService>((ref) {
+  return serviceLocator<DailyAdviceService>();
+});
+
+final plannedEventsServiceProvider = Provider<PlannedEventsService>((ref) {
+  return serviceLocator<PlannedEventsService>();
+});
+
+final rentabilityServiceProvider = Provider<RentabilityService>((ref) {
+  return serviceLocator<RentabilityService>();
 });
 
 final connectivityCheckerProvider = Provider<ConnectivityChecker>((ref) {

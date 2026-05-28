@@ -299,6 +299,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardAiTipWeather => '32°C forecast';
 
   @override
+  String get loading => 'Loading…';
+
+  @override
+  String get rentabilityTitle => 'Profitability score';
+
+  @override
+  String rentabilityScoreValue(int score) {
+    return '$score/100';
+  }
+
+  @override
+  String get timelineTitle => 'Timeline (7 days)';
+
+  @override
+  String get timelineAdd => 'Add';
+
+  @override
+  String get timelineEmptyTitle => 'Nothing upcoming';
+
+  @override
+  String get timelineEmptySubtitle => 'Add a planned weight or vaccine.';
+
+  @override
+  String timelineBirthTitle(String mother) {
+    return 'Expected birth — $mother';
+  }
+
+  @override
+  String get timelineBirthSubtitle => 'Prepare the nest early.';
+
+  @override
+  String get timelineWeightTitle => 'Weigh-in due';
+
+  @override
+  String get timelineWeightSubtitle => 'Planned weigh-in';
+
+  @override
+  String get timelineVaccineTitle => 'Vaccine due';
+
+  @override
+  String get timelineVaccineSubtitle => 'Planned vaccine';
+
+  @override
+  String get timelineAddTitle => 'Add an event';
+
+  @override
+  String get timelineAddWeight => 'Weight';
+
+  @override
+  String get timelineAddVaccine => 'Vaccine';
+
+  @override
+  String get timelineAddLapin => 'Rabbit';
+
+  @override
+  String get timelineAddDate => 'Date';
+
+  @override
+  String get timelineAddNote => 'Note (optional)';
+
+  @override
+  String get timelineAddSave => 'Save';
+
+  @override
+  String get timelineAddSaved => 'Event added';
+
+  @override
+  String get quickWeightTitle => 'Quick weigh-in';
+
+  @override
+  String get quickWeightLapin => 'Rabbit';
+
+  @override
+  String get quickWeightValueLabel => 'Weight';
+
+  @override
+  String get quickWeightUnit => 'g';
+
+  @override
+  String get quickWeightInvalid => 'Please enter a valid weight';
+
+  @override
+  String get quickWeightSave => 'Save';
+
+  @override
+  String get quickWeightSaved => 'Weight saved';
+
+  @override
+  String get quickWeightOffline => 'Quick weigh-in is unavailable offline';
+
+  @override
+  String get quickWeightNoLapins => 'Add a rabbit to record a weight';
+
+  @override
   String get kpiLapins => 'Rabbits';
 
   @override
@@ -306,6 +400,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kpiAttendus => 'Expected';
+
+  @override
+  String get kpiNextBirth => 'Next birth';
+
+  @override
+  String get kpiNextBirthNone => '—';
+
+  @override
+  String kpiNextBirthValue(String date, int days) {
+    return '$date (D-$days)';
+  }
 
   @override
   String get settingsTitle => 'Settings';

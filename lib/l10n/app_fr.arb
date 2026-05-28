@@ -123,9 +123,66 @@
   "dashboardAiTipTitle": "Conseil du jour",
   "dashboardAiTipBody": "La température prévue cette semaine est élevée. Assurez-vous que vos lapins ont accès à de l'eau fraîche en quantité suffisante et à un espace ombragé.",
   "dashboardAiTipWeather": "32°C prévu",
+  "loading": "Chargement…",
+  "rentabilityTitle": "Score de rentabilité",
+  "rentabilityScoreValue": "{score}/100",
+  "@rentabilityScoreValue": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "timelineTitle": "Timeline (7 jours)",
+  "timelineAdd": "Ajouter",
+  "timelineEmptyTitle": "Rien à venir",
+  "timelineEmptySubtitle": "Ajoutez une pesée ou un vaccin à planifier.",
+  "timelineBirthTitle": "Mise bas prévue — {mother}",
+  "@timelineBirthTitle": {
+    "placeholders": {
+      "mother": {
+        "type": "String"
+      }
+    }
+  },
+  "timelineBirthSubtitle": "Surveillez la préparation du nid.",
+  "timelineWeightTitle": "Pesée à faire",
+  "timelineWeightSubtitle": "Pesée planifiée",
+  "timelineVaccineTitle": "Vaccin à faire",
+  "timelineVaccineSubtitle": "Vaccin planifié",
+  "timelineAddTitle": "Ajouter un événement",
+  "timelineAddWeight": "Pesée",
+  "timelineAddVaccine": "Vaccin",
+  "timelineAddLapin": "Lapin",
+  "timelineAddDate": "Date",
+  "timelineAddNote": "Note (optionnel)",
+  "timelineAddSave": "Enregistrer",
+  "timelineAddSaved": "Événement ajouté",
+  "quickWeightTitle": "Pesée rapide",
+  "quickWeightLapin": "Lapin",
+  "quickWeightValueLabel": "Poids",
+  "quickWeightUnit": "g",
+  "quickWeightInvalid": "Veuillez entrer un poids valide",
+  "quickWeightSave": "Enregistrer",
+  "quickWeightSaved": "Pesée enregistrée",
+  "quickWeightOffline": "Pesée rapide indisponible hors ligne",
+  "quickWeightNoLapins": "Ajoutez un lapin pour enregistrer une pesée",
   "kpiLapins": "Lapins",
   "kpiGestantes": "Gestantes",
   "kpiAttendus": "Attendus",
+  "kpiNextBirth": "Prochaine naissance",
+  "kpiNextBirthNone": "—",
+  "kpiNextBirthValue": "{date} (J-{days})",
+  "@kpiNextBirthValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "Réglages",
   "settingsConnection": "Connexion",
   "settingsSync": "Synchronisation",

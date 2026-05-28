@@ -123,9 +123,66 @@
   "dashboardAiTipTitle": "Tip of the day",
   "dashboardAiTipBody": "The forecast temperature is high this week. Make sure your rabbits have plenty of fresh water and a shaded area.",
   "dashboardAiTipWeather": "32°C forecast",
+  "loading": "Loading…",
+  "rentabilityTitle": "Profitability score",
+  "rentabilityScoreValue": "{score}/100",
+  "@rentabilityScoreValue": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "timelineTitle": "Timeline (7 days)",
+  "timelineAdd": "Add",
+  "timelineEmptyTitle": "Nothing upcoming",
+  "timelineEmptySubtitle": "Add a planned weight or vaccine.",
+  "timelineBirthTitle": "Expected birth — {mother}",
+  "@timelineBirthTitle": {
+    "placeholders": {
+      "mother": {
+        "type": "String"
+      }
+    }
+  },
+  "timelineBirthSubtitle": "Prepare the nest early.",
+  "timelineWeightTitle": "Weigh-in due",
+  "timelineWeightSubtitle": "Planned weigh-in",
+  "timelineVaccineTitle": "Vaccine due",
+  "timelineVaccineSubtitle": "Planned vaccine",
+  "timelineAddTitle": "Add an event",
+  "timelineAddWeight": "Weight",
+  "timelineAddVaccine": "Vaccine",
+  "timelineAddLapin": "Rabbit",
+  "timelineAddDate": "Date",
+  "timelineAddNote": "Note (optional)",
+  "timelineAddSave": "Save",
+  "timelineAddSaved": "Event added",
+  "quickWeightTitle": "Quick weigh-in",
+  "quickWeightLapin": "Rabbit",
+  "quickWeightValueLabel": "Weight",
+  "quickWeightUnit": "g",
+  "quickWeightInvalid": "Please enter a valid weight",
+  "quickWeightSave": "Save",
+  "quickWeightSaved": "Weight saved",
+  "quickWeightOffline": "Quick weigh-in is unavailable offline",
+  "quickWeightNoLapins": "Add a rabbit to record a weight",
   "kpiLapins": "Rabbits",
   "kpiGestantes": "Pregnant",
   "kpiAttendus": "Expected",
+  "kpiNextBirth": "Next birth",
+  "kpiNextBirthNone": "—",
+  "kpiNextBirthValue": "{date} (D-{days})",
+  "@kpiNextBirthValue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "settingsTitle": "Settings",
   "settingsConnection": "Connection",
   "settingsSync": "Sync",

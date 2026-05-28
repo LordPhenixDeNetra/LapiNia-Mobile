@@ -650,6 +650,186 @@ abstract class AppLocalizations {
   /// **'32°C prévu'**
   String get dashboardAiTipWeather;
 
+  /// No description provided for @loading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chargement…'**
+  String get loading;
+
+  /// No description provided for @rentabilityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Score de rentabilité'**
+  String get rentabilityTitle;
+
+  /// No description provided for @rentabilityScoreValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{score}/100'**
+  String rentabilityScoreValue(int score);
+
+  /// No description provided for @timelineTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Timeline (7 jours)'**
+  String get timelineTitle;
+
+  /// No description provided for @timelineAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get timelineAdd;
+
+  /// No description provided for @timelineEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à venir'**
+  String get timelineEmptyTitle;
+
+  /// No description provided for @timelineEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez une pesée ou un vaccin à planifier.'**
+  String get timelineEmptySubtitle;
+
+  /// No description provided for @timelineBirthTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise bas prévue — {mother}'**
+  String timelineBirthTitle(String mother);
+
+  /// No description provided for @timelineBirthSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surveillez la préparation du nid.'**
+  String get timelineBirthSubtitle;
+
+  /// No description provided for @timelineWeightTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée à faire'**
+  String get timelineWeightTitle;
+
+  /// No description provided for @timelineWeightSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée planifiée'**
+  String get timelineWeightSubtitle;
+
+  /// No description provided for @timelineVaccineTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaccin à faire'**
+  String get timelineVaccineTitle;
+
+  /// No description provided for @timelineVaccineSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaccin planifié'**
+  String get timelineVaccineSubtitle;
+
+  /// No description provided for @timelineAddTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un événement'**
+  String get timelineAddTitle;
+
+  /// No description provided for @timelineAddWeight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée'**
+  String get timelineAddWeight;
+
+  /// No description provided for @timelineAddVaccine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vaccin'**
+  String get timelineAddVaccine;
+
+  /// No description provided for @timelineAddLapin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapin'**
+  String get timelineAddLapin;
+
+  /// No description provided for @timelineAddDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date'**
+  String get timelineAddDate;
+
+  /// No description provided for @timelineAddNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note (optionnel)'**
+  String get timelineAddNote;
+
+  /// No description provided for @timelineAddSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get timelineAddSave;
+
+  /// No description provided for @timelineAddSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Événement ajouté'**
+  String get timelineAddSaved;
+
+  /// No description provided for @quickWeightTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée rapide'**
+  String get quickWeightTitle;
+
+  /// No description provided for @quickWeightLapin.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapin'**
+  String get quickWeightLapin;
+
+  /// No description provided for @quickWeightValueLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids'**
+  String get quickWeightValueLabel;
+
+  /// No description provided for @quickWeightUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'g'**
+  String get quickWeightUnit;
+
+  /// No description provided for @quickWeightInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez entrer un poids valide'**
+  String get quickWeightInvalid;
+
+  /// No description provided for @quickWeightSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get quickWeightSave;
+
+  /// No description provided for @quickWeightSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée enregistrée'**
+  String get quickWeightSaved;
+
+  /// No description provided for @quickWeightOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pesée rapide indisponible hors ligne'**
+  String get quickWeightOffline;
+
+  /// No description provided for @quickWeightNoLapins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutez un lapin pour enregistrer une pesée'**
+  String get quickWeightNoLapins;
+
   /// No description provided for @kpiLapins.
   ///
   /// In fr, this message translates to:
@@ -667,6 +847,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Attendus'**
   String get kpiAttendus;
+
+  /// No description provided for @kpiNextBirth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prochaine naissance'**
+  String get kpiNextBirth;
+
+  /// No description provided for @kpiNextBirthNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get kpiNextBirthNone;
+
+  /// No description provided for @kpiNextBirthValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{date} (J-{days})'**
+  String kpiNextBirthValue(String date, int days);
 
   /// No description provided for @settingsTitle.
   ///

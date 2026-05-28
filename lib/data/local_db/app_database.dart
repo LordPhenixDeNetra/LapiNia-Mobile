@@ -102,6 +102,27 @@ class AlimentsLocauxRef extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class DailyAdviceCache extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get content => text()();
+  DateTimeColumn get cachedAt => dateTime()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class PlannedEvents extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get type => text()();
+  TextColumn get targetId => text().nullable()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get note => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class SyncQueue extends Table {
   TextColumn get id => text()();
   TextColumn get targetTable => text().named('table_name')();
@@ -127,6 +148,8 @@ class SyncQueue extends Table {
     RacesRef,
     MedicamentsRef,
     AlimentsLocauxRef,
+    DailyAdviceCache,
+    PlannedEvents,
     SyncQueue,
   ],
 )
@@ -143,5 +166,18 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.createTable(dailyAdviceCache);
+            await m.createTable(plannedEvents);
+          }
+        },
+      );
 }

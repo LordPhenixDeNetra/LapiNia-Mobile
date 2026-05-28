@@ -301,6 +301,102 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashboardAiTipWeather => '32°C prévu';
 
   @override
+  String get loading => 'Chargement…';
+
+  @override
+  String get rentabilityTitle => 'Score de rentabilité';
+
+  @override
+  String rentabilityScoreValue(int score) {
+    return '$score/100';
+  }
+
+  @override
+  String get timelineTitle => 'Timeline (7 jours)';
+
+  @override
+  String get timelineAdd => 'Ajouter';
+
+  @override
+  String get timelineEmptyTitle => 'Rien à venir';
+
+  @override
+  String get timelineEmptySubtitle =>
+      'Ajoutez une pesée ou un vaccin à planifier.';
+
+  @override
+  String timelineBirthTitle(String mother) {
+    return 'Mise bas prévue — $mother';
+  }
+
+  @override
+  String get timelineBirthSubtitle => 'Surveillez la préparation du nid.';
+
+  @override
+  String get timelineWeightTitle => 'Pesée à faire';
+
+  @override
+  String get timelineWeightSubtitle => 'Pesée planifiée';
+
+  @override
+  String get timelineVaccineTitle => 'Vaccin à faire';
+
+  @override
+  String get timelineVaccineSubtitle => 'Vaccin planifié';
+
+  @override
+  String get timelineAddTitle => 'Ajouter un événement';
+
+  @override
+  String get timelineAddWeight => 'Pesée';
+
+  @override
+  String get timelineAddVaccine => 'Vaccin';
+
+  @override
+  String get timelineAddLapin => 'Lapin';
+
+  @override
+  String get timelineAddDate => 'Date';
+
+  @override
+  String get timelineAddNote => 'Note (optionnel)';
+
+  @override
+  String get timelineAddSave => 'Enregistrer';
+
+  @override
+  String get timelineAddSaved => 'Événement ajouté';
+
+  @override
+  String get quickWeightTitle => 'Pesée rapide';
+
+  @override
+  String get quickWeightLapin => 'Lapin';
+
+  @override
+  String get quickWeightValueLabel => 'Poids';
+
+  @override
+  String get quickWeightUnit => 'g';
+
+  @override
+  String get quickWeightInvalid => 'Veuillez entrer un poids valide';
+
+  @override
+  String get quickWeightSave => 'Enregistrer';
+
+  @override
+  String get quickWeightSaved => 'Pesée enregistrée';
+
+  @override
+  String get quickWeightOffline => 'Pesée rapide indisponible hors ligne';
+
+  @override
+  String get quickWeightNoLapins =>
+      'Ajoutez un lapin pour enregistrer une pesée';
+
+  @override
   String get kpiLapins => 'Lapins';
 
   @override
@@ -308,6 +404,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get kpiAttendus => 'Attendus';
+
+  @override
+  String get kpiNextBirth => 'Prochaine naissance';
+
+  @override
+  String get kpiNextBirthNone => '—';
+
+  @override
+  String kpiNextBirthValue(String date, int days) {
+    return '$date (J-$days)';
+  }
 
   @override
   String get settingsTitle => 'Réglages';
