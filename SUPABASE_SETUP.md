@@ -59,6 +59,28 @@ Un modèle est disponible ici : [.env.exemple](file:///n:/AndroidStudioProjects/
 
 Ensuite : **redémarre Supabase** (pour que GoTrue recharge les variables).
 
+## Étape B3 — Personnaliser le design des emails (templates)
+
+Oui, c’est possible, avec une contrainte importante en self-hosted : Supabase Auth (GoTrue) ne lit pas des templates “montés en volume”. Il charge les templates via des **URLs HTTP** accessibles depuis le service `auth`. Source : https://supabase.com/docs/guides/self-hosting/custom-email-templates
+
+### B3.1 Templates prêts dans ce repo
+
+- [confirmation.html](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/supabase/email_templates/confirmation.html)
+- [recovery.html](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/supabase/email_templates/recovery.html)
+
+### B3.2 Exemple de variables serveur
+
+Un modèle est disponible ici : [supabase_server.env.example](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/supabase_server.env.example)
+
+### B3.3 Héberger les fichiers HTML (simple)
+
+Tu peux héberger ces fichiers via un petit serveur HTTP dans le même réseau Docker que Supabase (ex: un service `templates-server`), puis mettre :
+
+- `GOTRUE_MAILER_TEMPLATES_CONFIRMATION=http://templates-server/confirmation.html`
+- `GOTRUE_MAILER_TEMPLATES_RECOVERY=http://templates-server/recovery.html`
+
+Puis redémarrer le service `auth`.
+
 ## Étape C — Donner l’URL + ANON KEY à l’app Flutter
 
 L’app lapiNia lit la config Supabase depuis [main.dart](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/lib/main.dart#L18-L86).

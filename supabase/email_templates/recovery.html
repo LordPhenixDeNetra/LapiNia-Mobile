@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Réinitialiser votre mot de passe</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f7f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f1a14;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+      Réinitialisez votre mot de passe lapiNia.
+    </div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#f4f7f5;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid rgba(15,26,20,0.08);">
+            <tr>
+              <td style="padding:24px 24px 8px 24px;background:linear-gradient(135deg,#1f7a3f,#2f9a55);color:#ffffff;">
+                <div style="font-size:18px;font-weight:700;letter-spacing:0.2px;">lapiNia</div>
+                <div style="margin-top:6px;font-size:26px;font-weight:800;line-height:1.2;">Réinitialisation</div>
+                <div style="margin-top:6px;font-size:14px;opacity:0.95;line-height:1.5;">Réinitialisez votre mot de passe en toute sécurité.</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 24px 0 24px;">
+                <div style="font-size:14px;line-height:1.7;color:#0f1a14;">
+                  Bonjour{{ if .Email }} <strong>{{ .Email }}</strong>{{ end }},
+                </div>
+                <div style="margin-top:10px;font-size:14px;line-height:1.7;color:#0f1a14;">
+                  Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe.
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding:18px 24px 0 24px;">
+                <a href="{{ .ConfirmationURL }}"
+                  style="display:inline-block;background:#1f7a3f;color:#ffffff;text-decoration:none;padding:14px 18px;border-radius:12px;font-weight:700;font-size:15px;line-height:1;"
+                  target="_blank"
+                  rel="noreferrer"
+                >Réinitialiser mon mot de passe</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:18px 24px 0 24px;">
+                <div style="font-size:12px;line-height:1.6;color:rgba(15,26,20,0.75);">
+                  Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :
+                </div>
+                <div style="margin-top:8px;font-size:12px;line-height:1.6;word-break:break-all;">
+                  <a href="{{ .ConfirmationURL }}" style="color:#1f7a3f;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 24px;">
+                <div style="font-size:12px;line-height:1.6;color:rgba(15,26,20,0.75);">
+                  Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer cet email.
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 24px;background:#f0f5f1;border-top:1px solid rgba(15,26,20,0.08);">
+                <div style="font-size:12px;line-height:1.6;color:rgba(15,26,20,0.7);">
+                  © {{ .SiteURL }} • lapiNia
+                </div>
+              </td>
+            </tr>
+          </table>
+          <div style="max-width:640px;margin:14px auto 0 auto;font-size:11px;line-height:1.6;color:rgba(15,26,20,0.6);">
+            Cet email a été envoyé automatiquement. Merci de ne pas y répondre.
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+
