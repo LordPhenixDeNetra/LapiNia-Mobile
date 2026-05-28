@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
-import '../../blocs/lapin/lapin_bloc.dart';
+import '../../providers/lapin_provider.dart';
 import '../../widgets/common/loading_widget.dart';
 
-class LapinListScreen extends StatefulWidget {
+class LapinListScreen extends HookConsumerWidget {
   const LapinListScreen({super.key});
 
   @override
-  State<LapinListScreen> createState() => _LapinListScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchQuery = useState('');
+    final selectedStatut = useState<String?>(null);
+    final selectedSexe = useState<String?>(null);
 
-class _LapinListScreenState extends State<LapinListScreen> {
-  String _searchQuery = '';
-  String? _selectedStatut;
-  String? _selectedSexe;
+    final lapinsState = ref.watch(lapinsProvider);
 
-  @override
-  void initState() {
-    super.initState();
-    context.read<LapinBloc>().add(LapinsLoadRequested());
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -36,7 +28,11 @@ class _LapinListScreenState extends State<LapinListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: _showFilterBottomSheet,
+            onPressed: () => _showFilterBottomSheet(
+              context: context,
+              selectedStatut: selectedStatut,
+              selectedSexe: selectedSexe,
+            ),
           ),
         ],
       ),
@@ -48,146 +44,124 @@ class _LapinListScreenState extends State<LapinListScreen> {
               decoration: InputDecoration(
                 hintText: 'Rechercher un lapin...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
+                suffixIcon: searchQuery.value.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
+                        onPressed: () => searchQuery.value = '',
                       )
                     : null,
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
+              onChanged: (value) => searchQuery.value = value,
             ),
           ),
-          if (_selectedStatut != null || _selectedSexe != null)
+          if (selectedStatut.value != null || selectedSexe.value != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
                 spacing: 8,
                 children: [
-                  if (_selectedStatut != null)
+                  if (selectedStatut.value != null)
                     Chip(
-                      label: Text(_selectedStatut!),
-                      onDeleted: () {
-                        setState(() {
-                          _selectedStatut = null;
-                        });
-                      },
+                      label: Text(selectedStatut.value!),
+                      onDeleted: () => selectedStatut.value = null,
                     ),
-                  if (_selectedSexe != null)
+                  if (selectedSexe.value != null)
                     Chip(
-                      label: Text(_selectedSexe!),
-                      onDeleted: () {
-                        setState(() {
-                          _selectedSexe = null;
-                        });
-                      },
+                      label: Text(selectedSexe.value!),
+                      onDeleted: () => selectedSexe.value = null,
                     ),
                 ],
               ),
             ),
           Expanded(
-            child: BlocBuilder<LapinBloc, LapinState>(
-              builder: (context, state) {
-                if (state is LapinsLoading) {
-                  return const LoadingWidget();
-                }
-                if (state is LapinsLoaded) {
-                  var lapins = state.lapins;
-
-                  if (_searchQuery.isNotEmpty) {
-                    lapins = lapins
-                        .where((l) =>
-                            l.nom.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                            (l.numeroIdentification?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false))
-                        .toList();
-                  }
-
-                  if (_selectedStatut != null) {
-                    lapins = lapins
-                        .where((l) => l.statut.label == _selectedStatut)
-                        .toList();
-                  }
-
-                  if (_selectedSexe != null) {
-                    lapins = lapins
-                        .where((l) => l.sexe.label == _selectedSexe)
-                        .toList();
-                  }
-
-                  if (lapins.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.pets,
-                            size: 64,
-                            color: AppColors.greyLight,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Aucun lapin trouvé',
-                            style: AppTypography.headline3.copyWith(
-                              color: AppColors.greyMedium,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton.icon(
-                            onPressed: () => context.push('/lapin/new'),
-                            icon: const Icon(Icons.add),
-                            label: const Text('Ajouter un lapin'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      context.read<LapinBloc>().add(LapinsLoadRequested());
-                    },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: lapins.length,
-                      itemBuilder: (context, index) {
-                        final lapin = lapins[index];
-                        return _buildLapinCard(lapin);
-                      },
+            child: lapinsState.when(
+              loading: () => const LoadingWidget(),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: AppColors.danger,
                     ),
-                  );
+                    const SizedBox(height: 16),
+                    Text(e.toString()),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref.read(lapinsProvider.notifier).refresh(),
+                      child: const Text('Réessayer'),
+                    ),
+                  ],
+                ),
+              ),
+              data: (items) {
+                var lapins = items;
+
+                if (searchQuery.value.isNotEmpty) {
+                  lapins = lapins
+                      .where(
+                        (l) =>
+                            l.nom.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+                            (l.numeroIdentification
+                                    ?.toLowerCase()
+                                    .contains(searchQuery.value.toLowerCase()) ??
+                                false),
+                      )
+                      .toList();
                 }
-                if (state is LapinError) {
+
+                if (selectedStatut.value != null) {
+                  lapins = lapins
+                      .where((l) => l.statut.label == selectedStatut.value)
+                      .toList();
+                }
+
+                if (selectedSexe.value != null) {
+                  lapins = lapins
+                      .where((l) => l.sexe.label == selectedSexe.value)
+                      .toList();
+                }
+
+                if (lapins.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.error_outline,
+                        Icon(
+                          Icons.pets,
                           size: 64,
-                          color: AppColors.danger,
+                          color: AppColors.greyLight,
                         ),
                         const SizedBox(height: 16),
-                        Text(state.message),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<LapinBloc>().add(LapinsLoadRequested());
-                          },
-                          child: const Text('Réessayer'),
+                        Text(
+                          'Aucun lapin trouvé',
+                          style: AppTypography.headline3.copyWith(
+                            color: AppColors.greyMedium,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton.icon(
+                          onPressed: () => context.push('/lapin/new'),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Ajouter un lapin'),
                         ),
                       ],
                     ),
                   );
                 }
-                return const SizedBox.shrink();
+
+                return RefreshIndicator(
+                  onRefresh: () => ref.read(lapinsProvider.notifier).refresh(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: lapins.length,
+                    itemBuilder: (context, index) {
+                      final lapin = lapins[index];
+                      return _buildLapinCard(context, lapin);
+                    },
+                  ),
+                );
               },
             ),
           ),
@@ -200,7 +174,7 @@ class _LapinListScreenState extends State<LapinListScreen> {
     );
   }
 
-  Widget _buildLapinCard(Lapin lapin) {
+  Widget _buildLapinCard(BuildContext context, Lapin lapin) {
     final isMale = lapin.sexe == SexeLapin.male;
 
     return Card(
@@ -303,7 +277,11 @@ class _LapinListScreenState extends State<LapinListScreen> {
     }
   }
 
-  void _showFilterBottomSheet() {
+  void _showFilterBottomSheet({
+    required BuildContext context,
+    required ValueNotifier<String?> selectedStatut,
+    required ValueNotifier<String?> selectedSexe,
+  }) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -331,15 +309,14 @@ class _LapinListScreenState extends State<LapinListScreen> {
                   Wrap(
                     spacing: 8,
                     children: StatutLapin.values.map((statut) {
-                      final isSelected = _selectedStatut == statut.label;
+                      final isSelected = selectedStatut.value == statut.label;
                       return FilterChip(
                         label: Text(statut.label),
                         selected: isSelected,
                         onSelected: (selected) {
                           setModalState(() {
-                            _selectedStatut = selected ? statut.label : null;
+                            selectedStatut.value = selected ? statut.label : null;
                           });
-                          setState(() {});
                         },
                       );
                     }).toList(),
@@ -353,15 +330,14 @@ class _LapinListScreenState extends State<LapinListScreen> {
                   Wrap(
                     spacing: 8,
                     children: SexeLapin.values.map((sexe) {
-                      final isSelected = _selectedSexe == sexe.label;
+                      final isSelected = selectedSexe.value == sexe.label;
                       return FilterChip(
                         label: Text(sexe.label),
                         selected: isSelected,
                         onSelected: (selected) {
                           setModalState(() {
-                            _selectedSexe = selected ? sexe.label : null;
+                            selectedSexe.value = selected ? sexe.label : null;
                           });
-                          setState(() {});
                         },
                       );
                     }).toList(),
@@ -373,10 +349,9 @@ class _LapinListScreenState extends State<LapinListScreen> {
                         child: OutlinedButton(
                           onPressed: () {
                             setModalState(() {
-                              _selectedStatut = null;
-                              _selectedSexe = null;
+                              selectedStatut.value = null;
+                              selectedSexe.value = null;
                             });
-                            setState(() {});
                           },
                           child: const Text('Réinitialiser'),
                         ),

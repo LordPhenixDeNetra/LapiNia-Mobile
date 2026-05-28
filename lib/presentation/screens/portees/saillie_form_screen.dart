@@ -1,346 +1,159 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
-import '../../../core/models/lapin.dart';
-import '../../blocs/portee/portee_bloc.dart';
-import '../../blocs/lapin/lapin_bloc.dart';
+import '../../../core/models/portee.dart';
+import '../../providers/core_providers.dart';
+import '../../providers/lapin_provider.dart';
+import '../../providers/portee_provider.dart';
 
-class SaillieFormScreen extends StatefulWidget {
+class SaillieFormScreen extends HookConsumerWidget {
   final String? mereId;
 
   const SaillieFormScreen({super.key, this.mereId});
 
   @override
-  State<SaillieFormScreen> createState() => _SaillieFormScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedMereId = useState<String?>(mereId);
+    final selectedPereId = useState<String?>(null);
+    final dateSaillie = useState<DateTime>(DateTime.now());
+    final isSaving = useState(false);
 
-class _SaillieFormScreenState extends State<SaillieFormScreen> {
-  String? _selectedMereId;
-  String? _selectedPereId;
-  DateTime _dateSaillie = DateTime.now();
-  List<Lapin> _femelles = [];
-  List<Lapin> _males = [];
+    final lapins = ref.watch(lapinsProvider);
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedMereId = widget.mereId;
-    _loadLapins();
-  }
+    Future<void> selectDate() async {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: dateSaillie.value,
+        firstDate: DateTime(2010),
+        lastDate: DateTime.now(),
+      );
+      if (picked != null) {
+        dateSaillie.value = picked;
+      }
+    }
 
-  Future<void> _loadLapins() async {
-    context.read<LapinBloc>().add(LapinsLoadRequested());
-  }
+    Future<void> submit() async {
+      final supabase = ref.read(supabaseClientProvider);
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return;
+      if (selectedMereId.value == null || selectedPereId.value == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sélectionnez une femelle et un mâle')),
+        );
+        return;
+      }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<PorteeBloc, PorteeState>(
-      listener: (context, state) {
-        if (state is SaillieRecorded) {
-          context.pop();
-        } else if (state is PorteeError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
-      child: BlocBuilder<LapinBloc, LapinState>(
-        builder: (context, state) {
-          if (state is LapinsLoading) {
-            return Scaffold(
-              appBar: AppBar(title: const Text('Nouvelle saillie')),
-              body: const Center(child: CircularProgressIndicator()),
-            );
-          }
-          if (state is LapinsLoaded) {
-            _femelles = state.lapins
-                .where((l) =>
-                    l.sexe == SexeLapin.femelle &&
-                    l.statut == StatutLapin.repos)
-                .toList();
-            _males = state.lapins
-                .where((l) => l.sexe == SexeLapin.male)
-                .toList();
+      isSaving.value = true;
+      try {
+        final portee = Portee(
+          id: const Uuid().v4(),
+          userId: userId,
+          mereId: selectedMereId.value!,
+          pereId: selectedPereId.value!,
+          dateSaillie: dateSaillie.value,
+          statut: StatutPortee.enGestation,
+          createdAt: DateTime.now(),
+        );
+        await ref.read(porteesProvider.notifier).create(portee);
+        if (!context.mounted) return;
+        context.pop();
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      } finally {
+        isSaving.value = false;
+      }
+    }
 
-            return Scaffold(
-              backgroundColor: AppColors.background,
-              appBar: AppBar(
-                title: const Text('Nouvelle saillie'),
-              ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sélectionner la femelle',
-                      style: AppTypography.headline3,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Une femelle au repos et en bonne santé',
-                      style: AppTypography.body2.copyWith(
-                        color: AppColors.greyMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    if (_femelles.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Aucune femelle disponible au repos',
-                            style: AppTypography.body1.copyWith(
-                              color: AppColors.greyMedium,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ...(_femelles.map((femelle) => _buildLapinOption(
-                            femelle,
-                            _selectedMereId == femelle.id,
-                            (selected) {
-                              setState(() {
-                                _selectedMereId = selected ? femelle.id : null;
-                              });
-                            },
-                          ))),
-                    const SizedBox(height: 32),
-                    Text(
-                      'Sélectionner le mâle',
-                      style: AppTypography.headline3,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Choisissez un mâle reproducteur',
-                      style: AppTypography.body2.copyWith(
-                        color: AppColors.greyMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    if (_males.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Aucun mâle disponible',
-                            style: AppTypography.body1.copyWith(
-                              color: AppColors.greyMedium,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ...(_males.map((male) => _buildLapinOption(
-                            male,
-                            _selectedPereId == male.id,
-                            (selected) {
-                              setState(() {
-                                _selectedPereId = selected ? male.id : null;
-                              });
-                            },
-                          ))),
-                    const SizedBox(height: 32),
-                    Text(
-                      'Date de saillie',
-                      style: AppTypography.headline3,
-                    ),
-                    const SizedBox(height: 16),
-                    InkWell(
-                      onTap: () => _selectDate(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_today),
-                            const SizedBox(width: 12),
-                            Text(
-                              '${_dateSaillie.day}/${_dateSaillie.month}/${_dateSaillie.year}',
-                              style: AppTypography.body1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.info_outline,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Mise bas prévue: ${_dateSaillie.add(const Duration(days: 31)).day}/${_dateSaillie.add(const Duration(days: 31)).month}/${_dateSaillie.add(const Duration(days: 31)).year}',
-                              style: AppTypography.body2.copyWith(
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    BlocBuilder<PorteeBloc, PorteeState>(
-                      builder: (context, porteeState) {
-                        final isLoading = porteeState is PorteeSaving;
-                        return ElevatedButton(
-                          onPressed: (_selectedMereId != null &&
-                                  _selectedPereId != null &&
-                                  !isLoading)
-                              ? _submit
-                              : null,
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text('Enregistrer la saillie'),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          return Scaffold(
-            appBar: AppBar(title: const Text('Nouvelle saillie')),
-            body: const Center(child: Text('Erreur de chargement')),
-          );
-        },
+    final femelles = (lapins.valueOrNull ?? const [])
+        .where((l) => l.sexe == SexeLapin.femelle && l.statut == StatutLapin.repos)
+        .toList();
+    final males =
+        (lapins.valueOrNull ?? const []).where((l) => l.sexe == SexeLapin.male).toList();
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text('Nouvelle saillie'),
       ),
-    );
-  }
-
-  Widget _buildLapinOption(
-    Lapin lapin,
-    bool isSelected,
-    Function(bool) onSelected,
-  ) {
-    final isMale = lapin.sexe == SexeLapin.male;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () => onSelected(!isSelected),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
+      body: lapins.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text(e.toString())),
+        data: (_) => SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.greyLight,
-              width: 2,
-            ),
-          ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : (isMale
-                          ? AppColors.maleColor.withValues(alpha: 0.1)
-                          : AppColors.femelleColor.withValues(alpha: 0.1)),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Icon(
-                  isMale ? Icons.male : Icons.female,
-                  color: isSelected
-                      ? Colors.white
-                      : (isMale ? AppColors.maleColor : AppColors.femelleColor),
+              Text('Femelle', style: AppTypography.headline3),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                initialValue: selectedMereId.value,
+                decoration: const InputDecoration(prefixIcon: Icon(Icons.female)),
+                items: femelles
+                    .map(
+                      (l) => DropdownMenuItem(
+                        value: l.id,
+                        child: Text(l.nom),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) => selectedMereId.value = v,
+              ),
+              const SizedBox(height: 16),
+              Text('Mâle', style: AppTypography.headline3),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                initialValue: selectedPereId.value,
+                decoration: const InputDecoration(prefixIcon: Icon(Icons.male)),
+                items: males
+                    .map(
+                      (l) => DropdownMenuItem(
+                        value: l.id,
+                        child: Text(l.nom),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) => selectedPereId.value = v,
+              ),
+              const SizedBox(height: 16),
+              Text('Date de saillie', style: AppTypography.headline3),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: selectDate,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today),
+                      const SizedBox(width: 12),
+                      Text(
+                        '${dateSaillie.value.day}/${dateSaillie.value.month}/${dateSaillie.value.year}',
+                        style: AppTypography.body1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      lapin.nom,
-                      style: AppTypography.subtitle1.copyWith(
-                        color: isSelected ? Colors.white : AppColors.textDark,
-                      ),
-                    ),
-                    Text(
-                      lapin.race?.nom ?? 'Race inconnue',
-                      style: AppTypography.caption.copyWith(
-                        color: isSelected
-                            ? Colors.white.withValues(alpha: 0.8)
-                            : AppColors.greyMedium,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: isSaving.value ? null : submit,
+                child: const Text('Enregistrer'),
               ),
-              if (isSelected)
-                const Icon(
-                  Icons.check_circle,
-                  color: Colors.white,
-                ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _dateSaillie,
-      firstDate: DateTime.now().subtract(const Duration(days: 7)),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _dateSaillie = picked;
-      });
-    }
-  }
-
-  void _submit() {
-    if (_selectedMereId == null || _selectedPereId == null) return;
-
-    context.read<PorteeBloc>().add(
-      SaillieCreateRequested(
-        porteeId: const Uuid().v4(),
-        mereId: _selectedMereId!,
-        pereId: _selectedPereId!,
-        dateSaillie: _dateSaillie,
       ),
     );
   }

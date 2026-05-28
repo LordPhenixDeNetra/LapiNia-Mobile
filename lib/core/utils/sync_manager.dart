@@ -1,54 +1,46 @@
 import 'dart:async';
-import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
+import 'package:drift/drift.dart';
+
+import '../../data/local_db/app_database.dart';
 import 'idempotency_key.dart';
 import 'connectivity_checker.dart';
 
 enum MutationType { insert, update, delete }
 
-class PendingMutation {
-  final String id;
-  final String tableName;
-  final MutationType operation;
-  final String payload;
-  final String idempotencyKey;
-  final DateTime createdAt;
-
-  PendingMutation({
-    required this.id,
-    required this.tableName,
-    required this.operation,
-    required this.payload,
-    required this.idempotencyKey,
-    required this.createdAt,
-  });
-}
-
 class SyncManager {
   final ConnectivityChecker _connectivityChecker;
-  final Future<dynamic> Function(String table, MutationType op, String payload, String idempotencyKey) _apiCall;
-  
-  final List<PendingMutation> _queue = [];
+  final Future<dynamic> Function(
+    String table,
+    MutationType op,
+    String payload,
+    String idempotencyKey,
+  ) _apiCall;
+  final AppDatabase _db;
+
   bool _isSyncing = false;
-  Timer? _retryTimer;
-  static const int _maxRetries = 3;
-  static const Duration _retryDelay = Duration(seconds: 5);
+  static const int _maxRetries = 5;
+  static const Duration _retryDelayBase = Duration(seconds: 3);
 
   SyncManager({
     required ConnectivityChecker connectivityChecker,
-    required Future<dynamic> Function(String table, MutationType op, String payload, String idempotencyKey) apiCall,
+    required Future<dynamic> Function(
+      String table,
+      MutationType op,
+      String payload,
+      String idempotencyKey,
+    ) apiCall,
+    required AppDatabase database,
   }) : _connectivityChecker = connectivityChecker,
-       _apiCall = apiCall {
+       _apiCall = apiCall,
+       _db = database {
     _init();
   }
 
   void _init() {
     _connectivityChecker.onConnectivityChanged.listen((isOnline) {
       if (isOnline && !_isSyncing) {
-        _processQueue();
+        unawaited(_processQueue());
       }
     });
   }
@@ -58,53 +50,72 @@ class SyncManager {
     required MutationType operation,
     required String payload,
   }) async {
-    final mutation = PendingMutation(
-      id: IdempotencyKey.generate(),
-      tableName: tableName,
-      operation: operation,
-      payload: payload,
-      idempotencyKey: IdempotencyKey.generate(),
-      createdAt: DateTime.now(),
-    );
-    
-    _queue.add(mutation);
-    
+    final key = IdempotencyKey.generate();
+
+    await _db.into(_db.syncQueue).insert(
+          SyncQueueCompanion.insert(
+            id: key,
+            targetTable: tableName,
+            operation: operation.name,
+            payload: payload,
+            idempotencyKey: key,
+            createdAt: DateTime.now(),
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+
     if (_connectivityChecker.isOnline) {
-      _processQueue();
+      await _processQueue();
     }
   }
 
   Future<void> _processQueue() async {
-    if (_isSyncing || _queue.isEmpty) return;
-    
+    if (_isSyncing) return;
+
     _isSyncing = true;
-    
-    while (_queue.isNotEmpty && _connectivityChecker.isOnline) {
-      final mutation = _queue.first;
-      int retries = 0;
-      
-      while (retries < _maxRetries) {
-        try {
-          await _apiCall(
-            mutation.tableName,
-            mutation.operation,
-            mutation.payload,
-            mutation.idempotencyKey,
-          );
-          _queue.removeAt(0);
-          break;
-        } catch (e) {
-          retries++;
-          if (retries >= _maxRetries) {
-            _queue.removeAt(0);
-            break;
+
+    try {
+      while (_connectivityChecker.isOnline) {
+        final pending = await (_db.select(_db.syncQueue)
+              ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
+            .get();
+
+        if (pending.isEmpty) return;
+
+        for (final row in pending) {
+          if (!_connectivityChecker.isOnline) return;
+
+          if (row.retryCount >= _maxRetries) {
+            await (_db.delete(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+                .go();
+            continue;
           }
-          await Future.delayed(_retryDelay * retries);
+
+          try {
+            await _apiCall(
+              row.targetTable,
+              MutationType.values.byName(row.operation),
+              row.payload,
+              row.idempotencyKey,
+            );
+            await (_db.delete(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+                .go();
+          } catch (e) {
+            final nextRetries = row.retryCount + 1;
+            await (_db.update(_db.syncQueue)..where((t) => t.id.equals(row.id)))
+                .write(
+              SyncQueueCompanion(
+                retryCount: Value(nextRetries),
+                lastError: Value(e.toString()),
+              ),
+            );
+            await Future.delayed(_retryDelayBase * nextRetries);
+          }
         }
       }
+    } finally {
+      _isSyncing = false;
     }
-    
-    _isSyncing = false;
   }
 
   Future<void> forceSync() async {
@@ -114,33 +125,13 @@ class SyncManager {
     await _processQueue();
   }
 
-  int get pendingMutations => _queue.length;
+  Future<int> get pendingMutations async {
+    final q = _db.selectOnly(_db.syncQueue)..addColumns([_db.syncQueue.id.count()]);
+    final row = await q.getSingle();
+    return row.read(_db.syncQueue.id.count()) ?? 0;
+  }
   bool get isSyncing => _isSyncing;
 
   void dispose() {
-    _retryTimer?.cancel();
-  }
-}
-
-abstract class Disposable {
-  Future<void> dispose();
-}
-
-class LocalDatabase implements Disposable {
-  late LazyDatabase _db;
-
-  LocalDatabase() {
-    _db = LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(
-        '${dbFolder.path}${Platform.pathSeparator}lapinia_local.sqlite',
-      );
-      return NativeDatabase.createInBackground(file);
-    });
-  }
-
-  @override
-  Future<void> dispose() async {
-    await _db.close();
   }
 }

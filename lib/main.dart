@@ -1,19 +1,19 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import 'core/config/app_config.dart';
+import 'core/config/env_loader.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/app_typography.dart';
+import 'core/di/service_locator.dart';
 import 'core/utils/connectivity_checker.dart';
 import 'core/utils/sync_manager.dart';
-import 'presentation/blocs/auth/auth_bloc.dart';
-import 'presentation/blocs/lapin/lapin_bloc.dart';
-import 'presentation/blocs/portee/portee_bloc.dart';
-import 'presentation/blocs/alerte/alerte_bloc.dart';
-import 'presentation/router/app_router.dart';
+import 'data/local_db/app_database.dart';
+import 'domain/services/session_service.dart';
+import 'presentation/router/router_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,100 +23,44 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  final config = await _loadSupabaseConfig();
-  final supabaseUrl = config.url;
-  final supabaseAnonKey = config.anonKey;
+  final env = await loadEnv(
+    dotEnvAssetPath: 'assets/data/.env',
+    jsonAssetPath: 'assets/data/supabase.local.json',
+  );
+  final config = AppConfig.fromEnv(env);
 
-  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+  if (!config.hasSupabase) {
     runApp(const _MissingSupabaseConfigApp());
     return;
   }
 
   await Supabase.initialize(
-    url: supabaseUrl,
-    anonKey: supabaseAnonKey,
+    url: config.supabaseUrl,
+    anonKey: config.supabaseAnonKey,
   );
+
+  final database = AppDatabase.open();
   
   final connectivityChecker = ConnectivityChecker();
   final syncManager = SyncManager(
     connectivityChecker: connectivityChecker,
     apiCall: _apiCall,
+    database: database,
   );
-  
-  runApp(LapiNiaApp(
+
+  await setupServiceLocator(
+    config: config,
+    database: database,
     connectivityChecker: connectivityChecker,
     syncManager: syncManager,
-  ));
-}
-
-class _SupabaseConfig {
-  final String url;
-  final String anonKey;
-
-  const _SupabaseConfig({
-    required this.url,
-    required this.anonKey,
-  });
-}
-
-Future<_SupabaseConfig> _loadSupabaseConfig() async {
-  const envUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
-  const envAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
-
-  if (envUrl.isNotEmpty && envAnonKey.isNotEmpty) {
-    return const _SupabaseConfig(
-      url: envUrl,
-      anonKey: envAnonKey,
-    );
-  }
-
-  try {
-    final rawEnv = await rootBundle.loadString('assets/data/.env');
-    final env = _parseDotEnv(rawEnv);
-    final url = (env['SUPABASE_URL'] ?? '').trim();
-    final anonKey = (env['SUPABASE_ANON_KEY'] ?? '').trim();
-    if (url.isNotEmpty && anonKey.isNotEmpty) {
-      return _SupabaseConfig(url: url, anonKey: anonKey);
-    }
-  } catch (_) {}
-
-  try {
-    final rawConfig = await rootBundle.loadString(
-      'assets/data/supabase.local.json',
-    );
-    final json = jsonDecode(rawConfig) as Map<String, dynamic>;
-    return _SupabaseConfig(
-      url: (json['SUPABASE_URL'] as String? ?? '').trim(),
-      anonKey: (json['SUPABASE_ANON_KEY'] as String? ?? '').trim(),
-    );
-  } catch (_) {
-    return const _SupabaseConfig(url: '', anonKey: '');
-  }
-}
-
-Map<String, String> _parseDotEnv(String raw) {
-  final result = <String, String>{};
-  final lines = raw.split(RegExp(r'\r?\n'));
-  for (final line in lines) {
-    final trimmed = line.trim();
-    if (trimmed.isEmpty) continue;
-    if (trimmed.startsWith('#')) continue;
-    final idx = trimmed.indexOf('=');
-    if (idx <= 0) continue;
-    final key = trimmed.substring(0, idx).trim();
-    var value = trimmed.substring(idx + 1).trim();
-    if (value.length >= 2) {
-      final first = value[0];
-      final last = value[value.length - 1];
-      if ((first == '"' && last == '"') || (first == "'" && last == "'")) {
-        value = value.substring(1, value.length - 1);
-      }
-    }
-    if (key.isEmpty) continue;
-    result[key] = value;
-  }
-  return result;
+  );
+  await serviceLocator<SessionService>().start();
+  
+  runApp(
+    ProviderScope(
+      child: const LapiNiaApp(),
+    ),
+  );
 }
 
 class _MissingSupabaseConfigApp extends StatelessWidget {
@@ -235,79 +179,49 @@ Future<dynamic> _apiCall(String table, MutationType op, String payload, String i
   );
 }
 
-class LapiNiaApp extends StatelessWidget {
-  final ConnectivityChecker connectivityChecker;
-  final SyncManager syncManager;
-
-  const LapiNiaApp({
-    super.key,
-    required this.connectivityChecker,
-    required this.syncManager,
-  });
+class LapiNiaApp extends HookConsumerWidget {
+  const LapiNiaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<ConnectivityChecker>.value(value: connectivityChecker),
-        RepositoryProvider<SyncManager>.value(value: syncManager),
-        RepositoryProvider<SupabaseClient>.value(value: Supabase.instance.client),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(
-              supabaseClient: context.read<SupabaseClient>(),
-            ),
-          ),
-          BlocProvider<LapinBloc>(
-            create: (context) => LapinBloc(
-              supabaseClient: context.read<SupabaseClient>(),
-              syncManager: context.read<SyncManager>(),
-            ),
-          ),
-          BlocProvider<PorteeBloc>(
-            create: (context) => PorteeBloc(
-              supabaseClient: context.read<SupabaseClient>(),
-            ),
-          ),
-          BlocProvider<AlerteBloc>(
-            create: (context) => AlerteBloc(
-              supabaseClient: context.read<SupabaseClient>(),
-            ),
-          ),
-        ],
-        child: MaterialApp.router(
-          title: 'lapiNia',
-          debugShowCheckedModeBanner: false,
-          theme: _buildTheme(),
-          routerConfig: AppRouter.router,
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
+      title: 'lapiNia',
+      debugShowCheckedModeBanner: false,
+      theme: _buildTheme(Brightness.light),
+      darkTheme: _buildTheme(Brightness.dark),
+      themeMode: ThemeMode.system,
+      routerConfig: router,
     );
   }
 
-  ThemeData _buildTheme() {
+  ThemeData _buildTheme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final baseTextTheme = GoogleFonts.nunitoTextTheme();
     return ThemeData(
       useMaterial3: true,
+      brightness: brightness,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
-        brightness: Brightness.light,
+        brightness: brightness,
         primary: AppColors.primary,
         secondary: AppColors.ia,
         error: AppColors.danger,
-        surface: AppColors.white,
+        surface: isDark ? const Color(0xFF121212) : AppColors.white,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: isDark ? const Color(0xFF0F1115) : AppColors.background,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: AppTypography.headline3.copyWith(color: AppColors.white),
+        titleTextStyle: GoogleFonts.poppins(
+          textStyle: AppTypography.headline3.copyWith(color: AppColors.white),
+        ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.white,
+        color: isDark ? const Color(0xFF1A1D23) : AppColors.white,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -363,7 +277,7 @@ class LapiNiaApp extends StatelessWidget {
         foregroundColor: AppColors.white,
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.white,
+        backgroundColor: isDark ? const Color(0xFF1A1D23) : AppColors.white,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.greyMedium,
         type: BottomNavigationBarType.fixed,
@@ -379,19 +293,19 @@ class LapiNiaApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      textTheme: TextTheme(
-        headlineLarge: AppTypography.headline1,
-        headlineMedium: AppTypography.headline2,
-        headlineSmall: AppTypography.headline3,
-        titleLarge: AppTypography.headline3,
-        titleMedium: AppTypography.subtitle1,
-        titleSmall: AppTypography.subtitle2,
-        bodyLarge: AppTypography.body1,
-        bodyMedium: AppTypography.body2,
-        bodySmall: AppTypography.caption,
-        labelLarge: AppTypography.button,
-        labelMedium: AppTypography.label,
-        labelSmall: AppTypography.caption,
+      textTheme: baseTextTheme.copyWith(
+        headlineLarge: GoogleFonts.poppins(textStyle: AppTypography.headline1),
+        headlineMedium: GoogleFonts.poppins(textStyle: AppTypography.headline2),
+        headlineSmall: GoogleFonts.poppins(textStyle: AppTypography.headline3),
+        titleLarge: GoogleFonts.poppins(textStyle: AppTypography.headline3),
+        titleMedium: baseTextTheme.titleMedium,
+        titleSmall: baseTextTheme.titleSmall,
+        bodyLarge: baseTextTheme.bodyLarge,
+        bodyMedium: baseTextTheme.bodyMedium,
+        bodySmall: baseTextTheme.bodySmall,
+        labelLarge: baseTextTheme.labelLarge,
+        labelMedium: baseTextTheme.labelMedium,
+        labelSmall: baseTextTheme.labelSmall,
       ),
     );
   }

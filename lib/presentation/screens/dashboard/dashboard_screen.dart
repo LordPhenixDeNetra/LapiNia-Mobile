@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
-import '../../blocs/lapin/lapin_bloc.dart';
-import '../../blocs/portee/portee_bloc.dart';
-import '../../blocs/alerte/alerte_bloc.dart';
+import '../../../core/models/alerte.dart';
+import '../../../core/models/lapin.dart';
+import '../../../core/models/portee.dart';
+import '../../providers/alerte_provider.dart';
+import '../../providers/lapin_provider.dart';
+import '../../providers/portee_provider.dart';
+import '../../providers/core_providers.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lapins = ref.watch(lapinsProvider);
+    final portees = ref.watch(porteesProvider);
+    final alertesNonLues = ref.watch(alertesNonLuesProvider);
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  void _loadData() {
-    context.read<LapinBloc>().add(LapinsLoadRequested());
-    context.read<PorteeBloc>().add(PorteesLoadRequested());
-    context.read<AlerteBloc>().add(AlertesNonLuesLoadRequested());
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -55,9 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              context.read<AlerteBloc>().add(AlertesNonLuesLoadRequested());
-            },
+            onPressed: () => ref.invalidate(alertesNonLuesProvider),
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -67,7 +56,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          _loadData();
+          await ref.read(lapinsProvider.notifier).refresh();
+          await ref.read(porteesProvider.notifier).refresh();
+          ref.invalidate(alertesNonLuesProvider);
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -77,11 +68,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               _buildConseilCard(),
               const SizedBox(height: 16),
-              _buildKpiGrid(),
+              _buildKpiGrid(lapins: lapins, portees: portees),
               const SizedBox(height: 16),
-              _buildAlertesSection(),
+              _buildAlertesSection(
+                context: context,
+                ref: ref,
+                alertes: alertesNonLues,
+              ),
               const SizedBox(height: 16),
-              _buildProchainesPorteesSection(),
+              _buildProchainesPorteesSection(portees: portees, context: context),
             ],
           ),
         ),
@@ -156,61 +151,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildKpiGrid() {
-    return BlocBuilder<LapinBloc, LapinState>(
-      builder: (context, state) {
-        int nbLapins = 0;
-        int nbGestantes = 0;
-        int nbLapereauxAttendus = 0;
+  Widget _buildKpiGrid({
+    required AsyncValue<List<Lapin>> lapins,
+    required AsyncValue<List<Portee>> portees,
+  }) {
+    final lapinsList = lapins.valueOrNull ?? const [];
+    final porteesList = portees.valueOrNull ?? const [];
 
-        if (state is LapinsLoaded) {
-          nbLapins = state.lapins.length;
-          nbGestantes = state.lapins
-              .where((l) => l.statut.dbValue == 'EN_GESTATION')
-              .length;
-        }
+    final nbLapins = lapinsList.length;
+    final nbGestantes = lapinsList
+        .where((l) => l.statut.dbValue == 'EN_GESTATION')
+        .length;
 
-        return BlocBuilder<PorteeBloc, PorteeState>(
-          builder: (context, porteeState) {
-            if (porteeState is PorteesLoaded) {
-              nbLapereauxAttendus = porteeState.portees
-                  .where((p) => p.statut.dbValue == 'EN_GESTATION')
-                  .fold(0, (sum, p) => sum + (p.mere?.race?.taillePorteeMoyenne?.toInt() ?? 7));
-            }
-
-            return Row(
-              children: [
-                Expanded(
-                  child: _buildKpiCard(
-                    icon: Icons.pets,
-                    label: 'Lapins',
-                    value: nbLapins.toString(),
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildKpiCard(
-                    icon: Icons.pregnant_woman,
-                    label: 'Gestantes',
-                    value: nbGestantes.toString(),
-                    color: AppColors.statutGestation,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildKpiCard(
-                    icon: Icons.child_friendly,
-                    label: 'Attendus',
-                    value: nbLapereauxAttendus.toString(),
-                    color: AppColors.warning,
-                  ),
-                ),
-              ],
-            );
-          },
+    final nbLapereauxAttendus = porteesList
+        .where((p) => p.statut.dbValue == 'EN_GESTATION')
+        .fold<int>(
+          0,
+          (sum, p) => sum + (p.mere?.race?.taillePorteeMoyenne?.toInt() ?? 7),
         );
-      },
+
+    return Row(
+      children: [
+        Expanded(
+          child: _buildKpiCard(
+            icon: Icons.pets,
+            label: 'Lapins',
+            value: nbLapins.toString(),
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildKpiCard(
+            icon: Icons.pregnant_woman,
+            label: 'Gestantes',
+            value: nbGestantes.toString(),
+            color: AppColors.statutGestation,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildKpiCard(
+            icon: Icons.child_friendly,
+            label: 'Attendus',
+            value: nbLapereauxAttendus.toString(),
+            color: AppColors.warning,
+          ),
+        ),
+      ],
     );
   }
 
@@ -248,7 +236,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildAlertesSection() {
+  Widget _buildAlertesSection({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AsyncValue<List<Alerte>> alertes,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -268,95 +260,96 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        BlocBuilder<AlerteBloc, AlerteState>(
-          builder: (context, state) {
-            if (state is AlertesLoading) {
-              return const Center(child: CircularProgressIndicator());
+        alertes.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Text(e.toString()),
+          data: (items) {
+            if (items.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: AppColors.success,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Aucune alerte',
+                        style: AppTypography.body1.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
-            if (state is AlertesLoaded) {
-              if (state.alertes.isEmpty) {
+
+            return Column(
+              children: items.take(3).map((alerte) {
+                final prio = alerte.priorite.value;
                 return Container(
-                  padding: const EdgeInsets.all(24),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: AppColors.success,
-                          size: 48,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Aucune alerte',
-                          style: AppTypography.body1.copyWith(
-                            color: AppColors.textDark,
-                          ),
-                        ),
-                      ],
+                    border: Border.all(
+                      color: _getAlerteColor(prio),
+                      width: 2,
                     ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: _getAlerteColor(prio),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              alerte.type.label,
+                              style: AppTypography.subtitle2,
+                            ),
+                            Text(
+                              alerte.message,
+                              style: AppTypography.caption,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.check_circle_outline),
+                        onPressed: () async {
+                          final supabase = ref.read(supabaseClientProvider);
+                          await supabase.from('alertes').update({
+                            'action_effectuee': true,
+                            'lue': true,
+                          }).eq('id', alerte.id);
+                          ref.invalidate(alertesNonLuesProvider);
+                        },
+                      ),
+                    ],
                   ),
                 );
-              }
-              return Column(
-                children: state.alertes.take(3).map((alerte) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _getAlerteColor(alerte.priorite.value),
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: _getAlerteColor(alerte.priorite.value),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                alerte.type.label,
-                                style: AppTypography.subtitle2,
-                              ),
-                              Text(
-                                alerte.message,
-                                style: AppTypography.caption,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.check_circle_outline),
-                          onPressed: () {
-                            context.read<AlerteBloc>().add(
-                              AlerteMarkAsActionDoneRequested(id: alerte.id),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              );
-            }
-            return const SizedBox.shrink();
+              }).toList(),
+            );
           },
         ),
       ],
@@ -374,7 +367,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildProchainesPorteesSection() {
+  Widget _buildProchainesPorteesSection({
+    required AsyncValue<List<Portee>> portees,
+    required BuildContext context,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -394,99 +390,95 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         const SizedBox(height: 8),
-        BlocBuilder<PorteeBloc, PorteeState>(
-          builder: (context, state) {
-            if (state is PorteesLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is PorteesLoaded) {
-              final porteesGestantes = state.portees
-                  .where((p) => p.statut.dbValue == 'EN_GESTATION')
-                  .toList();
+        portees.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Text(e.toString()),
+          data: (items) {
+            final gestantes = items
+                .where((p) => p.statut.dbValue == 'EN_GESTATION')
+                .toList();
 
-              if (porteesGestantes.isEmpty) {
+            if (gestantes.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'Aucune portée en gestation',
+                    style: AppTypography.body2.copyWith(
+                      color: AppColors.greyMedium,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return Column(
+              children: gestantes.take(3).map((portee) {
+                final joursEcoules = portee.joursGestationEcoules ?? 0;
+                final joursRestants = 31 - joursEcoules;
+
                 return Container(
-                  padding: const EdgeInsets.all(24),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
-                    child: Text(
-                      'Aucune portée en gestation',
-                      style: AppTypography.body2.copyWith(
-                        color: AppColors.greyMedium,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.statutGestation.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: const Icon(
+                          Icons.child_friendly,
+                          color: AppColors.statutGestation,
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              portee.mere?.nom ?? 'Mère',
+                              style: AppTypography.subtitle2,
+                            ),
+                            Text(
+                              'J$joursEcoules - $joursRestants jours restants',
+                              style: AppTypography.caption,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getProgressColor(joursEcoules),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${((joursEcoules / 31) * 100).toInt()}%',
+                          style: AppTypography.caption.copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              }
-
-              return Column(
-                children: porteesGestantes.take(3).map((portee) {
-                  final joursEcoules = portee.joursGestationEcoules ?? 0;
-                  final joursRestants = 31 - joursEcoules;
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppColors.statutGestation.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          child: const Icon(
-                            Icons.child_friendly,
-                            color: AppColors.statutGestation,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                portee.mere?.nom ?? 'Mère',
-                                style: AppTypography.subtitle2,
-                              ),
-                              Text(
-                                'J$joursEcoules - $joursRestants jours restants',
-                                style: AppTypography.caption,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getProgressColor(joursEcoules),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '${((joursEcoules / 31) * 100).toInt()}%',
-                            style: AppTypography.caption.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              );
-            }
-            return const SizedBox.shrink();
+              }).toList(),
+            );
           },
         ),
       ],

@@ -29,6 +29,16 @@ class MainShellScreen extends StatelessWidget {
             activeIcon: Icon(Icons.child_friendly),
             label: 'Portées',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grass_outlined),
+            activeIcon: Icon(Icons.grass),
+            label: 'Aliments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.psychology_outlined),
+            activeIcon: Icon(Icons.psychology),
+            label: 'IA',
+          ),
         ],
       ),
     );
@@ -39,6 +49,8 @@ class MainShellScreen extends StatelessWidget {
     if (location.startsWith('/dashboard')) return 0;
     if (location.startsWith('/lapins')) return 1;
     if (location.startsWith('/portees')) return 2;
+    if (location.startsWith('/aliments')) return 3;
+    if (location.startsWith('/ia')) return 4;
     return 0;
   }
 
@@ -52,6 +64,12 @@ class MainShellScreen extends StatelessWidget {
         break;
       case 2:
         context.go('/portees');
+        break;
+      case 3:
+        context.go('/aliments');
+        break;
+      case 4:
+        context.go('/ia');
         break;
     }
   }

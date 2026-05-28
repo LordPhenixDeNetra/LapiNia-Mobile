@@ -1,80 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
-import '../../blocs/lapin/lapin_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../providers/core_providers.dart';
+import '../../providers/lapin_provider.dart';
 
-class LapinFormScreen extends StatefulWidget {
+class LapinFormScreen extends HookConsumerWidget {
   final String? lapinId;
 
   const LapinFormScreen({super.key, this.lapinId});
 
   @override
-  State<LapinFormScreen> createState() => _LapinFormScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isEditing = lapinId != null;
+    final formKey = useMemoized(GlobalKey<FormState>.new);
+    final nomController = useTextEditingController();
+    final poidsController = useTextEditingController();
+    final notesController = useTextEditingController();
+    final numeroController = useTextEditingController();
 
-class _LapinFormScreenState extends State<LapinFormScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nomController = TextEditingController();
-  final _poidsController = TextEditingController();
-  final _notesController = TextEditingController();
-  final _numeroController = TextEditingController();
+    final sexe = useState(SexeLapin.male);
+    final statut = useState(StatutLapin.repos);
+    final dateNaissance = useState<DateTime?>(null);
+    final selectedRaceId = useState<String?>(null);
+    final hasHydrated = useRef(false);
+    final isSaving = useState(false);
 
-  SexeLapin _sexe = SexeLapin.male;
-  StatutLapin _statut = StatutLapin.repos;
-  DateTime? _dateNaissance;
-  String? _selectedRaceId;
-  List<dynamic> _races = [];
-  bool _isLoading = true;
+    final races = ref.watch(racesProvider);
+    final lapinDetail = isEditing ? ref.watch(lapinDetailProvider(lapinId!)) : null;
 
-  bool get isEditing => widget.lapinId != null;
+    useEffect(() {
+      if (!isEditing) return null;
+      if (hasHydrated.value) return null;
+      final lapin = lapinDetail?.valueOrNull;
+      if (lapin == null) return null;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadRaces();
-    if (isEditing) {
-      _loadLapin();
+      hasHydrated.value = true;
+      nomController.text = lapin.nom;
+      poidsController.text = lapin.poidsActuelG?.toString() ?? '';
+      notesController.text = lapin.notes ?? '';
+      numeroController.text = lapin.numeroIdentification ?? '';
+      sexe.value = lapin.sexe;
+      statut.value = lapin.statut;
+      dateNaissance.value = lapin.dateNaissance;
+      selectedRaceId.value = lapin.raceId;
+      return null;
+    }, [lapinDetail]);
+
+    Future<void> selectDate() async {
+      final picked = await showDatePicker(
+        context: context,
+        initialDate: dateNaissance.value ?? DateTime.now(),
+        firstDate: DateTime(2010),
+        lastDate: DateTime.now(),
+      );
+      if (picked != null) {
+        dateNaissance.value = picked;
+      }
     }
-  }
 
-  Future<void> _loadRaces() async {
-    try {
-      final supabase = Supabase.instance.client;
-      final response = await supabase.from('races').select().order('nom');
-      setState(() {
-        _races = response;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _loadLapin() async {
-    context.read<LapinBloc>().add(LapinLoadRequested(id: widget.lapinId!));
-  }
-
-  @override
-  void dispose() {
-    _nomController.dispose();
-    _poidsController.dispose();
-    _notesController.dispose();
-    _numeroController.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final supabase = Supabase.instance.client;
+    Future<void> submit() async {
+      if (!formKey.currentState!.validate()) return;
+      final supabase = ref.read(supabaseClientProvider);
       final userId = supabase.auth.currentUser?.id;
 
       if (userId == null) {
@@ -84,248 +77,216 @@ class _LapinFormScreenState extends State<LapinFormScreen> {
         return;
       }
 
-      final lapin = Lapin(
-        id: widget.lapinId ?? const Uuid().v4(),
-        userId: userId,
-        nom: _nomController.text,
-        raceId: _selectedRaceId,
-        sexe: _sexe,
-        dateNaissance: _dateNaissance,
-        poidsActuelG: int.tryParse(_poidsController.text),
-        statut: _statut,
-        numeroIdentification: _numeroController.text.isNotEmpty
-            ? _numeroController.text
-            : null,
-        notes: _notesController.text.isNotEmpty ? _notesController.text : null,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+      isSaving.value = true;
+      try {
+        final now = DateTime.now();
+        final lapin = Lapin(
+          id: lapinId ?? const Uuid().v4(),
+          userId: userId,
+          nom: nomController.text,
+          raceId: selectedRaceId.value,
+          sexe: sexe.value,
+          dateNaissance: dateNaissance.value,
+          poidsActuelG: int.tryParse(poidsController.text),
+          statut: statut.value,
+          numeroIdentification:
+              numeroController.text.isNotEmpty ? numeroController.text : null,
+          notes: notesController.text.isNotEmpty ? notesController.text : null,
+          createdAt: now,
+          updatedAt: now,
+        );
 
-      if (isEditing) {
-        context.read<LapinBloc>().add(LapinUpdateRequested(lapin: lapin));
-      } else {
-        context.read<LapinBloc>().add(LapinCreateRequested(lapin: lapin));
+        if (isEditing) {
+          await ref.read(lapinsProvider.notifier).updateLapin(lapin);
+        } else {
+          await ref.read(lapinsProvider.notifier).create(lapin);
+        }
+
+        if (!context.mounted) return;
+        context.pop();
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      } finally {
+        isSaving.value = false;
       }
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<LapinBloc, LapinState>(
-      listener: (context, state) {
-        if (state is LapinCreated || state is LapinUpdated) {
-          context.pop();
-        } else if (state is LapinError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        } else if (state is LapinLoaded && isEditing) {
-          final lapin = state.lapin;
-          setState(() {
-            _nomController.text = lapin.nom;
-            _poidsController.text = lapin.poidsActuelG?.toString() ?? '';
-            _notesController.text = lapin.notes ?? '';
-            _numeroController.text = lapin.numeroIdentification ?? '';
-            _sexe = lapin.sexe;
-            _statut = lapin.statut;
-            _dateNaissance = lapin.dateNaissance;
-            _selectedRaceId = lapin.raceId;
-          });
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          title: Text(isEditing ? 'Modifier le lapin' : 'Nouveau lapin'),
-        ),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Identité',
-                        style: AppTypography.headline3,
+    final loading = races.isLoading || (lapinDetail?.isLoading ?? false);
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text(isEditing ? 'Modifier le lapin' : 'Nouveau lapin'),
+      ),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Identité',
+                      style: AppTypography.headline3,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: nomController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nom *',
+                        prefixIcon: Icon(Icons.pets),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _nomController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer un nom';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedRaceId.value,
+                      decoration: const InputDecoration(
+                        labelText: 'Race',
+                        prefixIcon: Icon(Icons.category),
+                      ),
+                      items: (races.valueOrNull ?? const [])
+                          .map(
+                            (race) => DropdownMenuItem(
+                              value: race.id,
+                              child: Text(race.nom),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) => selectedRaceId.value = value,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Sexe',
+                      style: AppTypography.label,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildSexeOption(sexe, SexeLapin.male)),
+                        const SizedBox(width: 16),
+                        Expanded(child: _buildSexeOption(sexe, SexeLapin.femelle)),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Paramètres',
+                      style: AppTypography.headline3,
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: selectDate,
+                      child: InputDecorator(
                         decoration: const InputDecoration(
-                          labelText: 'Nom *',
-                          prefixIcon: Icon(Icons.pets),
+                          labelText: 'Date de naissance',
+                          prefixIcon: Icon(Icons.calendar_today),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un nom';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        initialValue: _selectedRaceId,
-                        decoration: const InputDecoration(
-                          labelText: 'Race',
-                          prefixIcon: Icon(Icons.category),
-                        ),
-                        items: _races.map<DropdownMenuItem<String>>((race) {
-                          return DropdownMenuItem(
-                            value: race['id'] as String,
-                            child: Text(race['nom'] as String),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRaceId = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Sexe',
-                        style: AppTypography.label,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildSexeOption(SexeLapin.male),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildSexeOption(SexeLapin.femelle),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Paramètres',
-                        style: AppTypography.headline3,
-                      ),
-                      const SizedBox(height: 16),
-                      InkWell(
-                        onTap: () => _selectDate(context),
-                        child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Date de naissance',
-                            prefixIcon: Icon(Icons.calendar_today),
-                          ),
-                          child: Text(
-                            _dateNaissance != null
-                                ? '${_dateNaissance!.day}/${_dateNaissance!.month}/${_dateNaissance!.year}'
-                                : 'Sélectionner une date',
-                          ),
+                        child: Text(
+                          dateNaissance.value != null
+                              ? '${dateNaissance.value!.day}/${dateNaissance.value!.month}/${dateNaissance.value!.year}'
+                              : 'Sélectionner une date',
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _poidsController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Poids actuel (grammes)',
-                          prefixIcon: Icon(Icons.scale),
-                          suffixText: 'g',
-                        ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: poidsController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Poids actuel (grammes)',
+                        prefixIcon: Icon(Icons.scale),
+                        suffixText: 'g',
                       ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<StatutLapin>(
-                        initialValue: _statut,
-                        decoration: const InputDecoration(
-                          labelText: 'Statut',
-                          prefixIcon: Icon(Icons.info_outline),
-                        ),
-                        items: StatutLapin.values
-                            .where((s) =>
-                                s != StatutLapin.vendu &&
-                                s != StatutLapin.mort)
-                            .map<DropdownMenuItem<StatutLapin>>((statut) {
-                          return DropdownMenuItem(
-                            value: statut,
-                            child: Text(statut.label),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _statut = value!;
-                          });
-                        },
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<StatutLapin>(
+                      initialValue: statut.value,
+                      decoration: const InputDecoration(
+                        labelText: 'Statut',
+                        prefixIcon: Icon(Icons.info_outline),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _numeroController,
-                        decoration: const InputDecoration(
-                          labelText: 'Numéro d\'identification',
-                          prefixIcon: Icon(Icons.tag),
-                          helperText: 'Ex: SN-2026-NZW-0042',
-                        ),
+                      items: StatutLapin.values
+                          .map(
+                            (s) => DropdownMenuItem(
+                              value: s,
+                              child: Text(s.label),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) statut.value = value;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: numeroController,
+                      decoration: const InputDecoration(
+                        labelText: 'Numéro d\'identification',
+                        prefixIcon: Icon(Icons.tag),
                       ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Notes',
-                        style: AppTypography.headline3,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: notesController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Notes',
+                        prefixIcon: Icon(Icons.notes),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _notesController,
-                        maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'Notes (optionnel)',
-                          prefixIcon: Icon(Icons.note),
-                          alignLabelWithHint: true,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: _submit,
-                        child: Text(isEditing ? 'Modifier' : 'Créer'),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      onPressed: isSaving.value ? null : submit,
+                      child: Text(isEditing ? 'Mettre à jour' : 'Créer'),
+                    ),
+                  ],
                 ),
               ),
-      ),
+            ),
     );
   }
 
-  Widget _buildSexeOption(SexeLapin sexe) {
-    final isSelected = _sexe == sexe;
-    final isMale = sexe == SexeLapin.male;
+  Widget _buildSexeOption(
+    ValueNotifier<SexeLapin> selected,
+    SexeLapin option,
+  ) {
+    final isSelected = selected.value == option;
+    final selectedColor =
+        option == SexeLapin.male ? AppColors.maleColor : AppColors.femelleColor;
 
     return InkWell(
-      onTap: () {
-        setState(() {
-          _sexe = sexe;
-        });
-      },
+      onTap: () => selected.value = option,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected
-              ? (isMale ? AppColors.maleColor : AppColors.femelleColor)
-              : AppColors.white,
+          color: isSelected ? selectedColor : AppColors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? (isMale ? AppColors.maleColor : AppColors.femelleColor)
-                : AppColors.greyLight,
+            color: isSelected ? selectedColor : AppColors.greyLight,
             width: 2,
           ),
         ),
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isMale ? Icons.male : Icons.female,
-              color: isSelected ? Colors.white : AppColors.greyMedium,
-              size: 32,
+              option == SexeLapin.male ? Icons.male : Icons.female,
+              color: isSelected ? Colors.white : AppColors.textDark,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(width: 8),
             Text(
-              sexe.label,
+              option.label,
               style: AppTypography.body2.copyWith(
                 color: isSelected ? Colors.white : AppColors.textDark,
               ),
@@ -334,19 +295,5 @@ class _LapinFormScreenState extends State<LapinFormScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _dateNaissance ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _dateNaissance = picked;
-      });
-    }
   }
 }

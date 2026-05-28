@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../providers/bootstrap_provider.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends HookConsumerWidget {
   const OnboardingScreen({super.key});
 
-  @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
-}
-
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  final List<OnboardingQuestion> _questions = [
+  static const List<OnboardingQuestion> _questions = [
     OnboardingQuestion(
       title: 'Combien de lapins avez-vous ?',
       options: ['Moins de 10', '10 à 50', '50 à 200', 'Plus de 200'],
@@ -38,43 +33,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   ];
 
-  final Map<String, dynamic> _answers = {};
-
   @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pageController = usePageController();
+    final currentPage = useState(0);
+    final answers = useState<Map<String, dynamic>>({});
 
-  void _onOptionSelected(String questionKey, String value) {
-    setState(() {
-      _answers[questionKey] = value;
-    });
-  }
+    void onOptionSelected(String questionKey, String value) {
+      answers.value = {...answers.value, questionKey: value};
+    }
 
-  void _nextPage() {
-    if (_currentPage < _questions.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    } else {
+    Future<void> nextPage() async {
+      if (currentPage.value < _questions.length - 1) {
+        await pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+
+      await ref.read(onboardingDoneProvider.notifier).setDone(true);
+      if (!context.mounted) return;
       context.go('/dashboard');
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: _currentPage > 0
+        leading: currentPage.value > 0
             ? IconButton(
                 icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
                 onPressed: () {
-                  _pageController.previousPage(
+                  pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
@@ -86,30 +78,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             LinearProgressIndicator(
-              value: (_currentPage + 1) / _questions.length,
+              value: (currentPage.value + 1) / _questions.length,
               backgroundColor: AppColors.greyLight,
               valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
             Expanded(
               child: PageView.builder(
-                controller: _pageController,
+                controller: pageController,
                 onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
+                  currentPage.value = index;
                 },
                 itemCount: _questions.length,
                 itemBuilder: (context, index) {
-                  return _buildQuestionPage(_questions[index]);
+                  return _buildQuestionPage(
+                    _questions[index],
+                    answers: answers.value,
+                    onOptionSelected: onOptionSelected,
+                  );
                 },
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton(
-                onPressed: _answers.length > _currentPage ? _nextPage : null,
+                onPressed: answers.value.length > currentPage.value
+                    ? () => nextPage()
+                    : null,
                 child: Text(
-                  _currentPage == _questions.length - 1
+                  currentPage.value == _questions.length - 1
                       ? 'Commencer'
                       : 'Suivant',
                 ),
@@ -121,9 +117,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildQuestionPage(OnboardingQuestion question) {
+  Widget _buildQuestionPage(
+    OnboardingQuestion question, {
+    required Map<String, dynamic> answers,
+    required void Function(String questionKey, String value) onOptionSelected,
+  }) {
     final questionKey = question.title;
-    final selectedValue = _answers[questionKey];
+    final selectedValue = answers[questionKey];
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -149,7 +149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: InkWell(
-                onTap: () => _onOptionSelected(questionKey, option),
+                onTap: () => onOptionSelected(questionKey, option),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   width: double.infinity,
@@ -183,7 +183,7 @@ class OnboardingQuestion {
   final List<String> options;
   final IconData icon;
 
-  OnboardingQuestion({
+  const OnboardingQuestion({
     required this.title,
     required this.options,
     required this.icon,
