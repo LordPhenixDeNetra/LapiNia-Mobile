@@ -35,7 +35,6 @@
  
 **Onboarding**
 - [ ] **(Flutter · P1)** Onboarding étape 1 — nombre de lapins (< 10 / 10–50 / 50–200 / > 200)
-- [ ] **(Flutter · P1)** Onboarding étape 2 — objectif principal (vente lapereaux / viande / reproducteurs / loisir)
 - [ ] **(Flutter · P1)** Onboarding étape 3 — région (sélecteur pays + ville)
 - [ ] **(Flutter · P1)** Onboarding étape 4 — races possédées (multiselect sur `GET /rest/v1/races`)
 - [ ] **(Flutter · P1)** Onboarding étape 5 — niveau d'expérience (débutant / intermédiaire / expert)
@@ -247,7 +246,7 @@
  
 ### En cours
  
-- [ ] *(aucune pour le moment)*
+- [ ] **(Flutter · P1)** Onboarding étape 2 — objectif principal (vente lapereaux / viande / reproducteurs / loisir)
 ---
  
 ### Fait

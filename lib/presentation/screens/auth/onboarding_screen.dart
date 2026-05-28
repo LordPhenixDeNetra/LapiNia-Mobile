@@ -20,6 +20,7 @@ class OnboardingScreen extends HookConsumerWidget {
       title: 'Quel est votre objectif principal ?',
       options: ['Vente lapereaux', 'Viande familiale', 'Reproducteurs', 'Loisir'],
       icon: Icons.flag,
+      multiSelect: true,
     ),
     OnboardingQuestion(
       title: 'Votre région ?',
@@ -40,7 +41,20 @@ class OnboardingScreen extends HookConsumerWidget {
     final answers = useState<Map<String, dynamic>>({});
 
     void onOptionSelected(String questionKey, String value) {
-      answers.value = {...answers.value, questionKey: value};
+      final question = _questions.firstWhere((q) => q.title == questionKey);
+      if (!question.multiSelect) {
+        answers.value = {...answers.value, questionKey: value};
+        return;
+      }
+
+      final existing = answers.value[questionKey];
+      final selected = (existing is List<String>) ? List<String>.from(existing) : <String>[];
+      if (selected.contains(value)) {
+        selected.remove(value);
+      } else {
+        selected.add(value);
+      }
+      answers.value = {...answers.value, questionKey: selected};
     }
 
     Future<void> nextPage() async {
@@ -101,7 +115,10 @@ class OnboardingScreen extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton(
-                onPressed: answers.value.length > currentPage.value
+                onPressed: _canGoNext(
+                  currentPage: currentPage.value,
+                  answers: answers.value,
+                )
                     ? () => nextPage()
                     : null,
                 child: Text(
@@ -117,6 +134,18 @@ class OnboardingScreen extends HookConsumerWidget {
     );
   }
 
+  bool _canGoNext({
+    required int currentPage,
+    required Map<String, dynamic> answers,
+  }) {
+    if (currentPage < 0 || currentPage >= _questions.length) return false;
+    final q = _questions[currentPage];
+    final v = answers[q.title];
+    if (!q.multiSelect) return v is String && v.trim().isNotEmpty;
+    if (v is List<String>) return v.isNotEmpty;
+    return false;
+  }
+
   Widget _buildQuestionPage(
     OnboardingQuestion question, {
     required Map<String, dynamic> answers,
@@ -124,6 +153,8 @@ class OnboardingScreen extends HookConsumerWidget {
   }) {
     final questionKey = question.title;
     final selectedValue = answers[questionKey];
+    final selectedList =
+        (question.multiSelect && selectedValue is List<String>) ? selectedValue : const <String>[];
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -145,7 +176,8 @@ class OnboardingScreen extends HookConsumerWidget {
           ),
           const SizedBox(height: 32),
           ...question.options.map((option) {
-            final isSelected = selectedValue == option;
+            final isSelected =
+                question.multiSelect ? selectedList.contains(option) : selectedValue == option;
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: InkWell(
@@ -182,10 +214,12 @@ class OnboardingQuestion {
   final String title;
   final List<String> options;
   final IconData icon;
+  final bool multiSelect;
 
   const OnboardingQuestion({
     required this.title,
     required this.options,
     required this.icon,
+    this.multiSelect = false,
   });
 }
