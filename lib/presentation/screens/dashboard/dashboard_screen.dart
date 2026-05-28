@@ -532,42 +532,36 @@ class DashboardScreen extends ConsumerWidget {
   }) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final iconSize = constraints.maxHeight < 90 ? 20.0 : 24.0;
-          return Column(
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: color, size: iconSize),
-              const SizedBox(height: 6),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  value,
-                  style: AppTypography.headline3.copyWith(
-                    color: scheme.onSurface,
-                  ),
+              Icon(icon, color: color, size: 22),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: AppTypography.headline3.copyWith(
+                  color: scheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 2),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: AppTypography.caption.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+              const SizedBox(height: 1),
+              Text(
+                label,
+                style: AppTypography.caption.copyWith(
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
