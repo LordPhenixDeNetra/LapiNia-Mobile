@@ -267,3 +267,7 @@
 - [x] **(Flutter · P0)** AppColors — palette complète (`primary #2E7D32`, `alert #E65100`, `danger #B71C1C`, `ia #4A148C`)
 - [x] **(Flutter · P0)** AppTheme — `ThemeData` Poppins + Nunito + couleurs lapiNia + mode sombre
 - [x] **(Flutter · P0)** Bottom Navigation Bar — 5 onglets : 🏠 Accueil · 🐇 Lapins · 🤰 Portées · 🍃 Aliments · 🧠 IA
+
+- **UI**
+- [x] Fix overflow clavier sur l’écran Connexion (Login) — scroll + padding clavier
+- [x] Fix overflow sur Onboarding (questions) — page scrollable si écran petit

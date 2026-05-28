@@ -76,112 +76,127 @@ class LoginScreen extends HookConsumerWidget {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 24),
-                Text(
-                  'Connexion',
-                  style: AppTypography.headline1.copyWith(
-                    color: AppColors.textDark,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  isSignUp.value
-                      ? 'Creez votre compte'
-                      : 'Connectez-vous avec votre email',
-                  style: AppTypography.body1.copyWith(
-                    color: AppColors.textDark.withValues(alpha: 0.7),
-                  ),
-                ),
-                const SizedBox(height: 48),
-                Text(
-                  'Email',
-                  style: AppTypography.label.copyWith(
-                    color: AppColors.textDark,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'vous@exemple.com',
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre email';
-                    }
-                    final v = value.trim();
-                    if (!v.contains('@') || !v.contains('.')) {
-                      return 'Email invalide';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Mot de passe',
-                  style: AppTypography.label.copyWith(
-                    color: AppColors.textDark,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    hintText: '••••••••',
-                    prefixIcon: Icon(Icons.lock),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre mot de passe';
-                    }
-                    if (value.length < 6) {
-                      return 'Mot de passe trop court';
-                    }
-                    return null;
-                  },
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: isLoading ? null : submit,
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomInset),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 24),
+                        Text(
+                          'Connexion',
+                          style: AppTypography.headline1.copyWith(
+                            color: AppColors.textDark,
                           ),
-                        )
-                      : Text(isSignUp.value ? 'Creer un compte' : 'Se connecter'),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => isSignUp.value = !isSignUp.value,
-                  child: Text(
-                    isSignUp.value
-                        ? 'J\'ai deja un compte'
-                        : 'Creer un compte',
-                    style: AppTypography.body2.copyWith(
-                      color: AppColors.primary,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          isSignUp.value
+                              ? 'Creez votre compte'
+                              : 'Connectez-vous avec votre email',
+                          style: AppTypography.body1.copyWith(
+                            color: AppColors.textDark.withValues(alpha: 0.7),
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+                        Text(
+                          'Email',
+                          style: AppTypography.label.copyWith(
+                            color: AppColors.textDark,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            hintText: 'vous@exemple.com',
+                            prefixIcon: Icon(Icons.email),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre email';
+                            }
+                            final v = value.trim();
+                            if (!v.contains('@') || !v.contains('.')) {
+                              return 'Email invalide';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          'Mot de passe',
+                          style: AppTypography.label.copyWith(
+                            color: AppColors.textDark,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            hintText: '••••••••',
+                            prefixIcon: Icon(Icons.lock),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer votre mot de passe';
+                            }
+                            if (value.length < 6) {
+                              return 'Mot de passe trop court';
+                            }
+                            return null;
+                          },
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : submit,
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  isSignUp.value
+                                      ? 'Creer un compte'
+                                      : 'Se connecter',
+                                ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextButton(
+                          onPressed: isLoading
+                              ? null
+                              : () => isSignUp.value = !isSignUp.value,
+                          child: Text(
+                            isSignUp.value
+                                ? 'J\'ai deja un compte'
+                                : 'Creer un compte',
+                            style: AppTypography.body2.copyWith(
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

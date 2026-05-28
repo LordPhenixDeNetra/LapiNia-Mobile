@@ -156,56 +156,64 @@ class OnboardingScreen extends HookConsumerWidget {
     final selectedList =
         (question.multiSelect && selectedValue is List<String>) ? selectedValue : const <String>[];
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          Icon(
-            question.icon,
-            size: 48,
-            color: AppColors.primary,
-          ),
-          const SizedBox(height: 24),
-          Text(
-            question.title,
-            style: AppTypography.headline2.copyWith(
-              color: AppColors.textDark,
-            ),
-          ),
-          const SizedBox(height: 32),
-          ...question.options.map((option) {
-            final isSelected =
-                question.multiSelect ? selectedList.contains(option) : selectedValue == option;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () => onOptionSelected(questionKey, option),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : AppColors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.greyLight,
-                      width: 2,
-                    ),
-                  ),
-                  child: Text(
-                    option,
-                    style: AppTypography.body1.copyWith(
-                      color: isSelected ? AppColors.white : AppColors.textDark,
-                    ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                Icon(
+                  question.icon,
+                  size: 48,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  question.title,
+                  style: AppTypography.headline2.copyWith(
+                    color: AppColors.textDark,
                   ),
                 ),
-              ),
-            );
-          }),
-        ],
-      ),
+                const SizedBox(height: 32),
+                ...question.options.map((option) {
+                  final isSelected = question.multiSelect
+                      ? selectedList.contains(option)
+                      : selectedValue == option;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: InkWell(
+                      onTap: () => onOptionSelected(questionKey, option),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.primary : AppColors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected ? AppColors.primary : AppColors.greyLight,
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          option,
+                          style: AppTypography.body1.copyWith(
+                            color: isSelected ? AppColors.white : AppColors.textDark,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
