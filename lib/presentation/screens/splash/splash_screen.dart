@@ -36,7 +36,6 @@ class SplashScreen extends ConsumerWidget {
     final errorText = hasError ? bootstrap.error.toString() : null;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -48,7 +47,7 @@ class SplashScreen extends ConsumerWidget {
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(60),
               ),
-              child: const Icon(Icons.pets, size: 64, color: AppColors.white),
+              child: const Icon(Icons.pets, size: 64, color: Colors.white),
             ),
             const SizedBox(height: 24),
             Text(
@@ -69,16 +68,17 @@ class SplashScreen extends ConsumerWidget {
                   children: [
                     Text(
                       'Erreur au démarrage',
-                      style: AppTypography.headline3.copyWith(
-                        color: AppColors.textDark,
-                      ),
+                      style: AppTypography.headline3,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       errorText ?? 'Erreur inconnue',
                       style: AppTypography.body2.copyWith(
-                        color: AppColors.textDark.withValues(alpha: 0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7),
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 6,

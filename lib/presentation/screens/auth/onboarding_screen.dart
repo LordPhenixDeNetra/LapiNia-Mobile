@@ -72,13 +72,12 @@ class OnboardingScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: currentPage.value > 0
             ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   pageController.previousPage(
                     duration: const Duration(milliseconds: 300),
@@ -93,7 +92,8 @@ class OnboardingScreen extends HookConsumerWidget {
           children: [
             LinearProgressIndicator(
               value: (currentPage.value + 1) / _questions.length,
-              backgroundColor: AppColors.greyLight,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
               valueColor: const AlwaysStoppedAnimation(AppColors.primary),
             ),
             Expanded(
@@ -174,9 +174,7 @@ class OnboardingScreen extends HookConsumerWidget {
                 const SizedBox(height: 24),
                 Text(
                   question.title,
-                  style: AppTypography.headline2.copyWith(
-                    color: AppColors.textDark,
-                  ),
+                  style: AppTypography.headline2,
                 ),
                 const SizedBox(height: 32),
                 ...question.options.map((option) {
@@ -192,17 +190,23 @@ class OnboardingScreen extends HookConsumerWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.white,
+                          color: isSelected
+                              ? AppColors.primary
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? AppColors.primary : AppColors.greyLight,
+                            color: isSelected
+                                ? AppColors.primary
+                                : Theme.of(context).colorScheme.outlineVariant,
                             width: 2,
                           ),
                         ),
                         child: Text(
                           option,
                           style: AppTypography.body1.copyWith(
-                            color: isSelected ? AppColors.white : AppColors.textDark,
+                            color: isSelected
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                       ),

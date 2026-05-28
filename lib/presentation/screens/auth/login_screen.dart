@@ -66,12 +66,11 @@ class LoginScreen extends HookConsumerWidget {
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textDark),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
       ),
@@ -93,9 +92,7 @@ class LoginScreen extends HookConsumerWidget {
                         const SizedBox(height: 24),
                         Text(
                           'Connexion',
-                          style: AppTypography.headline1.copyWith(
-                            color: AppColors.textDark,
-                          ),
+                          style: AppTypography.headline1,
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -103,15 +100,16 @@ class LoginScreen extends HookConsumerWidget {
                               ? 'Creez votre compte'
                               : 'Connectez-vous avec votre email',
                           style: AppTypography.body1.copyWith(
-                            color: AppColors.textDark.withValues(alpha: 0.7),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.7),
                           ),
                         ),
                         const SizedBox(height: 48),
                         Text(
                           'Email',
-                          style: AppTypography.label.copyWith(
-                            color: AppColors.textDark,
-                          ),
+                          style: AppTypography.label,
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
@@ -135,9 +133,7 @@ class LoginScreen extends HookConsumerWidget {
                         const SizedBox(height: 24),
                         Text(
                           'Mot de passe',
-                          style: AppTypography.label.copyWith(
-                            color: AppColors.textDark,
-                          ),
+                          style: AppTypography.label,
                         ),
                         const SizedBox(height: 8),
                         TextFormField(

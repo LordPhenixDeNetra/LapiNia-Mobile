@@ -22,7 +22,6 @@ class LapinListScreen extends HookConsumerWidget {
     final lapinsState = ref.watch(lapinsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Mes Lapins'),
         actions: [

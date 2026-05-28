@@ -10,7 +10,6 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -44,7 +43,10 @@ class WelcomeScreen extends StatelessWidget {
                 'Votre assistant intelligent\nd\'élevage cunicole',
                 textAlign: TextAlign.center,
                 style: AppTypography.body1.copyWith(
-                  color: AppColors.textDark.withValues(alpha: 0.7),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
               ),
               const Spacer(),

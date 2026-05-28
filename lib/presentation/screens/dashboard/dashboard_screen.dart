@@ -22,7 +22,6 @@ class DashboardScreen extends ConsumerWidget {
     final alertesNonLues = ref.watch(alertesNonLuesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Row(
           children: [
@@ -50,7 +49,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {},
+            onPressed: () => context.go('/settings'),
           ),
         ],
       ),
@@ -68,7 +67,7 @@ class DashboardScreen extends ConsumerWidget {
             children: [
               _buildConseilCard(),
               const SizedBox(height: 16),
-              _buildKpiGrid(lapins: lapins, portees: portees),
+              _buildKpiGrid(context: context, lapins: lapins, portees: portees),
               const SizedBox(height: 16),
               _buildAlertesSection(
                 context: context,
@@ -152,6 +151,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildKpiGrid({
+    required BuildContext context,
     required AsyncValue<List<Lapin>> lapins,
     required AsyncValue<List<Portee>> portees,
   }) {
@@ -174,6 +174,7 @@ class DashboardScreen extends ConsumerWidget {
       children: [
         Expanded(
           child: _buildKpiCard(
+            context: context,
             icon: Icons.pets,
             label: 'Lapins',
             value: nbLapins.toString(),
@@ -183,6 +184,7 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildKpiCard(
+            context: context,
             icon: Icons.pregnant_woman,
             label: 'Gestantes',
             value: nbGestantes.toString(),
@@ -192,6 +194,7 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildKpiCard(
+            context: context,
             icon: Icons.child_friendly,
             label: 'Attendus',
             value: nbLapereauxAttendus.toString(),
@@ -203,6 +206,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildKpiCard({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
@@ -211,7 +215,7 @@ class DashboardScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -221,14 +225,14 @@ class DashboardScreen extends ConsumerWidget {
           Text(
             value,
             style: AppTypography.headline3.copyWith(
-              color: AppColors.textDark,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: AppTypography.caption.copyWith(
-              color: AppColors.greyMedium,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -250,7 +254,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               'Alertes',
               style: AppTypography.headline3.copyWith(
-                color: AppColors.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             TextButton(
@@ -268,7 +272,7 @@ class DashboardScreen extends ConsumerWidget {
               return Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -283,7 +287,7 @@ class DashboardScreen extends ConsumerWidget {
                       Text(
                         'Aucune alerte',
                         style: AppTypography.body1.copyWith(
-                          color: AppColors.textDark,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -299,7 +303,7 @@ class DashboardScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _getAlerteColor(prio),
@@ -380,7 +384,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               'Prochaines mises bas',
               style: AppTypography.headline3.copyWith(
-                color: AppColors.textDark,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             TextButton(
@@ -402,14 +406,14 @@ class DashboardScreen extends ConsumerWidget {
               return Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: Text(
                     'Aucune portée en gestation',
                     style: AppTypography.body2.copyWith(
-                      color: AppColors.greyMedium,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -425,7 +429,7 @@ class DashboardScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

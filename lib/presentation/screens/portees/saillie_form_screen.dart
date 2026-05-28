@@ -59,6 +59,7 @@ class SaillieFormScreen extends HookConsumerWidget {
           dateSaillie: dateSaillie.value,
           statut: StatutPortee.enGestation,
           createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         );
         await ref.read(porteesProvider.notifier).create(portee);
         if (!context.mounted) return;
@@ -81,7 +82,6 @@ class SaillieFormScreen extends HookConsumerWidget {
         .toList();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Nouvelle saillie'),
       ),
@@ -132,7 +132,7 @@ class SaillieFormScreen extends HookConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

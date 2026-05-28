@@ -277,3 +277,11 @@
 
 - **Maintenance**
 - [x] Mise à jour Flutter SDK + dépendances (go_router, Riverpod, Drift, etc.)
+
+- **Offline & thème**
+- [x] **(Flutter · P0)** Mode hors ligne (base) — cache local Drift (Lapins + Portées) + lecture local-first + file `sync_queue`
+- [x] **(Flutter · P0)** CRUD Lapins hors ligne — create/update/delete optimistes + mutations en attente + synchro à la reconnexion
+- [x] **(Flutter · P0)** Portées hors ligne (base) — création optimiste + mutation en attente + lecture depuis cache
+- [x] **(Flutter · P0)** Thème persisté — Système / Clair / Sombre (SharedPreferences) + application au démarrage
+- [x] **(Flutter · P0)** Écran Réglages — statut online/offline + compteur actions en attente + bouton “Synchroniser”
+- [x] **(Flutter · P1)** Nettoyage dark mode (base) — retrait des couleurs hardcodées sur écrans clés (Dashboard/Auth/Lapins/Portées)

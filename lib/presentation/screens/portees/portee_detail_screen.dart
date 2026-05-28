@@ -46,7 +46,6 @@ class PorteeDetailScreen extends HookConsumerWidget {
         final dateText = '${date.day}/${date.month}/${date.year}';
 
         return Scaffold(
-          backgroundColor: AppColors.background,
           appBar: AppBar(
             title: const Text('Détails portée'),
             actions: [
@@ -67,17 +66,18 @@ class PorteeDetailScreen extends HookConsumerWidget {
                     children: [
                       Text('Infos', style: AppTypography.subtitle1),
                       const SizedBox(height: 12),
-                      _row('Mère', mere),
-                      _row('Père', pere),
-                      _row('Statut', portee.statut.label),
-                      _row('Saillie', dateText),
+                      _row(context, 'Mère', mere),
+                      _row(context, 'Père', pere),
+                      _row(context, 'Statut', portee.statut.label),
+                      _row(context, 'Saillie', dateText),
                       if (portee.dateMiseBasPrevue != null)
                         _row(
+                          context,
                           'Mise bas prévue',
                           '${portee.dateMiseBasPrevue!.day}/${portee.dateMiseBasPrevue!.month}/${portee.dateMiseBasPrevue!.year}',
                         ),
-                      _row('Vivants', portee.nbVivants.toString()),
-                      _row('Morts', portee.nbMorts.toString()),
+                      _row(context, 'Vivants', portee.nbVivants.toString()),
+                      _row(context, 'Morts', portee.nbMorts.toString()),
                     ],
                   ),
                 ),
@@ -94,7 +94,7 @@ class PorteeDetailScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _row(String label, String value) {
+  Widget _row(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -103,14 +103,16 @@ class PorteeDetailScreen extends HookConsumerWidget {
             flex: 2,
             child: Text(
               label,
-              style: AppTypography.body2.copyWith(color: AppColors.greyMedium),
+              style: AppTypography.body2.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               value,
-              style: AppTypography.body2.copyWith(color: AppColors.textDark),
+              style: AppTypography.body2,
             ),
           ),
         ],
@@ -118,4 +120,3 @@ class PorteeDetailScreen extends HookConsumerWidget {
     );
   }
 }
-

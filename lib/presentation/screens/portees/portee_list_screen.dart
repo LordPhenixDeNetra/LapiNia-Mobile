@@ -15,7 +15,6 @@ class PorteeListScreen extends ConsumerWidget {
     final portees = ref.watch(porteesProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Mes Portées'),
       ),
@@ -123,4 +122,3 @@ class _PorteeCard extends StatelessWidget {
     );
   }
 }
-

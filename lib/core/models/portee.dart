@@ -16,6 +16,7 @@ class Portee extends Equatable {
   final StatutPortee statut;
   final String? notes;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final Lapin? mere;
   final Lapin? pere;
 
@@ -33,6 +34,7 @@ class Portee extends Equatable {
     required this.statut,
     this.notes,
     required this.createdAt,
+    required this.updatedAt,
     this.mere,
     this.pere,
   });
@@ -79,6 +81,9 @@ class Portee extends Equatable {
       statut: StatutPortee.fromDbValue(json['statut'] as String),
       notes: json['notes'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.parse(json['created_at'] as String),
       mere: json['lapins_mere'] != null
           ? Lapin.fromJson(json['lapins_mere'] as Map<String, dynamic>)
           : null,
@@ -103,6 +108,7 @@ class Portee extends Equatable {
       'statut': statut.dbValue,
       'notes': notes,
       'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
@@ -120,6 +126,7 @@ class Portee extends Equatable {
     StatutPortee? statut,
     String? notes,
     DateTime? createdAt,
+    DateTime? updatedAt,
     Lapin? mere,
     Lapin? pere,
   }) {
@@ -137,6 +144,7 @@ class Portee extends Equatable {
       statut: statut ?? this.statut,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       mere: mere ?? this.mere,
       pere: pere ?? this.pere,
     );
@@ -157,6 +165,7 @@ class Portee extends Equatable {
         statut,
         notes,
         createdAt,
+        updatedAt,
         mere,
         pere,
       ];

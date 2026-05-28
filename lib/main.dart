@@ -14,6 +14,7 @@ import 'core/utils/sync_manager.dart';
 import 'data/local_db/app_database.dart';
 import 'domain/services/session_service.dart';
 import 'presentation/router/router_provider.dart';
+import 'presentation/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -185,13 +186,14 @@ class LapiNiaApp extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider).asData?.value ?? ThemeMode.system;
 
     return MaterialApp.router(
       title: 'lapiNia',
       debugShowCheckedModeBanner: false,
       theme: _buildTheme(Brightness.light),
       darkTheme: _buildTheme(Brightness.dark),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: router,
     );
   }
@@ -199,17 +201,18 @@ class LapiNiaApp extends HookConsumerWidget {
   ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final baseTextTheme = GoogleFonts.nunitoTextTheme();
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      brightness: brightness,
+      primary: AppColors.primary,
+      secondary: AppColors.ia,
+      error: AppColors.danger,
+      surface: isDark ? const Color(0xFF121212) : AppColors.white,
+    );
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: brightness,
-        primary: AppColors.primary,
-        secondary: AppColors.ia,
-        error: AppColors.danger,
-        surface: isDark ? const Color(0xFF121212) : AppColors.white,
-      ),
+      colorScheme: colorScheme,
       scaffoldBackgroundColor: isDark ? const Color(0xFF0F1115) : AppColors.background,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primary,
@@ -251,14 +254,14 @@ class LapiNiaApp extends HookConsumerWidget {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: isDark ? const Color(0xFF1A1D23) : AppColors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.greyLight),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.greyLight),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -269,8 +272,8 @@ class LapiNiaApp extends HookConsumerWidget {
           borderSide: const BorderSide(color: AppColors.danger),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        labelStyle: AppTypography.body2.copyWith(color: AppColors.greyMedium),
-        hintStyle: AppTypography.body2.copyWith(color: AppColors.greyMedium),
+        labelStyle: AppTypography.body2,
+        hintStyle: AppTypography.body2,
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,

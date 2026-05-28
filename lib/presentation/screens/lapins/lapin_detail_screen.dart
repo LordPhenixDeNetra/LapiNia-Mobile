@@ -88,7 +88,6 @@ class LapinDetailScreen extends ConsumerWidget {
       data: (lapin) {
         final poidsKg = lapin.poidsKg;
         return Scaffold(
-          backgroundColor: AppColors.background,
           appBar: AppBar(
             title: Text(lapin.nom),
             actions: [

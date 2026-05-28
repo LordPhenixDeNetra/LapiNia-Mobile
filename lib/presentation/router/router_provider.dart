@@ -20,6 +20,7 @@ import '../screens/portees/saillie_form_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/aliments/aliments_screen.dart';
 import '../screens/ia/ia_screen.dart';
+import '../screens/settings/settings_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
@@ -81,6 +82,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => MainShellScreen(child: child),

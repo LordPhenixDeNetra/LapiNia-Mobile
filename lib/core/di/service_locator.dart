@@ -6,8 +6,10 @@ import '../config/app_config.dart';
 import '../utils/connectivity_checker.dart';
 import '../utils/sync_manager.dart';
 import '../../data/local_db/app_database.dart';
+import '../../data/local_db/local_cache_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/session_service.dart';
+import '../../domain/services/theme_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -27,6 +29,9 @@ Future<void> setupServiceLocator({
     const FlutterSecureStorage(),
   );
   serviceLocator.registerSingleton<AppDatabase>(database);
+  serviceLocator.registerSingleton<LocalCacheService>(
+    LocalCacheService(db: database),
+  );
   serviceLocator.registerSingleton<ConnectivityChecker>(connectivityChecker);
   serviceLocator.registerSingleton<SyncManager>(syncManager);
   serviceLocator.registerSingleton<SessionService>(
@@ -36,4 +41,5 @@ Future<void> setupServiceLocator({
     ),
   );
   serviceLocator.registerSingleton<OnboardingService>(OnboardingService());
+  serviceLocator.registerSingleton<ThemeService>(ThemeService());
 }

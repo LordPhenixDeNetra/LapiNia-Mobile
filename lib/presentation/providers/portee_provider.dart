@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../core/models/portee.dart';
+import '../../core/utils/sync_manager.dart';
 import 'core_providers.dart';
 
 class PorteesController extends AsyncNotifier<List<Portee>> {
@@ -16,13 +18,31 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return [];
 
-    final response = await supabase
-        .from('portees')
-        .select('*, lapins_mere:lapins!mere_id(*), lapins_pere:lapins!pere_id(*)')
-        .eq('user_id', userId)
-        .order('created_at', ascending: false);
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
 
-    return (response as List).map((e) => Portee.fromJson(e)).toList();
+    if (!connectivity.isOnline) {
+      return cache.getPortees(userId: userId);
+    }
+
+    try {
+      final response = await supabase
+          .from('portees')
+          .select(
+              '*, lapins_mere:lapins!mere_id(*), lapins_pere:lapins!pere_id(*)')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
+
+      final portees = (response as List).map((e) => Portee.fromJson(e)).toList();
+      await cache.cachePortees(userId: userId, portees: portees);
+      return portees;
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        return cache.getPortees(userId: userId);
+      }
+      rethrow;
+    }
   }
 
   Future<void> refresh() async {
@@ -37,25 +57,63 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
       throw Exception('User not authenticated');
     }
 
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
+
+    final now = DateTime.now();
+    final optimistic = portee.copyWith(
+      userId: userId,
+      updatedAt: now,
+    );
+    state = AsyncValue.data([
+      optimistic,
+      ...(state.asData?.value ?? const []),
+    ]);
+    await cache.upsertPortee(optimistic);
+
     final dateMiseBasPrevue = portee.dateSaillie.add(const Duration(days: 31));
 
     final data = {
-      'id': portee.id,
+      'id': optimistic.id,
       'user_id': userId,
-      'mere_id': portee.mereId,
-      'pere_id': portee.pereId,
-      'date_saillie': portee.dateSaillie.toIso8601String().split('T')[0],
+      'mere_id': optimistic.mereId,
+      'pere_id': optimistic.pereId,
+      'date_saillie': optimistic.dateSaillie.toIso8601String().split('T')[0],
       'date_mise_bas_prevue': dateMiseBasPrevue.toIso8601String().split('T')[0],
-      'statut': portee.statut.dbValue,
-      'notes': portee.notes,
+      'statut': optimistic.statut.dbValue,
+      'notes': optimistic.notes,
+      'updated_at': now.toIso8601String(),
     };
 
-    await supabase.from('portees').insert(data);
-    await supabase
-        .from('lapins')
-        .update({'statut': 'EN_GESTATION'})
-        .eq('id', portee.mereId);
-    await refresh();
+    if (!connectivity.isOnline) {
+      await syncManager.addMutation(
+        tableName: 'portees',
+        operation: MutationType.insert,
+        payload: jsonEncode(data),
+      );
+      return;
+    }
+
+    try {
+      await supabase.from('portees').insert(data);
+      await supabase
+          .from('lapins')
+          .update({'statut': 'EN_GESTATION'})
+          .eq('id', optimistic.mereId);
+      await refresh();
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        await syncManager.addMutation(
+          tableName: 'portees',
+          operation: MutationType.insert,
+          payload: jsonEncode(data),
+        );
+        return;
+      }
+      rethrow;
+    }
   }
 
   Future<void> recordMiseBas({
@@ -67,6 +125,11 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     required int poidsTotalG,
   }) async {
     final supabase = ref.read(supabaseClientProvider);
+    final connectivity = ref.read(connectivityCheckerProvider);
+    if (!connectivity.isOnline) {
+      throw Exception('Action indisponible hors ligne');
+    }
+
     await supabase.from('portees').update({
       'date_mise_bas_reelle': dateMiseBas.toIso8601String().split('T')[0],
       'nb_vivants': nbVivants,
@@ -84,6 +147,11 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     required String mereId,
   }) async {
     final supabase = ref.read(supabaseClientProvider);
+    final connectivity = ref.read(connectivityCheckerProvider);
+    if (!connectivity.isOnline) {
+      throw Exception('Action indisponible hors ligne');
+    }
+
     await supabase.from('portees').update({'statut': 'SEVRAGE'}).eq('id', porteeId);
     await supabase.from('lapins').update({'statut': 'REPOS'}).eq('id', mereId);
     await refresh();
@@ -103,4 +171,3 @@ final porteeDetailProvider =
       .single();
   return Portee.fromJson(response);
 });
-

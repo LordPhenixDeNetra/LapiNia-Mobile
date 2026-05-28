@@ -1,0 +1,133 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart';
+
+import 'app_database.dart';
+import '../../core/models/lapin.dart';
+import '../../core/models/portee.dart';
+
+class LocalCacheService {
+  final AppDatabase db;
+
+  LocalCacheService({required this.db});
+
+  Future<List<Lapin>> getLapins({required String userId}) async {
+    final rows = await (db.select(db.lapinsLocal)
+          ..where((t) => t.userId.equals(userId) & t.isDeleted.equals(false))
+          ..orderBy([(t) => OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)]))
+        .get();
+    return rows
+        .map((r) => Lapin.fromJson(jsonDecode(r.data) as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> upsertLapin(Lapin lapin) async {
+    await db.into(db.lapinsLocal).insert(
+          LapinsLocalCompanion.insert(
+            id: lapin.id,
+            userId: lapin.userId,
+            data: jsonEncode(lapin.toJson()),
+            updatedAt: lapin.updatedAt,
+            isDeleted: const Value(false),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+  }
+
+  Future<void> markLapinDeleted({
+    required String id,
+    required String userId,
+  }) async {
+    final now = DateTime.now();
+    await (db.update(db.lapinsLocal)..where((t) => t.id.equals(id))).write(
+      LapinsLocalCompanion(
+        userId: Value(userId),
+        updatedAt: Value(now),
+        isDeleted: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> cacheLapins({
+    required String userId,
+    required List<Lapin> lapins,
+  }) async {
+    await db.batch((batch) {
+      batch.insertAll(
+        db.lapinsLocal,
+        lapins
+            .map(
+              (l) => LapinsLocalCompanion.insert(
+                id: l.id,
+                userId: userId,
+                data: jsonEncode(l.toJson()),
+                updatedAt: l.updatedAt,
+                isDeleted: const Value(false),
+              ),
+            )
+            .toList(),
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+  }
+
+  Future<List<Portee>> getPortees({required String userId}) async {
+    final rows = await (db.select(db.porteesLocal)
+          ..where((t) => t.userId.equals(userId) & t.isDeleted.equals(false))
+          ..orderBy([(t) => OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)]))
+        .get();
+    return rows
+        .map((r) => Portee.fromJson(jsonDecode(r.data) as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> upsertPortee(Portee portee) async {
+    await db.into(db.porteesLocal).insert(
+          PorteesLocalCompanion.insert(
+            id: portee.id,
+            userId: portee.userId,
+            data: jsonEncode(portee.toJson()),
+            updatedAt: portee.updatedAt,
+            isDeleted: const Value(false),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+  }
+
+  Future<void> markPorteeDeleted({
+    required String id,
+    required String userId,
+  }) async {
+    final now = DateTime.now();
+    await (db.update(db.porteesLocal)..where((t) => t.id.equals(id))).write(
+      PorteesLocalCompanion(
+        userId: Value(userId),
+        updatedAt: Value(now),
+        isDeleted: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> cachePortees({
+    required String userId,
+    required List<Portee> portees,
+  }) async {
+    await db.batch((batch) {
+      batch.insertAll(
+        db.porteesLocal,
+        portees
+            .map(
+              (p) => PorteesLocalCompanion.insert(
+                id: p.id,
+                userId: userId,
+                data: jsonEncode(p.toJson()),
+                updatedAt: p.updatedAt,
+                isDeleted: const Value(false),
+              ),
+            )
+            .toList(),
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+  }
+}

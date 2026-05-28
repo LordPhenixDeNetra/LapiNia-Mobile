@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,13 +20,30 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return [];
 
-    final response = await supabase
-        .from('lapins')
-        .select('*, races(*)')
-        .eq('user_id', userId)
-        .order('created_at', ascending: false);
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
 
-    return (response as List).map((e) => Lapin.fromJson(e)).toList();
+    if (!connectivity.isOnline) {
+      return cache.getLapins(userId: userId);
+    }
+
+    try {
+      final response = await supabase
+          .from('lapins')
+          .select('*, races(*)')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
+
+      final lapins = (response as List).map((e) => Lapin.fromJson(e)).toList();
+      await cache.cacheLapins(userId: userId, lapins: lapins);
+      return lapins;
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        return cache.getLapins(userId: userId);
+      }
+      rethrow;
+    }
   }
 
   Future<void> refresh() async {
@@ -40,55 +58,171 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
       throw Exception('User not authenticated');
     }
 
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
+
+    final now = DateTime.now();
+    final optimistic = lapin.copyWith(
+      userId: userId,
+      updatedAt: now,
+    );
+
+    state = AsyncValue.data([
+      optimistic,
+      ...(state.asData?.value ?? const []),
+    ]);
+    await cache.upsertLapin(optimistic);
+
     final data = {
-      'id': lapin.id,
+      'id': optimistic.id,
       'user_id': userId,
-      'nom': lapin.nom,
-      'race_id': lapin.raceId,
-      'sexe': lapin.sexe.dbValue,
-      'date_naissance': lapin.dateNaissance?.toIso8601String().split('T')[0],
-      'poids_actuel_g': lapin.poidsActuelG,
-      'statut': lapin.statut.dbValue,
-      'numero_identification': lapin.numeroIdentification,
-      'photo_url': lapin.photoUrl,
-      'notes': lapin.notes,
+      'nom': optimistic.nom,
+      'race_id': optimistic.raceId,
+      'sexe': optimistic.sexe.dbValue,
+      'date_naissance':
+          optimistic.dateNaissance?.toIso8601String().split('T')[0],
+      'poids_actuel_g': optimistic.poidsActuelG,
+      'statut': optimistic.statut.dbValue,
+      'numero_identification': optimistic.numeroIdentification,
+      'photo_url': optimistic.photoUrl,
+      'notes': optimistic.notes,
+      'updated_at': now.toIso8601String(),
     };
 
-    await ref.read(syncManagerProvider).addMutation(
+    if (!connectivity.isOnline) {
+      await syncManager.addMutation(
+        tableName: 'lapins',
+        operation: MutationType.insert,
+        payload: jsonEncode(data),
+      );
+      return optimistic;
+    }
+
+    try {
+      final response = await supabase
+          .from('lapins')
+          .insert(data)
+          .select('*, races(*)')
+          .single();
+
+      final created = Lapin.fromJson(response);
+      await cache.upsertLapin(created);
+      state = AsyncValue.data([
+        created,
+        ...(state.asData?.value ?? const []).where((l) => l.id != created.id),
+      ]);
+      return created;
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        await syncManager.addMutation(
           tableName: 'lapins',
           operation: MutationType.insert,
-          payload: data.toString(),
+          payload: jsonEncode(data),
         );
-
-    final response =
-        await supabase.from('lapins').insert(data).select('*, races(*)').single();
-
-    final created = Lapin.fromJson(response);
-    await refresh();
-    return created;
+        return optimistic;
+      }
+      rethrow;
+    }
   }
 
   Future<Lapin> updateLapin(Lapin lapin) async {
     final supabase = ref.read(supabaseClientProvider);
-    final data = lapin.toJson();
-    data['updated_at'] = DateTime.now().toIso8601String();
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
 
-    await supabase.from('lapins').update(data).eq('id', lapin.id);
-    final response = await supabase
-        .from('lapins')
-        .select('*, races(*)')
-        .eq('id', lapin.id)
-        .single();
+    final now = DateTime.now();
+    final optimistic = lapin.copyWith(updatedAt: now);
+    state = AsyncValue.data([
+      for (final l in (state.asData?.value ?? const []))
+        if (l.id == optimistic.id) optimistic else l,
+    ]);
+    await cache.upsertLapin(optimistic);
 
-    final updated = Lapin.fromJson(response);
-    await refresh();
-    return updated;
+    final data = optimistic.toJson();
+    data['updated_at'] = now.toIso8601String();
+
+    if (!connectivity.isOnline) {
+      await syncManager.addMutation(
+        tableName: 'lapins',
+        operation: MutationType.update,
+        payload: jsonEncode(data),
+      );
+      return optimistic;
+    }
+
+    try {
+      await supabase.from('lapins').update(data).eq('id', optimistic.id);
+      final response = await supabase
+          .from('lapins')
+          .select('*, races(*)')
+          .eq('id', optimistic.id)
+          .single();
+
+      final updated = Lapin.fromJson(response);
+      await cache.upsertLapin(updated);
+      state = AsyncValue.data([
+        for (final l in (state.asData?.value ?? const []))
+          if (l.id == updated.id) updated else l,
+      ]);
+      return updated;
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        await syncManager.addMutation(
+          tableName: 'lapins',
+          operation: MutationType.update,
+          payload: jsonEncode(data),
+        );
+        return optimistic;
+      }
+      rethrow;
+    }
   }
 
   Future<void> remove(String id) async {
     final supabase = ref.read(supabaseClientProvider);
-    await supabase.from('lapins').delete().eq('id', id);
-    await refresh();
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+
+    final connectivity = ref.read(connectivityCheckerProvider);
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
+
+    state = AsyncValue.data([
+      ...(state.asData?.value ?? const []).where((l) => l.id != id),
+    ]);
+    await cache.markLapinDeleted(id: id, userId: userId);
+
+    final payload = {'id': id, 'user_id': userId};
+
+    if (!connectivity.isOnline) {
+      await syncManager.addMutation(
+        tableName: 'lapins',
+        operation: MutationType.delete,
+        payload: jsonEncode(payload),
+      );
+      return;
+    }
+
+    try {
+      await supabase.from('lapins').delete().eq('id', id);
+    } catch (e) {
+      await connectivity.checkConnectivity();
+      if (!connectivity.isOnline) {
+        await syncManager.addMutation(
+          tableName: 'lapins',
+          operation: MutationType.delete,
+          payload: jsonEncode(payload),
+        );
+        return;
+      }
+      rethrow;
+    }
   }
 
   Future<void> recordPesee({
@@ -99,6 +233,11 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) {
       throw Exception('User not authenticated');
+    }
+
+    final connectivity = ref.read(connectivityCheckerProvider);
+    if (!connectivity.isOnline) {
+      throw Exception('Action indisponible hors ligne');
     }
 
     final peseeData = {

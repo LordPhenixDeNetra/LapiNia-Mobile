@@ -117,7 +117,6 @@ class LapinFormScreen extends HookConsumerWidget {
     final loading = races.isLoading || (lapinDetail?.isLoading ?? false);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(isEditing ? 'Modifier le lapin' : 'Nouveau lapin'),
       ),
