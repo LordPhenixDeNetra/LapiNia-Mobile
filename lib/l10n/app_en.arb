@@ -1,0 +1,75 @@
+{
+  "@@locale": "en",
+  "appName": "lapiNia",
+  "welcomeTagline": "Your smart rabbit farming assistant",
+  "welcomeStart": "Get started",
+  "welcomeAlreadyAccount": "I already have an account",
+  "welcomeOfflineNotice": "Offline mode is available to view already-synced data.",
+  "loginTitle": "Sign in",
+  "loginSubtitleSignIn": "Sign in with your email",
+  "loginSubtitleSignUp": "Create your account",
+  "emailLabel": "Email",
+  "emailHint": "you@example.com",
+  "passwordLabel": "Password",
+  "passwordHint": "••••••••",
+  "signIn": "Sign in",
+  "signUp": "Sign up",
+  "loginToggleToSignIn": "I already have an account",
+  "loginToggleToSignUp": "Create an account",
+  "signUpCheckEmail": "Account created. Check your email: {email}",
+  "@signUpCheckEmail": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "An error occurred.",
+  "errorUnknown": "Unknown error",
+  "retry": "Retry",
+  "goToLogin": "Go to login",
+  "startupErrorTitle": "Startup error",
+  "dashboardTitle": "Home",
+  "dashboardAlerts": "Alerts",
+  "dashboardSeeAll": "See all",
+  "dashboardNoAlerts": "No alerts",
+  "dashboardNextBirths": "Upcoming births",
+  "dashboardSeeAllPortees": "See all",
+  "dashboardNoGestation": "No gestation litter",
+  "kpiLapins": "Rabbits",
+  "kpiGestantes": "Pregnant",
+  "kpiAttendus": "Expected",
+  "settingsTitle": "Settings",
+  "settingsConnection": "Connection",
+  "settingsSync": "Sync",
+  "settingsTheme": "Theme",
+  "settingsOnline": "Online",
+  "settingsOffline": "Offline",
+  "settingsOnlineHelp": "Data can be synced.",
+  "settingsOfflineHelp": "Actions will be queued.",
+  "settingsStatusUnknown": "Unknown status",
+  "settingsQueueTitle": "{count} pending action(s)",
+  "@settingsQueueTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refresh": "Refresh",
+  "syncNow": "Sync now",
+  "syncStarted": "Sync started",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "lapinsTitle": "My rabbits",
+  "lapinsSearchHint": "Search a rabbit...",
+  "porteesTitle": "My litters",
+  "porteesEmpty": "No litter",
+  "newSaillie": "New mating",
+  "save": "Save",
+  "validationEmailRequired": "Please enter your email",
+  "validationEmailInvalid": "Invalid email",
+  "validationPasswordRequired": "Please enter your password",
+  "validationPasswordTooShort": "Password too short"
+}

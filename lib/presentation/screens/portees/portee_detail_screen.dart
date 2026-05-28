@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/models/portee.dart';
 import '../../providers/portee_provider.dart';
 
@@ -42,8 +43,7 @@ class PorteeDetailScreen extends HookConsumerWidget {
       data: (portee) {
         final mere = portee.mere?.nom ?? 'Mère';
         final pere = portee.pere?.nom ?? 'Père';
-        final date = portee.dateSaillie;
-        final dateText = '${date.day}/${date.month}/${date.year}';
+        final dateText = formatDate(context, portee.dateSaillie);
 
         return Scaffold(
           appBar: AppBar(
@@ -74,7 +74,7 @@ class PorteeDetailScreen extends HookConsumerWidget {
                         _row(
                           context,
                           'Mise bas prévue',
-                          '${portee.dateMiseBasPrevue!.day}/${portee.dateMiseBasPrevue!.month}/${portee.dateMiseBasPrevue!.year}',
+                          formatDate(context, portee.dateMiseBasPrevue!),
                         ),
                       _row(context, 'Vivants', portee.nbVivants.toString()),
                       _row(context, 'Morts', portee.nbMorts.toString()),

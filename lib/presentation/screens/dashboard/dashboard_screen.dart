@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -17,6 +18,8 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     final lapins = ref.watch(lapinsProvider);
     final portees = ref.watch(porteesProvider);
     final alertesNonLues = ref.watch(alertesNonLuesProvider);
@@ -73,9 +76,10 @@ class DashboardScreen extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 alertes: alertesNonLues,
+                l10n: l10n,
               ),
               const SizedBox(height: 16),
-              _buildProchainesPorteesSection(portees: portees, context: context),
+              _buildProchainesPorteesSection(portees: portees, context: context, l10n: l10n),
             ],
           ),
         ),
@@ -155,6 +159,7 @@ class DashboardScreen extends ConsumerWidget {
     required AsyncValue<List<Lapin>> lapins,
     required AsyncValue<List<Portee>> portees,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     final lapinsList = lapins.asData?.value ?? const [];
     final porteesList = portees.asData?.value ?? const [];
 
@@ -176,7 +181,7 @@ class DashboardScreen extends ConsumerWidget {
           child: _buildKpiCard(
             context: context,
             icon: Icons.pets,
-            label: 'Lapins',
+            label: l10n.kpiLapins,
             value: nbLapins.toString(),
             color: AppColors.primary,
           ),
@@ -186,7 +191,7 @@ class DashboardScreen extends ConsumerWidget {
           child: _buildKpiCard(
             context: context,
             icon: Icons.pregnant_woman,
-            label: 'Gestantes',
+            label: l10n.kpiGestantes,
             value: nbGestantes.toString(),
             color: AppColors.statutGestation,
           ),
@@ -196,7 +201,7 @@ class DashboardScreen extends ConsumerWidget {
           child: _buildKpiCard(
             context: context,
             icon: Icons.child_friendly,
-            label: 'Attendus',
+            label: l10n.kpiAttendus,
             value: nbLapereauxAttendus.toString(),
             color: AppColors.warning,
           ),
@@ -244,6 +249,7 @@ class DashboardScreen extends ConsumerWidget {
     required BuildContext context,
     required WidgetRef ref,
     required AsyncValue<List<Alerte>> alertes,
+    required AppLocalizations l10n,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,14 +258,14 @@ class DashboardScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Alertes',
+              l10n.dashboardAlerts,
               style: AppTypography.headline3.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             TextButton(
               onPressed: () {},
-              child: const Text('Voir tout'),
+              child: Text(l10n.dashboardSeeAll),
             ),
           ],
         ),
@@ -285,7 +291,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Aucune alerte',
+                        l10n.dashboardNoAlerts,
                         style: AppTypography.body1.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -374,6 +380,7 @@ class DashboardScreen extends ConsumerWidget {
   Widget _buildProchainesPorteesSection({
     required AsyncValue<List<Portee>> portees,
     required BuildContext context,
+    required AppLocalizations l10n,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,14 +389,14 @@ class DashboardScreen extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Prochaines mises bas',
+              l10n.dashboardNextBirths,
               style: AppTypography.headline3.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             TextButton(
               onPressed: () => context.go('/portees'),
-              child: const Text('Voir tout'),
+              child: Text(l10n.dashboardSeeAllPortees),
             ),
           ],
         ),
@@ -411,7 +418,7 @@ class DashboardScreen extends ConsumerWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Aucune portée en gestation',
+                    l10n.dashboardNoGestation,
                     style: AppTypography.body2.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

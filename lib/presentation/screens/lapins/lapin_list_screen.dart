@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,6 +16,8 @@ class LapinListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     final searchQuery = useState('');
     final selectedStatut = useState<String?>(null);
     final selectedSexe = useState<String?>(null);
@@ -23,7 +26,7 @@ class LapinListScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mes Lapins'),
+        title: Text(l10n.lapinsTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
@@ -41,7 +44,7 @@ class LapinListScreen extends HookConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Rechercher un lapin...',
+                hintText: l10n.lapinsSearchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: searchQuery.value.isNotEmpty
                     ? IconButton(

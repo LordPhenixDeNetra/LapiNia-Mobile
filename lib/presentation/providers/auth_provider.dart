@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/utils/error_mapper.dart';
 import 'core_providers.dart';
 
 final authUserProvider = StreamProvider<User?>((ref) {
@@ -63,7 +64,7 @@ class AuthController extends AsyncNotifier<User?> {
       state = AsyncValue.data(response.user);
       return response;
     } on AuthException catch (e) {
-      state = AsyncValue.error(_humanizeAuthError(e), StackTrace.current);
+      state = AsyncValue.error(humanizeError(e), StackTrace.current);
       rethrow;
     }
   }
@@ -78,23 +79,3 @@ class AuthController extends AsyncNotifier<User?> {
 
 final authControllerProvider =
     AsyncNotifierProvider<AuthController, User?>(AuthController.new);
-
-String _humanizeAuthError(AuthException e) {
-  final raw = e.message.trim();
-  final lower = raw.toLowerCase();
-
-  if (lower.contains('error sending confirmation email') ||
-      lower.contains('confirmation email')) {
-    return 'Inscription impossible: Supabase n’arrive pas à envoyer l’email de confirmation (SMTP non configuré ou bloqué).';
-  }
-
-  if (lower.contains('invalid login credentials')) {
-    return 'Email ou mot de passe incorrect.';
-  }
-
-  if (lower.contains('user already registered')) {
-    return 'Ce compte existe déjà. Essayez “Se connecter”.';
-  }
-
-  return raw.isEmpty ? 'Erreur d’authentification.' : raw;
-}

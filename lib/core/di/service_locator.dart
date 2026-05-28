@@ -10,6 +10,7 @@ import '../../data/local_db/local_cache_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
+import '../../domain/services/file_share_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -42,4 +43,5 @@ Future<void> setupServiceLocator({
   );
   serviceLocator.registerSingleton<OnboardingService>(OnboardingService());
   serviceLocator.registerSingleton<ThemeService>(ThemeService());
+  serviceLocator.registerSingleton<FileShareService>(FileShareService());
 }

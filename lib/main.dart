@@ -1,14 +1,19 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 
 import 'core/config/app_config.dart';
 import 'core/config/env_loader.dart';
 import 'core/constants/app_colors.dart';
 import 'core/constants/app_typography.dart';
 import 'core/di/service_locator.dart';
+import 'core/utils/app_logger.dart';
 import 'core/utils/connectivity_checker.dart';
 import 'core/utils/sync_manager.dart';
 import 'data/local_db/app_database.dart';
@@ -18,7 +23,22 @@ import 'presentation/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  FlutterError.onError = (details) {
+    AppLogger.error(
+      'FlutterError',
+      details.exception,
+      details.stack ?? StackTrace.empty,
+      data: {'context': details.context?.toDescription()},
+    );
+    FlutterError.presentError(details);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    AppLogger.error('Uncaught', error, stack);
+    return false;
+  };
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -191,6 +211,13 @@ class LapiNiaApp extends HookConsumerWidget {
     return MaterialApp.router(
       title: 'lapiNia',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: _buildTheme(Brightness.light),
       darkTheme: _buildTheme(Brightness.dark),
       themeMode: themeMode,

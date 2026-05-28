@@ -16,11 +16,6 @@
 ---
  
 **Base app & architecture**
-- [ ] **(Flutter · P1)** Modèles & sérialisation — `Lapin`, `Portee`, `Pesee`, `EvenementSante`, `Stock`, `Finance`, `Alerte`, `Race` + `fromJson/toJson`
-- [ ] **(Flutter · P1)** Gestion erreurs UI — mapping erreurs Supabase (400/401/403/404/409/429/5xx) → messages utilisateur + états (vide / chargement / erreur)
-- [ ] **(Flutter · P1)** Téléchargements fichiers — sauvegarde `path_provider` + partage OS `share_plus` (PDF / exports)
-- [ ] **(Flutter · P1)** Internationalisation — FR + Wolof (V1.5) + formats dates DD/MM/YYYY + monnaie FCFA
-- [ ] **(Flutter · P1)** Observabilité — logs structurés + capture erreurs Sentry + performance monitoring
 ---
  
 **Auth & sécurité**
@@ -267,6 +262,11 @@
 - [x] **(Flutter · P0)** AppColors — palette complète (`primary #2E7D32`, `alert #E65100`, `danger #B71C1C`, `ia #4A148C`)
 - [x] **(Flutter · P0)** AppTheme — `ThemeData` Poppins + Nunito + couleurs lapiNia + mode sombre
 - [x] **(Flutter · P0)** Bottom Navigation Bar — 5 onglets : 🏠 Accueil · 🐇 Lapins · 🤰 Portées · 🍃 Aliments · 🧠 IA
+- [x] **(Flutter · P1)** Modèles & sérialisation — `Lapin`, `Portee`, `Pesee`, `EvenementSante`, `Stock`, `Finance`, `Alerte`, `Race` + `fromJson/toJson`
+- [x] **(Flutter · P1)** Gestion erreurs UI — mapping erreurs Supabase (400/401/403/404/409/429/5xx) → messages utilisateur + états (vide / chargement / erreur)
+- [x] **(Flutter · P1)** Téléchargements fichiers — sauvegarde `path_provider` + partage OS `share_plus` (PDF / exports)
+- [x] **(Flutter · P1)** Internationalisation — FR + EN (Wolof plus tard) + formats dates DD/MM/YYYY + monnaie FCFA
+- [x] **(Flutter · P1)** Observabilité — logs structurés + handlers globaux (Sentry plus tard)
 
 - **UI**
 - [x] Fix overflow clavier sur l’écran Connexion (Login) — scroll + padding clavier

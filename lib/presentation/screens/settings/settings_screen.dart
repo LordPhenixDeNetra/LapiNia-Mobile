@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../providers/settings_providers.dart';
@@ -10,47 +11,49 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     final connectivity = ref.watch(connectivityStatusProvider);
     final pendingMutations = ref.watch(pendingMutationsProvider);
     final themeMode = ref.watch(themeModeProvider).asData?.value ?? ThemeMode.system;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Réglages')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Connexion', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.settingsConnection, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: connectivity.when(
               loading: () => const ListTile(
                 leading: CircularProgressIndicator(),
-                title: Text('Vérification...'),
+                title: Text('...'),
               ),
               error: (e, _) => ListTile(
                 leading: const Icon(Icons.wifi_off),
-                title: const Text('Statut inconnu'),
+                title: Text(l10n.settingsStatusUnknown),
                 subtitle: Text(e.toString()),
               ),
               data: (isOnline) => ListTile(
                 leading: Icon(isOnline ? Icons.wifi : Icons.wifi_off),
-                title: Text(isOnline ? 'En ligne' : 'Hors ligne'),
+                title: Text(isOnline ? l10n.settingsOnline : l10n.settingsOffline),
                 subtitle: Text(
                   isOnline
-                      ? 'Les données peuvent être synchronisées.'
-                      : 'Les actions seront mises en attente.',
+                      ? l10n.settingsOnlineHelp
+                      : l10n.settingsOfflineHelp,
                 ),
               ),
             ),
           ),
           const SizedBox(height: 16),
-          Text('Synchronisation', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.settingsSync, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: pendingMutations.when(
               loading: () => const ListTile(
                 leading: CircularProgressIndicator(),
-                title: Text('Mutations en attente...'),
+                title: Text('...'),
               ),
               error: (e, _) => ListTile(
                 leading: const Icon(Icons.sync_problem),
@@ -59,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               data: (count) => ListTile(
                 leading: const Icon(Icons.sync),
-                title: Text('$count action(s) en attente'),
+                title: Text(l10n.settingsQueueTitle(count)),
               ),
             ),
           ),
@@ -73,7 +76,7 @@ class SettingsScreen extends ConsumerWidget {
                     ref.invalidate(pendingMutationsProvider);
                   },
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Rafraîchir'),
+                  label: Text(l10n.refresh),
                 ),
               ),
               const SizedBox(width: 12),
@@ -85,7 +88,7 @@ class SettingsScreen extends ConsumerWidget {
                       await ref.read(syncManagerProvider).forceSync();
                       ref.invalidate(pendingMutationsProvider);
                       messenger.showSnackBar(
-                        const SnackBar(content: Text('Synchronisation lancée')),
+                        SnackBar(content: Text(l10n.syncStarted)),
                       );
                     } catch (e) {
                       messenger.showSnackBar(
@@ -94,13 +97,13 @@ class SettingsScreen extends ConsumerWidget {
                     }
                   },
                   icon: const Icon(Icons.cloud_sync),
-                  label: const Text('Synchroniser'),
+                  label: Text(l10n.syncNow),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Thème', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.settingsTheme, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
             child: Column(
@@ -108,7 +111,7 @@ class SettingsScreen extends ConsumerWidget {
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.system,
                   groupValue: themeMode,
-                  title: const Text('Système'),
+                  title: Text(l10n.themeSystem),
                   onChanged: (v) {
                     if (v == null) return;
                     ref.read(themeModeProvider.notifier).setMode(v);
@@ -117,7 +120,7 @@ class SettingsScreen extends ConsumerWidget {
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.light,
                   groupValue: themeMode,
-                  title: const Text('Clair'),
+                  title: Text(l10n.themeLight),
                   onChanged: (v) {
                     if (v == null) return;
                     ref.read(themeModeProvider.notifier).setMode(v);
@@ -126,7 +129,7 @@ class SettingsScreen extends ConsumerWidget {
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.dark,
                   groupValue: themeMode,
-                  title: const Text('Sombre'),
+                  title: Text(l10n.themeDark),
                   onChanged: (v) {
                     if (v == null) return;
                     ref.read(themeModeProvider.notifier).setMode(v);
@@ -140,4 +143,3 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 }
-

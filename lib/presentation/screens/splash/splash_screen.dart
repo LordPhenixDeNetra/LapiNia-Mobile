@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,6 +13,7 @@ class SplashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bootstrap = ref.watch(bootstrapProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen(bootstrapProvider, (previous, next) {
       next.whenData((dest) {
@@ -67,13 +69,13 @@ class SplashScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Erreur au démarrage',
+                      l10n.startupErrorTitle,
                       style: AppTypography.headline3,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      errorText ?? 'Erreur inconnue',
+                      errorText ?? l10n.errorUnknown,
                       style: AppTypography.body2.copyWith(
                         color: Theme.of(context)
                             .colorScheme
@@ -87,12 +89,12 @@ class SplashScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(bootstrapProvider),
-                      child: const Text('Réessayer'),
+                      child: Text(l10n.retry),
                     ),
                     const SizedBox(height: 8),
                     OutlinedButton(
                       onPressed: () => context.go('/welcome'),
-                      child: const Text('Aller à la connexion'),
+                      child: Text(l10n.goToLogin),
                     ),
                   ],
                 ),

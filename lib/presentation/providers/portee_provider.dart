@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../core/models/portee.dart';
+import '../../core/utils/error_mapper.dart';
 import '../../core/utils/sync_manager.dart';
 import 'core_providers.dart';
 
@@ -41,7 +42,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
       if (!connectivity.isOnline) {
         return cache.getPortees(userId: userId);
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 
@@ -112,7 +113,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
         );
         return;
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 

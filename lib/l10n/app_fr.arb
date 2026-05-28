@@ -1,0 +1,75 @@
+{
+  "@@locale": "fr",
+  "appName": "lapiNia",
+  "welcomeTagline": "Votre assistant intelligent\nd'élevage cunicole",
+  "welcomeStart": "Commencer",
+  "welcomeAlreadyAccount": "J'ai déjà un compte",
+  "welcomeOfflineNotice": "Mode hors ligne disponible pour consulter vos données déjà synchronisées.",
+  "loginTitle": "Connexion",
+  "loginSubtitleSignIn": "Connectez-vous avec votre email",
+  "loginSubtitleSignUp": "Créez votre compte",
+  "emailLabel": "Email",
+  "emailHint": "vous@exemple.com",
+  "passwordLabel": "Mot de passe",
+  "passwordHint": "••••••••",
+  "signIn": "Se connecter",
+  "signUp": "S'inscrire",
+  "loginToggleToSignIn": "J'ai déjà un compte",
+  "loginToggleToSignUp": "Créer un compte",
+  "signUpCheckEmail": "Compte créé. Vérifiez votre email: {email}",
+  "@signUpCheckEmail": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "Une erreur est survenue.",
+  "errorUnknown": "Erreur inconnue",
+  "retry": "Réessayer",
+  "goToLogin": "Aller à la connexion",
+  "startupErrorTitle": "Erreur au démarrage",
+  "dashboardTitle": "Accueil",
+  "dashboardAlerts": "Alertes",
+  "dashboardSeeAll": "Voir tout",
+  "dashboardNoAlerts": "Aucune alerte",
+  "dashboardNextBirths": "Prochaines mises bas",
+  "dashboardSeeAllPortees": "Voir tout",
+  "dashboardNoGestation": "Aucune portée en gestation",
+  "kpiLapins": "Lapins",
+  "kpiGestantes": "Gestantes",
+  "kpiAttendus": "Attendus",
+  "settingsTitle": "Réglages",
+  "settingsConnection": "Connexion",
+  "settingsSync": "Synchronisation",
+  "settingsTheme": "Thème",
+  "settingsOnline": "En ligne",
+  "settingsOffline": "Hors ligne",
+  "settingsOnlineHelp": "Les données peuvent être synchronisées.",
+  "settingsOfflineHelp": "Les actions seront mises en attente.",
+  "settingsStatusUnknown": "Statut inconnu",
+  "settingsQueueTitle": "{count} action(s) en attente",
+  "@settingsQueueTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refresh": "Rafraîchir",
+  "syncNow": "Synchroniser",
+  "syncStarted": "Synchronisation lancée",
+  "themeSystem": "Système",
+  "themeLight": "Clair",
+  "themeDark": "Sombre",
+  "lapinsTitle": "Mes Lapins",
+  "lapinsSearchHint": "Rechercher un lapin...",
+  "porteesTitle": "Mes Portées",
+  "porteesEmpty": "Aucune portée",
+  "newSaillie": "Nouvelle saillie",
+  "save": "Enregistrer",
+  "validationEmailRequired": "Veuillez entrer votre email",
+  "validationEmailInvalid": "Email invalide",
+  "validationPasswordRequired": "Veuillez entrer votre mot de passe",
+  "validationPasswordTooShort": "Mot de passe trop court"
+}

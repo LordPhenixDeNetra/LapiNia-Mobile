@@ -7,6 +7,7 @@ import '../../core/utils/connectivity_checker.dart';
 import '../../core/utils/sync_manager.dart';
 import '../../data/local_db/app_database.dart';
 import '../../data/local_db/local_cache_service.dart';
+import '../../domain/services/file_share_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
@@ -29,6 +30,10 @@ final onboardingServiceProvider = Provider<OnboardingService>((ref) {
 
 final themeServiceProvider = Provider<ThemeService>((ref) {
   return serviceLocator<ThemeService>();
+});
+
+final fileShareServiceProvider = Provider<FileShareService>((ref) {
+  return serviceLocator<FileShareService>();
 });
 
 final databaseProvider = Provider<AppDatabase>((ref) {

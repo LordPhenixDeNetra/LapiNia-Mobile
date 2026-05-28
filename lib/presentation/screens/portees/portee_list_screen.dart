@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -12,11 +13,12 @@ class PorteeListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final portees = ref.watch(porteesProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mes Portées'),
+        title: Text(l10n.porteesTitle),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/saillie/new'),
@@ -36,7 +38,7 @@ class PorteeListScreen extends ConsumerWidget {
                     Icon(Icons.child_friendly, size: 64, color: AppColors.greyLight),
                     const SizedBox(height: 16),
                     Text(
-                      'Aucune portée',
+                      l10n.porteesEmpty,
                       style: AppTypography.headline3.copyWith(color: AppColors.greyMedium),
                     ),
                   ],

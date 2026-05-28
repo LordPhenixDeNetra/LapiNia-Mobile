@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,6 +14,8 @@ class LoginScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     final formKey = useMemoized(GlobalKey<FormState>.new);
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
@@ -48,10 +51,7 @@ class LoginScreen extends HookConsumerWidget {
           if (response.session == null) {
             if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Compte créé. Vérifiez votre email: $email'),
-                backgroundColor: AppColors.alert,
-              ),
+              SnackBar(content: Text(l10n.signUpCheckEmail(email))),
             );
           }
         } catch (_) {}
@@ -91,14 +91,14 @@ class LoginScreen extends HookConsumerWidget {
                       children: [
                         const SizedBox(height: 24),
                         Text(
-                          'Connexion',
+                          l10n.loginTitle,
                           style: AppTypography.headline1,
                         ),
                         const SizedBox(height: 8),
                         Text(
                           isSignUp.value
-                              ? 'Creez votre compte'
-                              : 'Connectez-vous avec votre email',
+                              ? l10n.loginSubtitleSignUp
+                              : l10n.loginSubtitleSignIn,
                           style: AppTypography.body1.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -108,47 +108,47 @@ class LoginScreen extends HookConsumerWidget {
                         ),
                         const SizedBox(height: 48),
                         Text(
-                          'Email',
+                          l10n.emailLabel,
                           style: AppTypography.label,
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: emailController,
                           keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            hintText: 'vous@exemple.com',
-                            prefixIcon: Icon(Icons.email),
+                          decoration: InputDecoration(
+                            hintText: l10n.emailHint,
+                            prefixIcon: const Icon(Icons.email),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer votre email';
+                              return l10n.validationEmailRequired;
                             }
                             final v = value.trim();
                             if (!v.contains('@') || !v.contains('.')) {
-                              return 'Email invalide';
+                              return l10n.validationEmailInvalid;
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Mot de passe',
+                          l10n.passwordLabel,
                           style: AppTypography.label,
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: passwordController,
                           obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: '••••••••',
-                            prefixIcon: Icon(Icons.lock),
+                          decoration: InputDecoration(
+                            hintText: l10n.passwordHint,
+                            prefixIcon: const Icon(Icons.lock),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer votre mot de passe';
+                              return l10n.validationPasswordRequired;
                             }
                             if (value.length < 6) {
-                              return 'Mot de passe trop court';
+                              return l10n.validationPasswordTooShort;
                             }
                             return null;
                           },
@@ -167,8 +167,8 @@ class LoginScreen extends HookConsumerWidget {
                                 )
                               : Text(
                                   isSignUp.value
-                                      ? 'Creer un compte'
-                                      : 'Se connecter',
+                                      ? l10n.signUp
+                                      : l10n.signIn,
                                 ),
                         ),
                         const SizedBox(height: 16),
@@ -178,8 +178,8 @@ class LoginScreen extends HookConsumerWidget {
                               : () => isSignUp.value = !isSignUp.value,
                           child: Text(
                             isSignUp.value
-                                ? 'J\'ai deja un compte'
-                                : 'Creer un compte',
+                                ? l10n.loginToggleToSignIn
+                                : l10n.loginToggleToSignUp,
                             style: AppTypography.body2.copyWith(
                               color: AppColors.primary,
                             ),

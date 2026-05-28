@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../core/models/lapin.dart';
 import '../../core/models/race.dart';
 import '../../core/utils/idempotency_key.dart';
+import '../../core/utils/error_mapper.dart';
 import '../../core/utils/sync_manager.dart';
 import 'core_providers.dart';
 
@@ -42,7 +43,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
       if (!connectivity.isOnline) {
         return cache.getLapins(userId: userId);
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 
@@ -123,7 +124,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return optimistic;
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 
@@ -178,7 +179,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return optimistic;
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 
@@ -221,7 +222,7 @@ class LapinsController extends AsyncNotifier<List<Lapin>> {
         );
         return;
       }
-      rethrow;
+      throw humanizeError(e as Object);
     }
   }
 

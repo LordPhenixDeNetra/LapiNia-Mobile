@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,6 +20,7 @@ class SaillieFormScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMereId = useState<String?>(mereId);
     final selectedPereId = useState<String?>(null);
     final dateSaillie = useState<DateTime>(DateTime.now());
@@ -83,7 +85,7 @@ class SaillieFormScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nouvelle saillie'),
+        title: Text(l10n.newSaillie),
       ),
       body: lapins.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -150,7 +152,7 @@ class SaillieFormScreen extends HookConsumerWidget {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: isSaving.value ? null : submit,
-                child: const Text('Enregistrer'),
+                child: Text(l10n.save),
               ),
             ],
           ),

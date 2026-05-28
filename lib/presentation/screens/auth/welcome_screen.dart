@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lapinia_mobile/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -9,6 +10,8 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -40,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Votre assistant intelligent\nd\'élevage cunicole',
+                l10n.welcomeTagline,
                 textAlign: TextAlign.center,
                 style: AppTypography.body1.copyWith(
                   color: Theme.of(context)
@@ -52,13 +55,13 @@ class WelcomeScreen extends StatelessWidget {
               const Spacer(),
               ElevatedButton(
                 onPressed: () => context.push('/login'),
-                child: const Text('Commencer'),
+                child: Text(l10n.welcomeStart),
               ),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => context.push('/login'),
                 child: Text(
-                  'J\'ai déjà un compte',
+                  l10n.welcomeAlreadyAccount,
                   style: AppTypography.body2.copyWith(
                     color: AppColors.primary,
                   ),
@@ -81,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Fonctionne hors-ligne',
+                        l10n.welcomeOfflineNotice,
                         style: AppTypography.caption.copyWith(
                           color: AppColors.alert,
                         ),
