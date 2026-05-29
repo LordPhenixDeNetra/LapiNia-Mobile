@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ import 'data/local_db/app_database.dart';
 import 'domain/services/session_service.dart';
 import 'presentation/router/router_provider.dart';
 import 'presentation/providers/theme_provider.dart';
+
+bool? _isSyncFunctionAvailable;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -191,13 +194,76 @@ class _MissingSupabaseConfigApp extends StatelessWidget {
 
 Future<dynamic> _apiCall(String table, MutationType op, String payload, String idempotencyKey) async {
   final supabase = Supabase.instance.client;
+  if (_isSyncFunctionAvailable == false) {
+    return _postgrestFallback(supabase: supabase, table: table, op: op, payload: payload);
+  }
+
   final data = {'table': table, 'operation': op.name, 'payload': payload};
-  
-  return await supabase.functions.invoke(
-    'sync',
-    body: data,
-    headers: {'Idempotency-Key': idempotencyKey},
-  );
+
+  try {
+    final res = await supabase.functions.invoke(
+      'sync',
+      body: data,
+      headers: {'Idempotency-Key': idempotencyKey},
+    );
+
+    if (res.status == 404) {
+      _isSyncFunctionAvailable = false;
+      return _postgrestFallback(supabase: supabase, table: table, op: op, payload: payload);
+    }
+
+    _isSyncFunctionAvailable = true;
+    return res.data;
+  } catch (e) {
+    final raw = e.toString().toLowerCase();
+    final isMissingFunction = raw.contains('functions') &&
+        (raw.contains('404') || raw.contains('not found') || raw.contains('missing'));
+
+    if (isMissingFunction) {
+      _isSyncFunctionAvailable = false;
+      return _postgrestFallback(supabase: supabase, table: table, op: op, payload: payload);
+    }
+    rethrow;
+  }
+}
+
+Future<void> _postgrestFallback({
+  required SupabaseClient supabase,
+  required String table,
+  required MutationType op,
+  required String payload,
+}) async {
+  final decoded = jsonDecode(payload);
+  if (decoded is! Map) {
+    throw Exception('Payload JSON invalide pour "$table" (${op.name})');
+  }
+
+  final data = Map<String, dynamic>.from(decoded);
+
+  switch (op) {
+    case MutationType.insert:
+      if (data.containsKey('id') && data['id'] != null) {
+        await supabase.from(table).upsert(data, onConflict: 'id');
+        return;
+      }
+      await supabase.from(table).insert(data);
+      return;
+    case MutationType.update:
+      final id = data['id'];
+      if (id == null) {
+        throw Exception('Update sans "id" pour "$table"');
+      }
+      final updateData = Map<String, dynamic>.from(data)..remove('id');
+      await supabase.from(table).update(updateData).eq('id', id);
+      return;
+    case MutationType.delete:
+      final id = data['id'];
+      if (id == null) {
+        throw Exception('Delete sans "id" pour "$table"');
+      }
+      await supabase.from(table).delete().eq('id', id);
+      return;
+  }
 }
 
 class LapiNiaApp extends HookConsumerWidget {

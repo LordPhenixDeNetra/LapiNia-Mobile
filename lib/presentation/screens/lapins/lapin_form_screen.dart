@@ -14,10 +14,12 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
+import '../../../core/models/race.dart';
 import '../../../core/utils/sync_manager.dart';
 import '../../../domain/services/lapin_photo_service.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/lapin_provider.dart';
+import '../../widgets/common/loading_widget.dart';
 
 class LapinFormScreen extends HookConsumerWidget {
   final String? lapinId;
@@ -251,13 +253,25 @@ class LapinFormScreen extends HookConsumerWidget {
     }
 
     final loading = races.isLoading || (lapinDetail?.isLoading ?? false);
+    final racesError = races.asError?.error;
+    final lapinDetailError = lapinDetail?.asError?.error;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Modifier le lapin' : 'Nouveau lapin'),
       ),
       body: loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const LoadingWidget()
+          : racesError != null
+              ? ErrorDisplayWidget(
+                  message: racesError.toString(),
+                  onRetry: () => ref.invalidate(racesProvider),
+                )
+              : lapinDetailError != null
+                  ? ErrorDisplayWidget(
+                      message: lapinDetailError.toString(),
+                      onRetry: () => ref.invalidate(lapinDetailProvider(currentLapinId)),
+                    )
           : Stepper(
               currentStep: currentStep.value,
               onStepTapped: (i) => currentStep.value = i,
@@ -286,6 +300,9 @@ class LapinFormScreen extends HookConsumerWidget {
                   children: [
                     ElevatedButton(
                       onPressed: isSaving.value ? null : details.onStepContinue,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(0, 56),
+                      ),
                       child: Text(currentStep.value == 2
                           ? (isEditing ? l10n.commonUpdate : l10n.commonCreate)
                           : l10n.commonNext),
@@ -334,13 +351,22 @@ class LapinFormScreen extends HookConsumerWidget {
                           },
                         ),
                         const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          initialValue: selectedRaceId.value,
+                        Builder(
+                          builder: (context) {
+                            final raceItems = races.asData?.value ?? const <Race>[];
+                            final selected = selectedRaceId.value;
+                            final initialValue = selected != null &&
+                                    raceItems.any((r) => r.id == selected)
+                                ? selected
+                                : null;
+
+                            return DropdownButtonFormField<String>(
+                              initialValue: initialValue,
                           decoration: InputDecoration(
                             labelText: l10n.lapinFieldRace,
                             prefixIcon: Icon(Icons.category),
                           ),
-                          items: (races.asData?.value ?? const [])
+                              items: raceItems
                               .map(
                                 (race) => DropdownMenuItem(
                                   value: race.id,
@@ -349,6 +375,8 @@ class LapinFormScreen extends HookConsumerWidget {
                               )
                               .toList(),
                           onChanged: (value) => selectedRaceId.value = value,
+                            );
+                          },
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -472,11 +500,23 @@ class LapinFormScreen extends HookConsumerWidget {
                               l.sexe == SexeLapin.femelle && l.id != currentLapinId)
                           .toList();
 
+                      final pereSelected = selectedPereId.value;
+                      final pereInitialValue = pereSelected != null &&
+                              pereOptions.any((l) => l.id == pereSelected)
+                          ? pereSelected
+                          : null;
+
+                      final mereSelected = selectedMereId.value;
+                      final mereInitialValue = mereSelected != null &&
+                              mereOptions.any((l) => l.id == mereSelected)
+                          ? mereSelected
+                          : null;
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DropdownButtonFormField<String?>(
-                            initialValue: selectedPereId.value,
+                            initialValue: pereInitialValue,
                             decoration: InputDecoration(
                               labelText: l10n.lapinFormFatherOptional,
                               prefixIcon: Icon(Icons.male),
@@ -502,7 +542,7 @@ class LapinFormScreen extends HookConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           DropdownButtonFormField<String?>(
-                            initialValue: selectedMereId.value,
+                            initialValue: mereInitialValue,
                             decoration: InputDecoration(
                               labelText: l10n.lapinFormMotherOptional,
                               prefixIcon: Icon(Icons.female),

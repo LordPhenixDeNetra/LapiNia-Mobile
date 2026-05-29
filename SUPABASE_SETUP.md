@@ -161,3 +161,29 @@ Si l’app affiche des erreurs du genre “permission denied”, “RLS”, ou q
 - `supabase/migrations/003_permissions_rls_fix.sql`
 
 2) Relance l’app et réessaie de créer un lapin.
+
+## Étape F — Activer la synchronisation idempotente (Edge Function `sync`)
+
+Depuis la P1 “Lapins”, l’app peut envoyer les mutations (create/update/delete) via une Edge Function `sync` avec un header `Idempotency-Key`, afin d’avoir un comportement online/offline plus robuste.
+
+Si tu es sur une instance Supabase auto-hébergée sans Edge Functions, l’app retombe automatiquement sur un mode “direct DB” (PostgREST) et continue de fonctionner. Dans ce mode, l’idempotency côté serveur n’est pas garantie (mais les opérations restent sûres car l’app envoie des IDs stables et utilise des upserts quand c’est possible).
+
+### F1 — Créer la table `idempotency_keys`
+
+Dans Supabase Studio → SQL Editor, exécute :
+- [004_idempotency_keys.sql](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/supabase/migrations/004_idempotency_keys.sql)
+
+### F2 — Déployer l’Edge Function `sync`
+
+Code de la function :
+- [sync/index.ts](file:///n:/AndroidStudioProjects/Flutter/lapinia_mobile/supabase/functions/sync/index.ts)
+
+Selon ton setup :
+- Supabase Cloud : déployer via la CLI `supabase functions deploy sync`
+- Supabase auto-hébergé : déployer l’infra Edge Functions (edge-runtime) + exposer `/functions/v1/*` via ton reverse-proxy. Le menu “Edge Functions” n’apparaît pas toujours dans Studio si ce composant n’est pas installé.
+
+## Étape G — Storage (photos lapins)
+
+Pour activer l’upload des photos :
+- créer un bucket Storage public nommé `lapins`
+- configurer les policies Storage pour autoriser l’upload par les utilisateurs authentifiés
