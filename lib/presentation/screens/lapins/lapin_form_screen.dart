@@ -273,6 +273,7 @@ class LapinFormScreen extends HookConsumerWidget {
                       onRetry: () => ref.invalidate(lapinDetailProvider(currentLapinId)),
                     )
           : Stepper(
+              physics: const ClampingScrollPhysics(),
               currentStep: currentStep.value,
               onStepTapped: (i) => currentStep.value = i,
               onStepContinue: () async {
@@ -296,25 +297,32 @@ class LapinFormScreen extends HookConsumerWidget {
                 currentStep.value -= 1;
               },
               controlsBuilder: (context, details) {
-                return Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: isSaving.value ? null : details.onStepContinue,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 56),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      ElevatedButton(
+                        onPressed: isSaving.value ? null : details.onStepContinue,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(160, 56),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                        child: Text(
+                          currentStep.value == 2
+                              ? (isEditing ? l10n.commonUpdate : l10n.commonCreate)
+                              : l10n.commonNext,
+                        ),
                       ),
-                      child: Text(currentStep.value == 2
-                          ? (isEditing ? l10n.commonUpdate : l10n.commonCreate)
-                          : l10n.commonNext),
-                    ),
-                    const SizedBox(width: 12),
-                    TextButton(
-                      onPressed: isSaving.value ? null : details.onStepCancel,
-                      child: Text(
-                        currentStep.value == 0 ? l10n.cancel : l10n.commonBack,
+                      TextButton(
+                        onPressed: isSaving.value ? null : details.onStepCancel,
+                        child: Text(
+                          currentStep.value == 0 ? l10n.cancel : l10n.commonBack,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               },
               steps: [
@@ -350,7 +358,7 @@ class LapinFormScreen extends HookConsumerWidget {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Builder(
                           builder: (context) {
                             final raceItems = races.asData?.value ?? const <Race>[];
@@ -362,6 +370,7 @@ class LapinFormScreen extends HookConsumerWidget {
 
                             return DropdownButtonFormField<String>(
                               initialValue: initialValue,
+                              isExpanded: true,
                           decoration: InputDecoration(
                             labelText: l10n.lapinFieldRace,
                             prefixIcon: Icon(Icons.category),
@@ -370,15 +379,29 @@ class LapinFormScreen extends HookConsumerWidget {
                               .map(
                                 (race) => DropdownMenuItem(
                                   value: race.id,
-                                  child: Text(race.nom),
+                                      child: Text(
+                                        race.nom,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                 ),
                               )
                               .toList(),
+                              selectedItemBuilder: (context) => [
+                                for (final race in raceItems)
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      race.nom,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                              ],
                           onChanged: (value) => selectedRaceId.value = value,
                             );
                           },
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Text(
                           l10n.lapinFieldSexe,
                           style: AppTypography.label,
