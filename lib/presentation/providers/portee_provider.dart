@@ -3,10 +3,12 @@ import 'dart:convert';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../core/constants/enums.dart';
 import '../../core/models/portee.dart';
 import '../../core/utils/error_mapper.dart';
 import '../../core/utils/sync_manager.dart';
 import 'core_providers.dart';
+import 'lapin_provider.dart';
 
 class PorteesController extends AsyncNotifier<List<Portee>> {
   @override
@@ -87,33 +89,31 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
       'updated_at': now.toIso8601String(),
     };
 
-    if (!connectivity.isOnline) {
-      await syncManager.addMutation(
-        tableName: 'portees',
-        operation: MutationType.insert,
-        payload: jsonEncode(data),
-      );
-      return;
-    }
+    await syncManager.addMutation(
+      tableName: 'portees',
+      operation: MutationType.insert,
+      payload: jsonEncode(data),
+    );
 
-    try {
-      await supabase.from('portees').insert(data);
-      await supabase
-          .from('lapins')
-          .update({'statut': 'EN_GESTATION'})
-          .eq('id', optimistic.mereId);
-      await refresh();
-    } catch (e) {
-      await connectivity.checkConnectivity();
-      if (!connectivity.isOnline) {
-        await syncManager.addMutation(
-          tableName: 'portees',
-          operation: MutationType.insert,
-          payload: jsonEncode(data),
+    await ref.read(lapinsProvider.notifier).setLapinStatutOptimistic(
+          lapinId: optimistic.mereId,
+          statut: StatutLapin.enGestation,
         );
-        return;
-      }
-      throw humanizeError(e);
+
+    await syncManager.addMutation(
+      tableName: 'lapins',
+      operation: MutationType.update,
+      payload: jsonEncode({
+        'id': optimistic.mereId,
+        'user_id': userId,
+        'statut': StatutLapin.enGestation.dbValue,
+        'updated_at': now.toIso8601String(),
+      }),
+    );
+
+    if (connectivity.isOnline) {
+      unawaited(refresh());
+      unawaited(ref.read(lapinsProvider.notifier).refresh());
     }
   }
 
@@ -125,37 +125,130 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     required int nbMorts,
     required int poidsTotalG,
   }) async {
-    final supabase = ref.read(supabaseClientProvider);
     final connectivity = ref.read(connectivityCheckerProvider);
-    if (!connectivity.isOnline) {
-      throw Exception('Action indisponible hors ligne');
+    final supabase = ref.read(supabaseClientProvider);
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('User not authenticated');
     }
 
-    await supabase.from('portees').update({
-      'date_mise_bas_reelle': dateMiseBas.toIso8601String().split('T')[0],
-      'nb_vivants': nbVivants,
-      'nb_morts': nbMorts,
-      'poids_total_portee_g': poidsTotalG,
-      'statut': 'LACTATION',
-    }).eq('id', porteeId);
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
 
-    await supabase.from('lapins').update({'statut': 'LACTATION'}).eq('id', mereId);
-    await refresh();
+    final now = DateTime.now();
+    final current = state.asData?.value ?? const [];
+    final index = current.indexWhere((p) => p.id == porteeId);
+    if (index != -1) {
+      final updatedPortee = current[index].copyWith(
+        dateMiseBasReelle: dateMiseBas,
+        nbVivants: nbVivants,
+        nbMorts: nbMorts,
+        poidsTotalPorteeG: poidsTotalG,
+        statut: StatutPortee.lactation,
+        updatedAt: now,
+      );
+      state = AsyncValue.data([
+        for (final p in current) if (p.id == porteeId) updatedPortee else p,
+      ]);
+      await cache.upsertPortee(updatedPortee);
+    }
+
+    await ref.read(lapinsProvider.notifier).setLapinStatutOptimistic(
+          lapinId: mereId,
+          statut: StatutLapin.lactation,
+        );
+
+    await syncManager.addMutation(
+      tableName: 'portees',
+      operation: MutationType.update,
+      payload: jsonEncode({
+        'id': porteeId,
+        'user_id': userId,
+        'date_mise_bas_reelle': dateMiseBas.toIso8601String().split('T')[0],
+        'nb_vivants': nbVivants,
+        'nb_morts': nbMorts,
+        'poids_total_portee_g': poidsTotalG,
+        'statut': StatutPortee.lactation.dbValue,
+        'updated_at': now.toIso8601String(),
+      }),
+    );
+
+    await syncManager.addMutation(
+      tableName: 'lapins',
+      operation: MutationType.update,
+      payload: jsonEncode({
+        'id': mereId,
+        'user_id': userId,
+        'statut': StatutLapin.lactation.dbValue,
+        'updated_at': now.toIso8601String(),
+      }),
+    );
+
+    if (connectivity.isOnline) {
+      unawaited(refresh());
+      unawaited(ref.read(lapinsProvider.notifier).refresh());
+    }
   }
 
   Future<void> recordSevrage({
     required String porteeId,
     required String mereId,
   }) async {
-    final supabase = ref.read(supabaseClientProvider);
     final connectivity = ref.read(connectivityCheckerProvider);
-    if (!connectivity.isOnline) {
-      throw Exception('Action indisponible hors ligne');
+    final supabase = ref.read(supabaseClientProvider);
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      throw Exception('User not authenticated');
     }
 
-    await supabase.from('portees').update({'statut': 'SEVRAGE'}).eq('id', porteeId);
-    await supabase.from('lapins').update({'statut': 'REPOS'}).eq('id', mereId);
-    await refresh();
+    final cache = ref.read(localCacheServiceProvider);
+    final syncManager = ref.read(syncManagerProvider);
+
+    final now = DateTime.now();
+    final current = state.asData?.value ?? const [];
+    final index = current.indexWhere((p) => p.id == porteeId);
+    if (index != -1) {
+      final updatedPortee = current[index].copyWith(
+        statut: StatutPortee.sevrage,
+        updatedAt: now,
+      );
+      state = AsyncValue.data([
+        for (final p in current) if (p.id == porteeId) updatedPortee else p,
+      ]);
+      await cache.upsertPortee(updatedPortee);
+    }
+
+    await ref.read(lapinsProvider.notifier).setLapinStatutOptimistic(
+          lapinId: mereId,
+          statut: StatutLapin.repos,
+        );
+
+    await syncManager.addMutation(
+      tableName: 'portees',
+      operation: MutationType.update,
+      payload: jsonEncode({
+        'id': porteeId,
+        'user_id': userId,
+        'statut': StatutPortee.sevrage.dbValue,
+        'updated_at': now.toIso8601String(),
+      }),
+    );
+
+    await syncManager.addMutation(
+      tableName: 'lapins',
+      operation: MutationType.update,
+      payload: jsonEncode({
+        'id': mereId,
+        'user_id': userId,
+        'statut': StatutLapin.repos.dbValue,
+        'updated_at': now.toIso8601String(),
+      }),
+    );
+
+    if (connectivity.isOnline) {
+      unawaited(refresh());
+      unawaited(ref.read(lapinsProvider.notifier).refresh());
+    }
   }
 }
 

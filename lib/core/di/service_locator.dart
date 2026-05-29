@@ -15,6 +15,7 @@ import '../../domain/services/file_share_service.dart';
 import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/planned_events_service.dart';
 import '../../domain/services/rentability_service.dart';
+import '../../domain/services/lapin_photo_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -62,5 +63,8 @@ Future<void> setupServiceLocator({
   );
   serviceLocator.registerSingleton<RentabilityService>(
     RentabilityService(supabase: serviceLocator<SupabaseClient>()),
+  );
+  serviceLocator.registerSingleton<LapinPhotoService>(
+    LapinPhotoService(supabase: serviceLocator<SupabaseClient>()),
   );
 }

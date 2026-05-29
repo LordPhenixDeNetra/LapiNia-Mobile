@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lapinia_mobile/l10n/app_localizations.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_typography.dart';
+import '../../../core/constants/enums.dart';
 import '../../../core/models/lapin.dart';
+import '../../../domain/services/lapin_photo_service.dart';
+import '../../providers/core_providers.dart';
 import '../../providers/lapin_provider.dart';
 import '../../widgets/common/connectivity_banner.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -78,6 +83,72 @@ class LapinDetailScreen extends ConsumerWidget {
       await ref.read(lapinsProvider.notifier).refresh();
     }
 
+    Future<ImageSource?> selectPhotoSource() async {
+      return showModalBottomSheet<ImageSource>(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_camera),
+                  title: Text(l10n.photoCamera),
+                  onTap: () => Navigator.pop(context, ImageSource.camera),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: Text(l10n.photoGallery),
+                  onTap: () => Navigator.pop(context, ImageSource.gallery),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    Future<void> changePhoto(Lapin lapin) async {
+      final connectivity = ref.read(connectivityCheckerProvider);
+      if (!connectivity.isOnline) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.photoChangeRequiresOnline)),
+        );
+        return;
+      }
+
+      final source = await selectPhotoSource();
+      if (source == null) return;
+
+      try {
+        final service = ref.read(lapinPhotoServiceProvider);
+        final filePath = await service.pickCropAndValidate(source: source);
+        if (filePath == null) return;
+        final url =
+            await service.uploadLapinPhoto(lapinId: lapin.id, filePath: filePath);
+
+        await ref
+            .read(lapinsProvider.notifier)
+            .updateLapin(lapin.copyWith(photoUrl: url));
+        ref.invalidate(lapinDetailProvider(lapinId));
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e is LapinPhotoException && e.error == LapinPhotoError.tooLarge
+                  ? l10n.photoTooLarge
+                  : e.toString(),
+            ),
+          ),
+        );
+      }
+    }
+
     return lapinAsync.when(
       loading: () => const Scaffold(
         body: LoadingWidget(),
@@ -85,81 +156,210 @@ class LapinDetailScreen extends ConsumerWidget {
       error: (e, _) => Scaffold(
         appBar: AppBar(title: Text(l10n.lapinTitle)),
         body: ErrorDisplayWidget(
-          message: e.toString(),
+          message: e is LapinOfflineNotFoundException
+              ? l10n.lapinOfflineNotFound
+              : e.toString(),
           onRetry: () => ref.invalidate(lapinDetailProvider(lapinId)),
         ),
       ),
       data: (lapin) {
         final poidsKg = lapin.poidsKg;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(lapin.nom),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () => context.push('/lapin/${lapin.id}/edit'),
+        final photoUrl = lapin.photoUrl?.trim();
+
+        return DefaultTabController(
+          length: 4,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(lapin.nom),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => context.push('/lapin/${lapin.id}/edit'),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.photo_camera_outlined),
+                  onPressed: () => changePhoto(lapin),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => deleteLapin(lapin),
+                ),
+              ],
+              bottom: TabBar(
+                tabs: [
+                  Tab(text: l10n.lapinTabGrowth),
+                  Tab(text: l10n.lapinTabHealth),
+                  Tab(text: l10n.lapinTabRepro),
+                  Tab(text: l10n.lapinTabInfo),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () => deleteLapin(lapin),
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: recordPesee,
-            icon: const Icon(Icons.scale),
-            label: Text(l10n.quickEventWeight),
-          ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              const ConnectivityBanner(),
-              const SizedBox(height: 12),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: recordPesee,
+              icon: const Icon(Icons.scale),
+              label: Text(l10n.quickEventWeight),
+            ),
+            body: Column(
+              children: [
+                const ConnectivityBanner(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Row(
                     children: [
-                      Text(l10n.lapinInfoSection, style: AppTypography.subtitle1),
-                      const SizedBox(height: 12),
-                      _row(context, l10n.lapinFieldRace, lapin.race?.nom ?? '—'),
-                      _row(context, l10n.lapinFieldSexe, lapin.sexe.label),
-                      _row(context, l10n.lapinFieldStatut, lapin.statut.label),
-                      _row(
-                        context,
-                        l10n.lapinFieldPoids,
-                        poidsKg != null
-                            ? '${poidsKg.toStringAsFixed(2)} kg'
-                            : '—',
+                      if (photoUrl != null && photoUrl.isNotEmpty)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(44),
+                          child: CachedNetworkImage(
+                            imageUrl: photoUrl,
+                            width: 88,
+                            height: 88,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 88,
+                              height: 88,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest
+                                  .withValues(alpha: 0.5),
+                            ),
+                            errorWidget: (context, url, error) => _photoFallback(lapin),
+                          ),
+                        )
+                      else
+                        _photoFallback(lapin),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(lapin.nom, style: AppTypography.headline3),
+                            const SizedBox(height: 4),
+                            Text(
+                              lapin.race?.nom ?? '—',
+                              style: AppTypography.body2.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      _row(context, l10n.lapinFieldAge, lapin.ageFormate ?? '—'),
-                      if (lapin.numeroIdentification != null)
-                        _row(context, l10n.lapinFieldId, lapin.numeroIdentification!),
                     ],
                   ),
                 ),
-              ),
-              if (lapin.notes != null && lapin.notes!.trim().isNotEmpty) ...[
                 const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(l10n.lapinNotesSection, style: AppTypography.subtitle1),
-                        const SizedBox(height: 8),
-                        Text(lapin.notes!, style: AppTypography.body2),
-                      ],
-                    ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      _placeholderTab(l10n: l10n, title: l10n.lapinTabGrowth),
+                      _placeholderTab(l10n: l10n, title: l10n.lapinTabHealth),
+                      _placeholderTab(l10n: l10n, title: l10n.lapinTabRepro),
+                      ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    l10n.lapinInfoSection,
+                                    style: AppTypography.subtitle1,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _row(context, l10n.lapinFieldRace,
+                                      lapin.race?.nom ?? '—'),
+                                  _row(context, l10n.lapinFieldSexe,
+                                      lapin.sexe.label),
+                                  _row(context, l10n.lapinFieldStatut,
+                                      lapin.statut.label),
+                                  _row(
+                                    context,
+                                    l10n.lapinFieldPoids,
+                                    poidsKg != null
+                                        ? '${poidsKg.toStringAsFixed(2)} kg'
+                                        : '—',
+                                  ),
+                                  _row(context, l10n.lapinFieldAge,
+                                      lapin.ageFormate ?? '—'),
+                                  if (lapin.numeroIdentification != null)
+                                    _row(
+                                      context,
+                                      l10n.lapinFieldId,
+                                      lapin.numeroIdentification!,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (lapin.notes != null &&
+                              lapin.notes!.trim().isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.lapinNotesSection,
+                                      style: AppTypography.subtitle1,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(lapin.notes!,
+                                        style: AppTypography.body2),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _placeholderTab({
+    required AppLocalizations l10n,
+    required String title,
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          l10n.comingSoonLabel(title),
+          style: AppTypography.body1,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _photoFallback(Lapin lapin) {
+    final isMale = lapin.sexe == SexeLapin.male;
+    return Container(
+      width: 88,
+      height: 88,
+      decoration: BoxDecoration(
+        color: isMale
+            ? const Color(0xFF2196F3).withValues(alpha: 0.12)
+            : const Color(0xFFE91E63).withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(44),
+      ),
+      child: Icon(
+        isMale ? Icons.male : Icons.female,
+        size: 40,
+        color: isMale ? const Color(0xFF2196F3) : const Color(0xFFE91E63),
+      ),
     );
   }
 

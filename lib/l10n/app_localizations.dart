@@ -962,6 +962,72 @@ abstract class AppLocalizations {
   /// **'Sombre'**
   String get themeDark;
 
+  /// No description provided for @commonNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get commonNext;
+
+  /// No description provided for @commonBack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retour'**
+  String get commonBack;
+
+  /// No description provided for @commonAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes'**
+  String get commonAll;
+
+  /// No description provided for @commonSelectDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner une date'**
+  String get commonSelectDate;
+
+  /// No description provided for @commonCreate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer'**
+  String get commonCreate;
+
+  /// No description provided for @commonUpdate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mettre à jour'**
+  String get commonUpdate;
+
+  /// No description provided for @photoCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Caméra'**
+  String get photoCamera;
+
+  /// No description provided for @photoGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie'**
+  String get photoGallery;
+
+  /// No description provided for @photoChangeRequiresOnline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion requise pour changer la photo'**
+  String get photoChangeRequiresOnline;
+
+  /// No description provided for @photoUploadRequiresOnline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion requise pour uploader la photo'**
+  String get photoUploadRequiresOnline;
+
+  /// No description provided for @photoTooLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Image trop lourde (max 200 Ko).'**
+  String get photoTooLarge;
+
   /// No description provided for @lapinsTitle.
   ///
   /// In fr, this message translates to:
@@ -985,6 +1051,144 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Poids (g)'**
   String get lapinWeightGramLabel;
+
+  /// No description provided for @lapinsFilterTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer'**
+  String get lapinsFilterTitle;
+
+  /// No description provided for @lapinsFilterStatut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get lapinsFilterStatut;
+
+  /// No description provided for @lapinsFilterRace.
+  ///
+  /// In fr, this message translates to:
+  /// **'Race'**
+  String get lapinsFilterRace;
+
+  /// No description provided for @lapinsFilterSexe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sexe'**
+  String get lapinsFilterSexe;
+
+  /// No description provided for @lapinsFilterReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser'**
+  String get lapinsFilterReset;
+
+  /// No description provided for @lapinsFilterApply.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appliquer'**
+  String get lapinsFilterApply;
+
+  /// No description provided for @lapinFormIdentityStep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Identité'**
+  String get lapinFormIdentityStep;
+
+  /// No description provided for @lapinFormParamsStep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paramètres'**
+  String get lapinFormParamsStep;
+
+  /// No description provided for @lapinFormGenealogyStep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Généalogie'**
+  String get lapinFormGenealogyStep;
+
+  /// No description provided for @lapinFieldNom.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get lapinFieldNom;
+
+  /// No description provided for @lapinFieldDateNaissance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de naissance'**
+  String get lapinFieldDateNaissance;
+
+  /// No description provided for @lapinFieldPoidsActuel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids actuel (grammes)'**
+  String get lapinFieldPoidsActuel;
+
+  /// No description provided for @lapinFieldNumeroIdentification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro d\'identification'**
+  String get lapinFieldNumeroIdentification;
+
+  /// No description provided for @lapinFormFatherOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'Père (optionnel)'**
+  String get lapinFormFatherOptional;
+
+  /// No description provided for @lapinFormMotherOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mère (optionnel)'**
+  String get lapinFormMotherOptional;
+
+  /// No description provided for @lapinFormNoneMasculine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun'**
+  String get lapinFormNoneMasculine;
+
+  /// No description provided for @lapinFormNoneFeminine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune'**
+  String get lapinFormNoneFeminine;
+
+  /// No description provided for @lapinValidationNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Veuillez entrer un nom'**
+  String get lapinValidationNameRequired;
+
+  /// No description provided for @lapinTabGrowth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Croissance'**
+  String get lapinTabGrowth;
+
+  /// No description provided for @lapinTabHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Santé'**
+  String get lapinTabHealth;
+
+  /// No description provided for @lapinTabRepro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repro'**
+  String get lapinTabRepro;
+
+  /// No description provided for @lapinTabInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Infos'**
+  String get lapinTabInfo;
+
+  /// No description provided for @comingSoonLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'{title} : à venir'**
+  String comingSoonLabel(String title);
 
   /// No description provided for @lapinInfoSection.
   ///
@@ -1033,6 +1237,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'ID'**
   String get lapinFieldId;
+
+  /// No description provided for @lapinOfflineNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapin introuvable hors ligne'**
+  String get lapinOfflineNotFound;
 
   /// No description provided for @lapinsSearchHint.
   ///

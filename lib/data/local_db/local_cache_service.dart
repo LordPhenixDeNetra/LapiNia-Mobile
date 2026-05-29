@@ -11,6 +11,22 @@ class LocalCacheService {
 
   LocalCacheService({required this.db});
 
+  Future<Lapin?> getLapinById({
+    required String userId,
+    required String lapinId,
+  }) async {
+    final row = await (db.select(db.lapinsLocal)
+          ..where(
+            (t) =>
+                t.id.equals(lapinId) &
+                t.userId.equals(userId) &
+                t.isDeleted.equals(false),
+          ))
+        .getSingleOrNull();
+    if (row == null) return null;
+    return Lapin.fromJson(jsonDecode(row.data) as Map<String, dynamic>);
+  }
+
   Future<List<Lapin>> getLapins({required String userId}) async {
     final rows = await (db.select(db.lapinsLocal)
           ..where((t) => t.userId.equals(userId) & t.isDeleted.equals(false))
@@ -41,6 +57,21 @@ class LocalCacheService {
     final now = DateTime.now();
     await (db.update(db.lapinsLocal)..where((t) => t.id.equals(id))).write(
       LapinsLocalCompanion(
+        userId: Value(userId),
+        updatedAt: Value(now),
+        isDeleted: const Value(true),
+      ),
+    );
+
+    await (db.update(db.peseesLocal)..where((t) => t.lapinId.equals(id))).write(
+      PeseesLocalCompanion(
+        userId: Value(userId),
+        updatedAt: Value(now),
+        isDeleted: const Value(true),
+      ),
+    );
+    await (db.update(db.santeLocal)..where((t) => t.lapinId.equals(id))).write(
+      SanteLocalCompanion(
         userId: Value(userId),
         updatedAt: Value(now),
         isDeleted: const Value(true),

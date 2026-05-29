@@ -9,6 +9,7 @@ import '../../data/local_db/app_database.dart';
 import '../../data/local_db/local_cache_service.dart';
 import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/file_share_service.dart';
+import '../../domain/services/lapin_photo_service.dart';
 import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/planned_events_service.dart';
@@ -42,6 +43,10 @@ final themeServiceProvider = Provider<ThemeService>((ref) {
 
 final fileShareServiceProvider = Provider<FileShareService>((ref) {
   return serviceLocator<FileShareService>();
+});
+
+final lapinPhotoServiceProvider = Provider<LapinPhotoService>((ref) {
+  return serviceLocator<LapinPhotoService>();
 });
 
 final databaseProvider = Provider<AppDatabase>((ref) {

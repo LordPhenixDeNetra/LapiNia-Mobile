@@ -4,11 +4,11 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
-import '../../../core/models/lapin.dart';
+import '../../../core/models/race.dart';
 import '../../providers/lapin_provider.dart';
+import '../../widgets/lapin_card.dart';
 import '../../widgets/common/loading_widget.dart';
 import '../../widgets/common/connectivity_banner.dart';
 
@@ -20,10 +20,15 @@ class LapinListScreen extends HookConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final searchQuery = useState('');
-    final selectedStatut = useState<String?>(null);
-    final selectedSexe = useState<String?>(null);
+    final selectedStatut = useState<StatutLapin?>(null);
+    final selectedSexe = useState<SexeLapin?>(null);
+    final selectedRaceId = useState<String?>(null);
 
     final lapinsState = ref.watch(lapinsProvider);
+    final racesState = ref.watch(racesProvider);
+    final racesById = {
+      for (final r in racesState.asData?.value ?? const <Race>[]) r.id: r.nom,
+    };
 
     return Scaffold(
       appBar: AppBar(
@@ -33,8 +38,15 @@ class LapinListScreen extends HookConsumerWidget {
             icon: const Icon(Icons.filter_list),
             onPressed: () => _showFilterBottomSheet(
               context: context,
+              races: racesState.asData?.value ?? const [],
               selectedStatut: selectedStatut,
               selectedSexe: selectedSexe,
+              selectedRaceId: selectedRaceId,
+              onApply: () => ref.read(lapinsProvider.notifier).setFilters(
+                    statut: selectedStatut.value,
+                    sexe: selectedSexe.value,
+                    raceId: selectedRaceId.value,
+                  ),
             ),
           ),
         ],
@@ -58,7 +70,9 @@ class LapinListScreen extends HookConsumerWidget {
               onChanged: (value) => searchQuery.value = value,
             ),
           ),
-          if (selectedStatut.value != null || selectedSexe.value != null)
+          if (selectedStatut.value != null ||
+              selectedSexe.value != null ||
+              selectedRaceId.value != null)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Wrap(
@@ -66,13 +80,41 @@ class LapinListScreen extends HookConsumerWidget {
                 children: [
                   if (selectedStatut.value != null)
                     Chip(
-                      label: Text(selectedStatut.value!),
-                      onDeleted: () => selectedStatut.value = null,
+                      label: Text(selectedStatut.value!.label),
+                      onDeleted: () {
+                        selectedStatut.value = null;
+                        ref.read(lapinsProvider.notifier).setFilters(
+                              statut: null,
+                              sexe: selectedSexe.value,
+                              raceId: selectedRaceId.value,
+                            );
+                      },
                     ),
                   if (selectedSexe.value != null)
                     Chip(
-                      label: Text(selectedSexe.value!),
-                      onDeleted: () => selectedSexe.value = null,
+                      label: Text(selectedSexe.value!.label),
+                      onDeleted: () {
+                        selectedSexe.value = null;
+                        ref.read(lapinsProvider.notifier).setFilters(
+                              statut: selectedStatut.value,
+                              sexe: null,
+                              raceId: selectedRaceId.value,
+                            );
+                      },
+                    ),
+                  if (selectedRaceId.value != null)
+                    Chip(
+                      label: Text(
+                        racesById[selectedRaceId.value] ?? selectedRaceId.value!,
+                      ),
+                      onDeleted: () {
+                        selectedRaceId.value = null;
+                        ref.read(lapinsProvider.notifier).setFilters(
+                              statut: selectedStatut.value,
+                              sexe: selectedSexe.value,
+                              raceId: null,
+                            );
+                      },
                     ),
                 ],
               ),
@@ -84,8 +126,8 @@ class LapinListScreen extends HookConsumerWidget {
                 message: e.toString(),
                 onRetry: () => ref.read(lapinsProvider.notifier).refresh(),
               ),
-              data: (items) {
-                var lapins = items;
+              data: (data) {
+                var lapins = data.items;
 
                 if (searchQuery.value.isNotEmpty) {
                   lapins = lapins
@@ -97,18 +139,6 @@ class LapinListScreen extends HookConsumerWidget {
                                     .contains(searchQuery.value.toLowerCase()) ??
                                 false),
                       )
-                      .toList();
-                }
-
-                if (selectedStatut.value != null) {
-                  lapins = lapins
-                      .where((l) => l.statut.label == selectedStatut.value)
-                      .toList();
-                }
-
-                if (selectedSexe.value != null) {
-                  lapins = lapins
-                      .where((l) => l.sexe.label == selectedSexe.value)
                       .toList();
                 }
 
@@ -126,10 +156,23 @@ class LapinListScreen extends HookConsumerWidget {
                   onRefresh: () => ref.read(lapinsProvider.notifier).refresh(),
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: lapins.length,
+                    itemCount: lapins.length + (data.hasMore ? 1 : 0),
                     itemBuilder: (context, index) {
+                      if (index >= lapins.length) {
+                        ref.read(lapinsProvider.notifier).loadMore();
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          ),
+                        );
+                      }
                       final lapin = lapins[index];
-                      return _buildLapinCard(context, lapin);
+                      return LapinCard(lapin: lapin);
                     },
                   ),
                 );
@@ -145,114 +188,15 @@ class LapinListScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildLapinCard(BuildContext context, Lapin lapin) {
-    final isMale = lapin.sexe == SexeLapin.male;
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () => context.push('/lapin/${lapin.id}'),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: isMale
-                      ? AppColors.maleColor.withValues(alpha: 0.1)
-                      : AppColors.femelleColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Icon(
-                  isMale ? Icons.male : Icons.female,
-                  color: isMale ? AppColors.maleColor : AppColors.femelleColor,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            lapin.nom,
-                            style: AppTypography.subtitle1,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getStatutColor(lapin.statut),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            lapin.statut.label,
-                            style: AppTypography.caption.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      lapin.race?.nom ?? 'Race inconnue',
-                      style: AppTypography.caption.copyWith(
-                        color: AppColors.greyMedium,
-                      ),
-                    ),
-                    if (lapin.poidsActuelG != null)
-                      Text(
-                        '${(lapin.poidsActuelG! / 1000).toStringAsFixed(2)} kg',
-                        style: AppTypography.body2,
-                      ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right,
-                color: AppColors.greyMedium,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getStatutColor(StatutLapin statut) {
-    switch (statut) {
-      case StatutLapin.repos:
-        return AppColors.statutRepos;
-      case StatutLapin.enGestation:
-        return AppColors.statutGestation;
-      case StatutLapin.lactation:
-        return AppColors.statutLactation;
-      case StatutLapin.malade:
-        return AppColors.statutMalade;
-      case StatutLapin.disponibleSaillie:
-        return AppColors.statutDisponible;
-      case StatutLapin.engraissement:
-        return AppColors.statutEngraissement;
-      default:
-        return AppColors.greyMedium;
-    }
-  }
-
   void _showFilterBottomSheet({
     required BuildContext context,
-    required ValueNotifier<String?> selectedStatut,
-    required ValueNotifier<String?> selectedSexe,
+    required List<Race> races,
+    required ValueNotifier<StatutLapin?> selectedStatut,
+    required ValueNotifier<SexeLapin?> selectedSexe,
+    required ValueNotifier<String?> selectedRaceId,
+    required VoidCallback onApply,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -268,25 +212,25 @@ class LapinListScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Filtrer',
+                    l10n.lapinsFilterTitle,
                     style: AppTypography.headline3,
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Statut',
+                    l10n.lapinsFilterStatut,
                     style: AppTypography.label,
                   ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     children: StatutLapin.values.map((statut) {
-                      final isSelected = selectedStatut.value == statut.label;
+                      final isSelected = selectedStatut.value == statut;
                       return FilterChip(
                         label: Text(statut.label),
                         selected: isSelected,
                         onSelected: (selected) {
                           setModalState(() {
-                            selectedStatut.value = selected ? statut.label : null;
+                            selectedStatut.value = selected ? statut : null;
                           });
                         },
                       );
@@ -294,20 +238,49 @@ class LapinListScreen extends HookConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Sexe',
+                    l10n.lapinsFilterRace,
+                    style: AppTypography.label,
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String?>(
+                    initialValue: selectedRaceId.value,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.category),
+                    ),
+                    items: [
+                      DropdownMenuItem<String?>(
+                        value: null,
+                        child: Text(l10n.commonAll),
+                      ),
+                      ...races.map(
+                        (race) => DropdownMenuItem<String?>(
+                          value: race.id,
+                          child: Text(race.nom),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setModalState(() {
+                        selectedRaceId.value = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.lapinsFilterSexe,
                     style: AppTypography.label,
                   ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     children: SexeLapin.values.map((sexe) {
-                      final isSelected = selectedSexe.value == sexe.label;
+                      final isSelected = selectedSexe.value == sexe;
                       return FilterChip(
                         label: Text(sexe.label),
                         selected: isSelected,
                         onSelected: (selected) {
                           setModalState(() {
-                            selectedSexe.value = selected ? sexe.label : null;
+                            selectedSexe.value = selected ? sexe : null;
                           });
                         },
                       );
@@ -322,16 +295,20 @@ class LapinListScreen extends HookConsumerWidget {
                             setModalState(() {
                               selectedStatut.value = null;
                               selectedSexe.value = null;
+                              selectedRaceId.value = null;
                             });
                           },
-                          child: const Text('Réinitialiser'),
+                          child: Text(l10n.lapinsFilterReset),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Appliquer'),
+                          onPressed: () {
+                            onApply();
+                            Navigator.pop(context);
+                          },
+                          child: Text(l10n.lapinsFilterApply),
                         ),
                       ),
                     ],

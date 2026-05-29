@@ -467,6 +467,41 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeDark => 'Sombre';
 
   @override
+  String get commonNext => 'Suivant';
+
+  @override
+  String get commonBack => 'Retour';
+
+  @override
+  String get commonAll => 'Toutes';
+
+  @override
+  String get commonSelectDate => 'Sélectionner une date';
+
+  @override
+  String get commonCreate => 'Créer';
+
+  @override
+  String get commonUpdate => 'Mettre à jour';
+
+  @override
+  String get photoCamera => 'Caméra';
+
+  @override
+  String get photoGallery => 'Galerie';
+
+  @override
+  String get photoChangeRequiresOnline =>
+      'Connexion requise pour changer la photo';
+
+  @override
+  String get photoUploadRequiresOnline =>
+      'Connexion requise pour uploader la photo';
+
+  @override
+  String get photoTooLarge => 'Image trop lourde (max 200 Ko).';
+
+  @override
   String get lapinsTitle => 'Mes Lapins';
 
   @override
@@ -477,6 +512,77 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get lapinWeightGramLabel => 'Poids (g)';
+
+  @override
+  String get lapinsFilterTitle => 'Filtrer';
+
+  @override
+  String get lapinsFilterStatut => 'Statut';
+
+  @override
+  String get lapinsFilterRace => 'Race';
+
+  @override
+  String get lapinsFilterSexe => 'Sexe';
+
+  @override
+  String get lapinsFilterReset => 'Réinitialiser';
+
+  @override
+  String get lapinsFilterApply => 'Appliquer';
+
+  @override
+  String get lapinFormIdentityStep => 'Identité';
+
+  @override
+  String get lapinFormParamsStep => 'Paramètres';
+
+  @override
+  String get lapinFormGenealogyStep => 'Généalogie';
+
+  @override
+  String get lapinFieldNom => 'Nom';
+
+  @override
+  String get lapinFieldDateNaissance => 'Date de naissance';
+
+  @override
+  String get lapinFieldPoidsActuel => 'Poids actuel (grammes)';
+
+  @override
+  String get lapinFieldNumeroIdentification => 'Numéro d\'identification';
+
+  @override
+  String get lapinFormFatherOptional => 'Père (optionnel)';
+
+  @override
+  String get lapinFormMotherOptional => 'Mère (optionnel)';
+
+  @override
+  String get lapinFormNoneMasculine => 'Aucun';
+
+  @override
+  String get lapinFormNoneFeminine => 'Aucune';
+
+  @override
+  String get lapinValidationNameRequired => 'Veuillez entrer un nom';
+
+  @override
+  String get lapinTabGrowth => 'Croissance';
+
+  @override
+  String get lapinTabHealth => 'Santé';
+
+  @override
+  String get lapinTabRepro => 'Repro';
+
+  @override
+  String get lapinTabInfo => 'Infos';
+
+  @override
+  String comingSoonLabel(String title) {
+    return '$title : à venir';
+  }
 
   @override
   String get lapinInfoSection => 'Infos';
@@ -501,6 +607,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get lapinFieldId => 'ID';
+
+  @override
+  String get lapinOfflineNotFound => 'Lapin introuvable hors ligne';
 
   @override
   String get lapinsSearchHint => 'Rechercher un lapin...';

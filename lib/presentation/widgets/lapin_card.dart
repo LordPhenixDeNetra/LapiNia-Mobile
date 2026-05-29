@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -21,6 +22,7 @@ class LapinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMale = lapin.sexe == SexeLapin.male;
+    final photoUrl = lapin.photoUrl?.trim();
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -31,21 +33,59 @@ class LapinCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: isMale
-                      ? AppColors.maleColor.withValues(alpha: 0.1)
-                      : AppColors.femelleColor.withValues(alpha: 0.1),
+              if (photoUrl != null && photoUrl.isNotEmpty)
+                ClipRRect(
                   borderRadius: BorderRadius.circular(30),
+                  child: CachedNetworkImage(
+                    imageUrl: photoUrl,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      width: 60,
+                      height: 60,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest
+                          .withValues(alpha: 0.5),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: isMale
+                            ? AppColors.maleColor.withValues(alpha: 0.1)
+                            : AppColors.femelleColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Icon(
+                        isMale ? Icons.male : Icons.female,
+                        color: isMale
+                            ? AppColors.maleColor
+                            : AppColors.femelleColor,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: isMale
+                        ? AppColors.maleColor.withValues(alpha: 0.1)
+                        : AppColors.femelleColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Icon(
+                    isMale ? Icons.male : Icons.female,
+                    color: isMale
+                        ? AppColors.maleColor
+                        : AppColors.femelleColor,
+                    size: 32,
+                  ),
                 ),
-                child: Icon(
-                  isMale ? Icons.male : Icons.female,
-                  color: isMale ? AppColors.maleColor : AppColors.femelleColor,
-                  size: 32,
-                ),
-              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

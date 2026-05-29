@@ -45,16 +45,7 @@
 
 **Lapins**
 
-- [ ] **(Flutter · P1)** Liste lapins paginée (`GET /rest/v1/lapins?user_id=eq.{id}&order=nom.asc&limit=20`) — cursor-based + pull-to-refresh
-- [ ] **(Flutter · P1)** Filtres liste lapins — statut, race, sexe (query params Supabase : `&statut=eq.EN_GESTATION`)
-- [ ] **(Flutter · P1)** Recherche lapins — filtre local sur nom + `numero_identification`
-- [ ] **(Flutter · P1)** Créer un lapin (`POST /rest/v1/lapins`) — formulaire 3 étapes (identité + paramètres + généalogie) + idempotency key
-- [ ] **(Flutter · P1)** Fiche lapin (`GET /rest/v1/lapins?id=eq.{id}&select=*,races(*)`) — onglets croissance / santé / reproductions / infos
-- [ ] **(Flutter · P1)** Modifier un lapin (`PATCH /rest/v1/lapins?id=eq.{id}`) — formulaire pré-rempli + validation
-- [ ] **(Flutter · P1)** Supprimer un lapin (`DELETE /rest/v1/lapins?id=eq.{id}`) — confirmation + cascade SQLite
-- [ ] **(Flutter · P1)** Photo lapin — upload (`POST /storage/v1/object/lapins/{id}`) caméra/galerie + compression + affichage `cached_network_image`
-- [ ] **(Flutter · P1)** Upload photo vers Supabase Storage — compression < 200 Ko avant envoi
-- [ ] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)
+- [ ] *(aucune pour le moment)*
 
 ***
 
@@ -328,3 +319,14 @@
 - [x] **(Flutter · P0)** Thème persisté — Système / Clair / Sombre (SharedPreferences) + application au démarrage
 - [x] **(Flutter · P0)** Écran Réglages — statut online/offline + compteur actions en attente + bouton “Synchroniser”
 - [x] **(Flutter · P1)** Nettoyage dark mode (base) — retrait des couleurs hardcodées sur écrans clés (Dashboard/Auth/Lapins/Portées)
+- **Lapins**
+- [x] **(Flutter · P1)** Liste lapins paginée (`GET /rest/v1/lapins?user_id=eq.{id}&order=nom.asc&limit=20`) — cursor-based + pull-to-refresh
+- [x] **(Flutter · P1)** Filtres liste lapins — statut, race, sexe (query params Supabase : `&statut=eq.EN_GESTATION`)
+- [x] **(Flutter · P1)** Recherche lapins — filtre local sur nom + `numero_identification`
+- [x] **(Flutter · P1)** Créer un lapin (`POST /rest/v1/lapins`) — formulaire 3 étapes (identité + paramètres + généalogie) + idempotency key
+- [x] **(Flutter · P1)** Fiche lapin (`GET /rest/v1/lapins?id=eq.{id}&select=*,races(*)`) — onglets croissance / santé / reproductions / infos
+- [x] **(Flutter · P1)** Modifier un lapin (`PATCH /rest/v1/lapins?id=eq.{id}`) — formulaire pré-rempli + validation
+- [x] **(Flutter · P1)** Supprimer un lapin (`DELETE /rest/v1/lapins?id=eq.{id}`) — confirmation + cascade SQLite
+- [x] **(Flutter · P1)** Photo lapin — upload (`POST /storage/v1/object/lapins/{id}`) caméra/galerie + compression + affichage `cached_network_image`
+- [x] **(Flutter · P1)** Upload photo vers Supabase Storage — compression < 200 Ko avant envoi
+- [x] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)

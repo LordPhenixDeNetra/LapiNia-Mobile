@@ -450,12 +450,12 @@ class DashboardScreen extends ConsumerWidget {
 
   Widget _buildKpiGrid({
     required BuildContext context,
-    required AsyncValue<List<Lapin>> lapins,
+    required AsyncValue<LapinsListState> lapins,
     required AsyncValue<List<Portee>> portees,
   }) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final lapinsList = lapins.asData?.value ?? const [];
+    final lapinsList = lapins.asData?.value.items ?? const [];
     final porteesList = portees.asData?.value ?? const [];
 
     final nbLapins = lapinsList.length;
@@ -773,7 +773,8 @@ class DashboardScreen extends ConsumerWidget {
       return;
     }
 
-    final lapins = ref.read(lapinsProvider).asData?.value ?? const <Lapin>[];
+    final lapins =
+        ref.read(lapinsProvider).asData?.value.items ?? const <Lapin>[];
     if (lapins.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.quickWeightNoLapins)),
@@ -879,7 +880,8 @@ class DashboardScreen extends ConsumerWidget {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
 
-    final lapins = ref.read(lapinsProvider).asData?.value ?? const <Lapin>[];
+    final lapins =
+        ref.read(lapinsProvider).asData?.value.items ?? const <Lapin>[];
     PlannedEventType type = PlannedEventType.weight;
     DateTime date = DateTime.now().add(const Duration(days: 1));
     String? targetId = lapins.isEmpty ? null : lapins.first.id;

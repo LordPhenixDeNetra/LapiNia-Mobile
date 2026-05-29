@@ -17,9 +17,10 @@ final dailyAdviceProvider = FutureProvider<String?>((ref) async {
   final profileService = ref.read(onboardingProfileServiceProvider);
   final profile = await profileService.getProfile();
 
-  final lapins = await ref.watch(lapinsProvider.future);
+  final lapinsState = await ref.watch(lapinsProvider.future);
   final portees = await ref.watch(porteesProvider.future);
 
+  final lapins = lapinsState.items;
   final gestantesCount =
       lapins.where((l) => l.statut == StatutLapin.enGestation).length;
   final context = <String, dynamic>{
@@ -42,11 +43,12 @@ final rentabilityScoreProvider = FutureProvider<RentabilityScore>((ref) async {
     return const RentabilityScore(score: 0, actions: <String>[]);
   }
 
-  final lapins = await ref.watch(lapinsProvider.future);
+  final lapinsState = await ref.watch(lapinsProvider.future);
   final portees = await ref.watch(porteesProvider.future);
   final pending = ref.watch(pendingMutationsProvider).asData?.value ?? 0;
   final isOnline = ref.watch(connectivityStatusProvider).asData?.value ?? true;
 
+  final lapins = lapinsState.items;
   final gestantesCount =
       lapins.where((l) => l.statut == StatutLapin.enGestation).length;
 
