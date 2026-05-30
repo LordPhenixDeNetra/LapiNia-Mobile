@@ -132,19 +132,17 @@ class PorteeDetailScreen extends HookConsumerWidget {
         return Scaffold(
           appBar: AppBar(
             title: Text(l10n.porteeDetailTitle),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.list),
-                onPressed: () {
-                  final router = GoRouter.of(context);
-                  if (router.canPop()) {
-                    router.pop();
-                    return;
-                  }
-                  context.go('/portees');
-                },
-              ),
-            ],
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                final router = GoRouter.of(context);
+                if (router.canPop()) {
+                  router.pop();
+                  return;
+                }
+                context.go('/portees');
+              },
+            ),
           ),
           body: ListView(
             padding: const EdgeInsets.all(16),
