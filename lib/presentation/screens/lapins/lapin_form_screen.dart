@@ -257,7 +257,9 @@ class LapinFormScreen extends HookConsumerWidget {
       }
     }
 
-    final loading = races.isLoading || (lapinDetail?.isLoading ?? false);
+    final racesData = races.asData?.value;
+    final lapinData = lapinDetail?.asData?.value;
+    final isInitialLoading = racesData == null || (isEditing && lapinData == null);
     final racesError = races.asError?.error;
     final lapinDetailError = lapinDetail?.asError?.error;
 
@@ -265,7 +267,7 @@ class LapinFormScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(isEditing ? 'Modifier le lapin' : 'Nouveau lapin'),
       ),
-      body: loading
+      body: isInitialLoading
           ? const LoadingWidget()
           : racesError != null
               ? ErrorDisplayWidget(
