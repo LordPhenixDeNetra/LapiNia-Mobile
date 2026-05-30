@@ -199,121 +199,142 @@ class LapinListScreen extends HookConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.lapinsFilterTitle,
-                    style: AppTypography.headline3,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.lapinsFilterStatut,
-                    style: AppTypography.label,
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: StatutLapin.values.map((statut) {
-                      final isSelected = selectedStatut.value == statut;
-                      return FilterChip(
-                        label: Text(statut.label),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setModalState(() {
-                            selectedStatut.value = selected ? statut : null;
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.lapinsFilterRace,
-                    style: AppTypography.label,
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String?>(
-                    initialValue: selectedRaceId.value,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.category),
-                    ),
-                    items: [
-                      DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text(l10n.commonAll),
-                      ),
-                      ...races.map(
-                        (race) => DropdownMenuItem<String?>(
-                          value: race.id,
-                          child: Text(race.nom),
-                        ),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setModalState(() {
-                        selectedRaceId.value = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.lapinsFilterSexe,
-                    style: AppTypography.label,
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: SexeLapin.values.map((sexe) {
-                      final isSelected = selectedSexe.value == sexe;
-                      return FilterChip(
-                        label: Text(sexe.label),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setModalState(() {
-                            selectedSexe.value = selected ? sexe : null;
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
+            final initialRaceId = races.any((r) => r.id == selectedRaceId.value)
+                ? selectedRaceId.value
+                : null;
+            final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: 24,
+                  bottom: 24 + bottomPadding,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            setModalState(() {
-                              selectedStatut.value = null;
-                              selectedSexe.value = null;
-                              selectedRaceId.value = null;
-                            });
-                          },
-                          child: Text(l10n.lapinsFilterReset),
-                        ),
+                      Text(
+                        l10n.lapinsFilterTitle,
+                        style: AppTypography.headline3,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            onApply();
-                            Navigator.pop(context);
-                          },
-                          child: Text(l10n.lapinsFilterApply),
+                      const SizedBox(height: 24),
+                      Text(
+                        l10n.lapinsFilterStatut,
+                        style: AppTypography.label,
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: StatutLapin.values.map((statut) {
+                          final isSelected = selectedStatut.value == statut;
+                          return FilterChip(
+                            label: Text(statut.label),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setModalState(() {
+                                selectedStatut.value = selected ? statut : null;
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.lapinsFilterRace,
+                        style: AppTypography.label,
+                      ),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String?>(
+                        initialValue: initialRaceId,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.category),
                         ),
+                        items: [
+                          DropdownMenuItem<String?>(
+                            value: null,
+                            child: Text(l10n.commonAll),
+                          ),
+                          ...races.map(
+                            (race) => DropdownMenuItem<String?>(
+                              value: race.id,
+                              child: Text(
+                                race.nom,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setModalState(() {
+                            selectedRaceId.value = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.lapinsFilterSexe,
+                        style: AppTypography.label,
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: SexeLapin.values.map((sexe) {
+                          final isSelected = selectedSexe.value == sexe;
+                          return FilterChip(
+                            label: Text(sexe.label),
+                            selected: isSelected,
+                            onSelected: (selected) {
+                              setModalState(() {
+                                selectedSexe.value = selected ? sexe : null;
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                setModalState(() {
+                                  selectedStatut.value = null;
+                                  selectedSexe.value = null;
+                                  selectedRaceId.value = null;
+                                });
+                              },
+                              child: Text(l10n.lapinsFilterReset),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                onApply();
+                                Navigator.pop(context);
+                              },
+                              child: Text(l10n.lapinsFilterApply),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             );
           },
