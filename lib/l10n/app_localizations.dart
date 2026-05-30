@@ -482,6 +482,12 @@ abstract class AppLocalizations {
   /// **'Aliments'**
   String get plusFeed;
 
+  /// No description provided for @plusQrScan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner QR'**
+  String get plusQrScan;
+
   /// No description provided for @plusSettings.
   ///
   /// In fr, this message translates to:
@@ -1399,6 +1405,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Races'**
   String get plusRaces;
+
+  /// No description provided for @qrLapinTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'QR code du lapin'**
+  String get qrLapinTitle;
+
+  /// No description provided for @qrShare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get qrShare;
+
+  /// No description provided for @qrPrint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Imprimer'**
+  String get qrPrint;
+
+  /// No description provided for @qrScanTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner un QR code'**
+  String get qrScanTitle;
+
+  /// No description provided for @qrScanInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'QR code non reconnu'**
+  String get qrScanInvalid;
 
   /// No description provided for @racesTitle.
   ///

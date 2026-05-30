@@ -30,6 +30,11 @@ class PlusScreen extends StatelessWidget {
             onTap: () => context.push('/aliments'),
           ),
           _Tile(
+            icon: Icons.qr_code_scanner,
+            title: l10n.plusQrScan,
+            onTap: () => context.push('/qr/scan'),
+          ),
+          _Tile(
             icon: Icons.pets_outlined,
             title: l10n.plusRaces,
             onTap: () => context.push('/races'),

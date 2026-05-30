@@ -57,10 +57,6 @@
 
 **QR Code & Traçabilité**
 
-- [ ] **(Flutter · P1)** Génération QR code (`qr_flutter`) — encodage `lapinia://lapin/{id}` à la création de chaque animal
-- [ ] **(Flutter · P1)** Affichage + partage QR code — écran plein écran + bouton partager image + bouton imprimer (Bluetooth)
-- [ ] **(Flutter · P1)** Scanner QR code (`mobile_scanner`) — accès direct fiche lapin depuis scan
-- [ ] **(Flutter · P1)** Identifiant unique auto-généré — format `{PAYS}-{ANNÉE}-{RACE}-{NUMÉRO}` (ex : `SN-2026-NZW-0042`)
 - [ ] **(Flutter · P2)** Passeport animal PDF (`POST /functions/v1/generate-passport`) — identité + pedigree + vaccins + performances + QR code + download
 - [ ] **(Flutter · P2)** Registre d'élevage officiel PDF (`POST /functions/v1/generate-registre`) — format DIREL Sénégal + export mensuel
 
@@ -328,6 +324,11 @@
 - [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques
 - [x] **(Flutter · P1)** Comparateur de races — sélection 2–3 races + tableau comparatif interactif selon objectif
 - [x] **(Flutter · P1)** Recommandation de race (`POST /functions/v1/recommend-race`) — basée sur région, objectif, ressources disponibles
+- **QR Code & Traçabilité**
+- [x] **(Flutter · P1)** Génération QR code (`qr_flutter`) — encodage `lapinia://lapin/{id}` à la création de chaque animal
+- [x] **(Flutter · P1)** Affichage + partage QR code — écran plein écran + bouton partager image + bouton imprimer (Bluetooth)
+- [x] **(Flutter · P1)** Scanner QR code (`mobile_scanner`) — accès direct fiche lapin depuis scan
+- [x] **(Flutter · P1)** Identifiant unique auto-généré — format `{PAYS}-{ANNÉE}-{RACE}-{NUMÉRO}` (ex : `SN-2026-NZW-0042`)
 - **Pesées & Croissance**
 - [x] **(Flutter · P1)** Ajouter pesée (`POST /rest/v1/pesees`) — saisie rapide poids en grammes + date + idempotency key
 - [x] **(Flutter · P1)** Liste pesées (`GET /rest/v1/pesees?lapin_id=eq.{id}&order=date.desc&limit=50`) — offset-based

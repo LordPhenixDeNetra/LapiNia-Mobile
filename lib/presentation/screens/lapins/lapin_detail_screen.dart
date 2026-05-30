@@ -242,6 +242,10 @@ class LapinDetailScreen extends ConsumerWidget {
               title: Text(lapin.nom),
               actions: [
                 IconButton(
+                  icon: const Icon(Icons.qr_code_2),
+                  onPressed: () => context.push('/lapin/${lapin.id}/qr'),
+                ),
+                IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () => context.push('/lapin/${lapin.id}/edit'),
                 ),

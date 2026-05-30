@@ -14,10 +14,12 @@ import '../screens/onboarding/onboarding_advice_screen.dart';
 import '../screens/lapins/lapin_detail_screen.dart';
 import '../screens/lapins/lapin_form_screen.dart';
 import '../screens/lapins/lapin_list_screen.dart';
+import '../screens/lapins/lapin_qr_screen.dart';
 import '../screens/main_shell_screen.dart';
 import '../screens/portees/portee_detail_screen.dart';
 import '../screens/portees/portee_list_screen.dart';
 import '../screens/portees/saillie_form_screen.dart';
+import '../screens/qr/qr_scanner_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/aliments/aliments_screen.dart';
 import '../screens/ia/ia_screen.dart';
@@ -59,6 +61,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(supabase.auth.onAuthStateChange),
     redirect: (context, state) {
+      final uri = state.uri;
+      if (uri.scheme == 'lapinia' && uri.host == 'lapin' && uri.pathSegments.isNotEmpty) {
+        final id = uri.pathSegments.first;
+        return '/lapin/$id';
+      }
+
       final location = state.matchedLocation;
       final isAuthenticated = supabase.auth.currentUser != null;
       final isSplash = location == '/splash';
@@ -115,6 +123,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return LapinFormScreen(lapinId: id);
+        },
+      ),
+      GoRoute(
+        path: '/lapin/:id/qr',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return LapinQrScreen(lapinId: id);
         },
       ),
       GoRoute(
@@ -205,6 +220,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/aliments',
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: AlimentsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/qr/scan',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: QrScannerScreen(),
                 ),
               ),
               GoRoute(

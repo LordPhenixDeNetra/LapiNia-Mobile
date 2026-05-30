@@ -16,6 +16,7 @@ import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/planned_events_service.dart';
 import '../../domain/services/rentability_service.dart';
 import '../../domain/services/lapin_photo_service.dart';
+import '../../domain/services/lapin_identifier_service.dart';
 import '../../domain/services/growth_prediction_service.dart';
 import '../../domain/services/race_recommendation_service.dart';
 
@@ -71,6 +72,9 @@ Future<void> setupServiceLocator({
       supabase: serviceLocator<SupabaseClient>(),
       config: serviceLocator<AppConfig>(),
     ),
+  );
+  serviceLocator.registerSingleton<LapinIdentifierService>(
+    LapinIdentifierService(),
   );
   serviceLocator.registerSingleton<GrowthPredictionService>(
     GrowthPredictionService(supabase: serviceLocator<SupabaseClient>()),

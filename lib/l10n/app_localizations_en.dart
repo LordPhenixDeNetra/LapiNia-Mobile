@@ -210,6 +210,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plusFeed => 'Feed';
 
   @override
+  String get plusQrScan => 'Scan QR';
+
+  @override
   String get plusSettings => 'Settings';
 
   @override
@@ -685,6 +688,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plusRaces => 'Breeds';
+
+  @override
+  String get qrLapinTitle => 'Rabbit QR code';
+
+  @override
+  String get qrShare => 'Share';
+
+  @override
+  String get qrPrint => 'Print';
+
+  @override
+  String get qrScanTitle => 'Scan a QR code';
+
+  @override
+  String get qrScanInvalid => 'Unrecognized QR code';
 
   @override
   String get racesTitle => 'Breeds';

@@ -51,5 +51,16 @@
 	<string>L’application a besoin d’accéder à vos photos pour sélectionner une image.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>L’application a besoin d’enregistrer des images dans votre photothèque.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>lapinia</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

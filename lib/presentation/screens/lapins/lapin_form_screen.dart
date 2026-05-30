@@ -55,6 +55,9 @@ class LapinFormScreen extends HookConsumerWidget {
     final races = ref.watch(racesProvider);
     final lapinDetail = isEditing ? ref.watch(lapinDetailProvider(lapinId!)) : null;
     final lapinsSelection = ref.watch(lapinsSelectionProvider);
+    final racesById = {
+      for (final r in races.asData?.value ?? const <Race>[]) r.id: r,
+    };
 
     useEffect(() {
       if (!isEditing) return null;
@@ -160,6 +163,18 @@ class LapinFormScreen extends HookConsumerWidget {
 
       isSaving.value = true;
       try {
+        if (!isEditing && numeroController.text.trim().isEmpty) {
+          final profile = await ref.read(onboardingProfileServiceProvider).getProfile();
+          final race = selectedRaceId.value != null ? racesById[selectedRaceId.value] : null;
+          final generator = ref.read(lapinIdentifierServiceProvider);
+          final numero = await generator.generateNumeroIdentification(
+            country: profile?.country,
+            year: DateTime.now().year,
+            raceCode: race?.nom,
+          );
+          numeroController.text = numero;
+        }
+
         final now = DateTime.now();
         final createdAt = isEditing
             ? (lapinDetail?.asData?.value.createdAt ?? now)
