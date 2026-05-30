@@ -195,6 +195,11 @@ class LapinDetailScreen extends ConsumerWidget {
                 ),
               ],
               bottom: TabBar(
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white70,
+                indicatorColor: Colors.white,
+                dividerColor: Colors.transparent,
+                indicatorWeight: 3,
                 tabs: [
                   Tab(text: l10n.lapinTabGrowth),
                   Tab(text: l10n.lapinTabHealth),
