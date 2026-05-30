@@ -117,12 +117,60 @@ class SaillieFormScreen extends HookConsumerWidget {
       }
     }
 
-    final femelles = (lapins.asData?.value.items ?? const [])
+    final allLapins = lapins.asData?.value.items ?? const [];
+
+    final femelles = allLapins
         .where((l) => l.sexe == SexeLapin.femelle && l.statut == StatutLapin.repos)
         .toList();
-    final males = (lapins.asData?.value.items ?? const [])
-        .where((l) => l.sexe == SexeLapin.male)
-        .toList();
+    final males = allLapins.where((l) => l.sexe == SexeLapin.male).toList();
+
+    final selectedMere = selectedMereId.value == null
+        ? null
+        : allLapins.where((l) => l.id == selectedMereId.value).cast().toList();
+    final selectedMereLapin = selectedMere == null || selectedMere.isEmpty ? null : selectedMere.first;
+
+    final femellesItems = <DropdownMenuItem<String>>[];
+    if (selectedMereLapin != null &&
+        !femelles.any((l) => l.id == selectedMereLapin.id)) {
+      femellesItems.add(
+        DropdownMenuItem(
+          value: selectedMereLapin.id,
+          child: Text(selectedMereLapin.nom),
+        ),
+      );
+    }
+    final seenFemelleIds = <String>{};
+    for (final l in femelles) {
+      if (seenFemelleIds.add(l.id)) {
+        femellesItems.add(
+          DropdownMenuItem(
+            value: l.id,
+            child: Text(l.nom),
+          ),
+        );
+      }
+    }
+
+    final safeSelectedMereId = femellesItems.any((e) => e.value == selectedMereId.value)
+        ? selectedMereId.value
+        : null;
+
+    final malesItems = <DropdownMenuItem<String>>[];
+    final seenMaleIds = <String>{};
+    for (final l in males) {
+      if (seenMaleIds.add(l.id)) {
+        malesItems.add(
+          DropdownMenuItem(
+            value: l.id,
+            child: Text(l.nom),
+          ),
+        );
+      }
+    }
+
+    final safeSelectedPereId = malesItems.any((e) => e.value == selectedPereId.value)
+        ? selectedPereId.value
+        : null;
 
     final consanguinityLabel = () {
       final r = consanguinity.value;
@@ -155,32 +203,18 @@ class SaillieFormScreen extends HookConsumerWidget {
               Text(l10n.femaleLabel, style: AppTypography.headline3),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                initialValue: selectedMereId.value,
+                initialValue: safeSelectedMereId,
                 decoration: const InputDecoration(prefixIcon: Icon(Icons.female)),
-                items: femelles
-                    .map(
-                      (l) => DropdownMenuItem(
-                        value: l.id,
-                        child: Text(l.nom),
-                      ),
-                    )
-                    .toList(),
+                items: femellesItems,
                 onChanged: (v) => selectedMereId.value = v,
               ),
               const SizedBox(height: 16),
               Text(l10n.maleLabel, style: AppTypography.headline3),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                initialValue: selectedPereId.value,
+                initialValue: safeSelectedPereId,
                 decoration: const InputDecoration(prefixIcon: Icon(Icons.male)),
-                items: males
-                    .map(
-                      (l) => DropdownMenuItem(
-                        value: l.id,
-                        child: Text(l.nom),
-                      ),
-                    )
-                    .toList(),
+                items: malesItems,
                 onChanged: (v) => selectedPereId.value = v,
               ),
               const SizedBox(height: 16),

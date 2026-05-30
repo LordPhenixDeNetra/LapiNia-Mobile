@@ -272,6 +272,7 @@
 - [x] Dashboard UX — sections Alertes/Prochaines portées harmonisées (Loading/Empty/Error) + lien “Voir tout” vers écran Alertes
 - [x] Écran “Alertes” — filtre (Non lues/Toutes) + actions rapides (action faite / marquer comme lue)
 - [x] Écran “Plus” — hub : Alertes + Aliments + Réglages
+- [x] Fix crash éphémère “dropdown saillie” — empêcher l’assert quand la femelle sélectionnée n’est plus dans la liste (statut qui change pendant sauvegarde)
 - **Dashboard**
 - [x] **(Flutter · P1)** Dashboard global — KPIs : nb lapins, gestantes, lapereaux attendus, prochaine naissance
 - [x] **(Flutter · P1)** Conseil IA du jour (`POST /functions/v1/daily-advice`) — carte avec cache 24h local (SQLite)
