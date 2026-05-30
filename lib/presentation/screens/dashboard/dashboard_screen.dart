@@ -14,6 +14,7 @@ import '../../../core/models/rentability_score.dart';
 import '../../providers/alerte_provider.dart';
 import '../../providers/dashboard_providers.dart';
 import '../../providers/lapin_provider.dart';
+import '../../providers/pesee_provider.dart';
 import '../../providers/portee_provider.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/settings_providers.dart';
@@ -833,6 +834,15 @@ class DashboardScreen extends ConsumerWidget {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: () async {
+                        final connectivity =
+                            ref.read(connectivityCheckerProvider);
+                        if (!connectivity.isOnline) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(l10n.quickWeightOffline)),
+                          );
+                          return;
+                        }
+
                         final raw = controller.text.trim();
                         final poids = int.tryParse(raw);
                         if (poids == null || poids <= 0) {
@@ -844,9 +854,17 @@ class DashboardScreen extends ConsumerWidget {
 
                         final messenger = ScaffoldMessenger.of(context);
                         try {
-                          await ref.read(lapinsProvider.notifier).recordPesee(
-                                lapinId: selectedId,
+                          Lapin? selectedLapin;
+                          for (final l in lapins) {
+                            if (l.id == selectedId) {
+                              selectedLapin = l;
+                              break;
+                            }
+                          }
+                          await ref.read(peseesProvider(selectedId).notifier).addPesee(
                                 poidsG: poids,
+                                date: DateTime.now(),
+                                gmqTargetG: selectedLapin?.race?.gmqCibleG,
                               );
                           if (!context.mounted) return;
                           Navigator.of(context).pop();

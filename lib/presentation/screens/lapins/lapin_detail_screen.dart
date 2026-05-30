@@ -366,10 +366,11 @@ class LapinDetailScreen extends ConsumerWidget {
                                   ),
                                   _row(context, l10n.lapinFieldAge,
                                       lapin.ageFormate ?? '—'),
+                                  _row(context, l10n.lapinFieldId, lapin.id),
                                   if (lapin.numeroIdentification != null)
                                     _row(
                                       context,
-                                      l10n.lapinFieldId,
+                                      l10n.lapinFieldNumeroIdentification,
                                       lapin.numeroIdentification!,
                                     ),
                                 ],
@@ -562,6 +563,11 @@ class LapinDetailScreen extends ConsumerWidget {
                       ),
                       if (connectivity.isOnline)
                         OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(0, 44),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
                           onPressed: () => _showGrowthPrediction(
                             context: context,
                             ref: ref,
