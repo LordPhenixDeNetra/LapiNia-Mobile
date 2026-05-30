@@ -329,4 +329,7 @@
 - [x] **(Flutter · P1)** Supprimer un lapin (`DELETE /rest/v1/lapins?id=eq.{id}`) — confirmation + cascade SQLite
 - [x] **(Flutter · P1)** Photo lapin — upload (`POST /storage/v1/object/lapins/{id}`) caméra/galerie + compression + affichage `cached_network_image`
 - [x] **(Flutter · P1)** Upload photo vers Supabase Storage — compression < 200 Ko avant envoi
+- [x] **(Flutter · P1)** Fix crash Android caméra/galerie (image\_cropper) — désactivation recadrage Android + sécurisation flux sélection photo
+- [x] **(Flutter · P1)** Fix 403 Storage (RLS) upload photo — chemin `lapins/<userId>/<lapinId>.jpg` + policies basées sur `storage.foldername(name)[1]`
+- [x] **(Flutter · P1)** Workaround upload Storage 403 (auto-hébergé) — upload HTTP direct avec headers `Authorization` + `apikey`
 - [x] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)

@@ -187,3 +187,46 @@ Selon ton setup :
 Pour activer l’upload des photos :
 - créer un bucket Storage public nommé `lapins`
 - configurer les policies Storage pour autoriser l’upload par les utilisateurs authentifiés
+
+### G1 — Policies Storage (RLS) recommandées
+
+Même si le bucket est “public”, l’upload est bloqué tant que les policies RLS sur `storage.objects` ne sont pas créées.
+
+L’app uploade les photos au chemin `lapins/<userId>/<lapinId>.jpg`.
+
+Dans Supabase Studio → SQL Editor, exécute :
+
+```sql
+drop policy if exists "lapins_storage_insert_own" on storage.objects;
+drop policy if exists "lapins_storage_update_own" on storage.objects;
+drop policy if exists "lapins_storage_delete_own" on storage.objects;
+
+create policy "lapins_storage_insert_own"
+on storage.objects
+for insert
+to authenticated
+with check (
+  bucket_id = 'lapins'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+create policy "lapins_storage_update_own"
+on storage.objects
+for update
+to authenticated
+using (
+  bucket_id = 'lapins'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+create policy "lapins_storage_delete_own"
+on storage.objects
+for delete
+to authenticated
+using (
+  bucket_id = 'lapins'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+```
+
+Si tu as déjà des policies “lapins_*”, garde seulement celles-ci pour éviter les doublons/confusions.

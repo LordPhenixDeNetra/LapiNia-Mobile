@@ -17,19 +17,11 @@ cat >"$FUNCTIONS_DIR/sync/index.ts" <<'EOF'
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-type Operation = 'insert' | 'update' | 'delete';
-
-function jsonResponse(data: unknown, status: number, headers: HeadersInit) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...headers, 'Content-Type': 'application/json' },
-  });
-}
-
 serve(async (req: Request) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, idempotency-key, Idempotency-Key',
+    'Access-Control-Allow-Headers':
+      'authorization, x-client-info, apikey, content-type, idempotency-key, Idempotency-Key',
   };
 
   if (req.method === 'OPTIONS') {
@@ -39,129 +31,145 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-    if (!supabaseUrl || !supabaseAnonKey || !serviceRoleKey) {
-      return jsonResponse(
-        { error: 'Missing required env vars (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY)' },
-        500,
-        corsHeaders,
-      );
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return new Response(JSON.stringify({ error: 'Missing Supabase env' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const idempotencyKey =
-      req.headers.get('Idempotency-Key') || req.headers.get('idempotency-key');
+      req.headers.get('Idempotency-Key') ?? req.headers.get('idempotency-key');
+    const authorization = req.headers.get('Authorization') ?? '';
 
-    if (!idempotencyKey || idempotencyKey.trim().length < 8) {
-      return jsonResponse({ error: 'Missing Idempotency-Key' }, 400, corsHeaders);
+    if (!authorization) {
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '').trim();
-    if (!token) {
-      return jsonResponse({ error: 'Missing Authorization header' }, 401, corsHeaders);
+    if (!idempotencyKey) {
+      return new Response(JSON.stringify({ error: 'Missing Idempotency-Key header' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: authorization,
+        },
+      },
     });
 
-    const adminClient = createClient(supabaseUrl, serviceRoleKey);
-
-    const { data: userRes, error: userError } = await userClient.auth.getUser();
-    if (userError || !userRes?.user) {
-      return jsonResponse({ error: 'Invalid user session' }, 401, corsHeaders);
+    const userRes = await supabase.auth.getUser();
+    const user = userRes.data.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Invalid user session' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const userId = userRes.user.id;
-
-    const body = (await req.json()) as { table?: string; operation?: Operation; payload?: unknown };
-
-    const table = body.table;
-    const operation = body.operation;
-    const payloadRaw = body.payload;
-
-    if (!table || !operation) {
-      return jsonResponse({ error: 'Missing table/operation' }, 400, corsHeaders);
+    const { table, operation, payload } = (await req.json()) as any;
+    if (!table || !operation || payload === undefined || payload === null) {
+      return new Response(
+        JSON.stringify({ error: 'Body must include table, operation, payload' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
 
-    if (typeof payloadRaw !== 'string') {
-      return jsonResponse({ error: 'Payload must be a JSON string' }, 400, corsHeaders);
-    }
-
-    let payload: Record<string, unknown>;
-    try {
-      const parsed = JSON.parse(payloadRaw);
-      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-        return jsonResponse({ error: 'Invalid payload JSON' }, 400, corsHeaders);
-      }
-      payload = parsed as Record<string, unknown>;
-    } catch {
-      return jsonResponse({ error: 'Invalid payload JSON' }, 400, corsHeaders);
-    }
-
-    if (payload.user_id && payload.user_id !== userId) {
-      return jsonResponse({ error: 'user_id mismatch' }, 403, corsHeaders);
-    }
-    payload.user_id = userId;
-
-    const { data: keyRow, error: keyErr } = await adminClient
+    const existing = await supabase
       .from('idempotency_keys')
-      .select('id, response')
-      .eq('id', idempotencyKey)
-      .eq('user_id', userId)
+      .select('key')
+      .eq('key', idempotencyKey)
       .maybeSingle();
 
-    if (keyErr) {
-      return jsonResponse({ error: keyErr.message }, 500, corsHeaders);
+    if (existing.data?.key) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          duplicate: true,
+          table,
+          operation,
+          idempotencyKey,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
 
-    if (keyRow?.id && keyRow.response) {
-      return jsonResponse(keyRow.response, 200, corsHeaders);
-    }
-
-    let responseData: unknown;
-
-    if (operation === 'insert') {
-      const { data, error } = await adminClient.from(table).insert(payload).select().single();
-      if (error) {
-        return jsonResponse({ error: error.message }, 400, corsHeaders);
-      }
-      responseData = data;
-    } else if (operation === 'update') {
-      const id = payload.id as string | undefined;
-      if (!id) return jsonResponse({ error: 'Missing payload.id' }, 400, corsHeaders);
-      const updateData = { ...payload };
-      delete (updateData as any).id;
-      const { data, error } = await adminClient.from(table).update(updateData).eq('id', id).select().single();
-      if (error) {
-        return jsonResponse({ error: error.message }, 400, corsHeaders);
-      }
-      responseData = data;
-    } else if (operation === 'delete') {
-      const id = payload.id as string | undefined;
-      if (!id) return jsonResponse({ error: 'Missing payload.id' }, 400, corsHeaders);
-      const { error } = await adminClient.from(table).delete().eq('id', id);
-      if (error) {
-        return jsonResponse({ error: error.message }, 400, corsHeaders);
-      }
-      responseData = { ok: true };
-    } else {
-      return jsonResponse({ error: 'Unsupported operation' }, 400, corsHeaders);
-    }
-
-    await adminClient.from('idempotency_keys').insert({
-      id: idempotencyKey,
-      user_id: userId,
-      response: responseData,
-      created_at: new Date().toISOString(),
+    const insertKey = await supabase.from('idempotency_keys').insert({
+      key: idempotencyKey,
+      user_id: user.id,
     });
 
-    return jsonResponse(responseData, 200, corsHeaders);
-  } catch (error) {
+    if (insertKey.error) {
+      return new Response(JSON.stringify({ error: insertKey.error.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const payloadObj = typeof payload === 'string' ? JSON.parse(payload) : payload;
+
+    if (operation === 'insert') {
+      const r = await supabase.from(table).insert(payloadObj).select().maybeSingle();
+      if (r.error) throw r.error;
+      return new Response(
+        JSON.stringify({ ok: true, table, operation, data: r.data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (operation === 'update') {
+      const id = payloadObj.id;
+      if (!id) {
+        return new Response(JSON.stringify({ error: 'Update requires payload.id' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { id: _id, ...updateFields } = payloadObj;
+      const r = await supabase.from(table).update(updateFields).eq('id', id).select().maybeSingle();
+      if (r.error) throw r.error;
+      return new Response(
+        JSON.stringify({ ok: true, table, operation, data: r.data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (operation === 'delete') {
+      const id = payloadObj.id;
+      if (!id) {
+        return new Response(JSON.stringify({ error: 'Delete requires payload.id' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const r = await supabase.from(table).delete().eq('id', id);
+      if (r.error) throw r.error;
+      return new Response(
+        JSON.stringify({ ok: true, table, operation }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid operation' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

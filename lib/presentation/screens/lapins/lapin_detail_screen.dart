@@ -125,11 +125,16 @@ class LapinDetailScreen extends ConsumerWidget {
       if (source == null) return;
 
       try {
+        final supabase = ref.read(supabaseClientProvider);
+        final userId = supabase.auth.currentUser?.id;
+        if (userId == null) {
+          throw Exception('User not authenticated');
+        }
         final service = ref.read(lapinPhotoServiceProvider);
         final filePath = await service.pickCropAndValidate(source: source);
         if (filePath == null) return;
         final url =
-            await service.uploadLapinPhoto(lapinId: lapin.id, filePath: filePath);
+            await service.uploadLapinPhoto(userId: userId, lapinId: lapin.id, filePath: filePath);
 
         await ref
             .read(lapinsProvider.notifier)
@@ -137,12 +142,16 @@ class LapinDetailScreen extends ConsumerWidget {
         ref.invalidate(lapinDetailProvider(lapinId));
       } catch (e) {
         if (!context.mounted) return;
+        final raw = e.toString();
+        final extra = raw.contains('row-level security policy') || raw.contains('statusCode: 403')
+            ? '\n\nUpload refusé par Storage (RLS). Vérifie les policies du bucket "lapins" (chemin attendu: "${lapin.userId}/${lapin.id}.jpg").'
+            : '';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               e is LapinPhotoException && e.error == LapinPhotoError.tooLarge
                   ? l10n.photoTooLarge
-                  : e.toString(),
+                  : '${e.toString()}$extra',
             ),
           ),
         );

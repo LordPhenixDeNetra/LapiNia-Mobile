@@ -59,7 +59,6 @@ dependencies:
 
   # Stockage fichiers
   image_picker: ^1.0.0
-  image_cropper: ^12.2.1
 
   # Utilitaires
   uuid: ^4.0.0

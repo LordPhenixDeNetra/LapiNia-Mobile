@@ -65,6 +65,9 @@ Future<void> setupServiceLocator({
     RentabilityService(supabase: serviceLocator<SupabaseClient>()),
   );
   serviceLocator.registerSingleton<LapinPhotoService>(
-    LapinPhotoService(supabase: serviceLocator<SupabaseClient>()),
+    LapinPhotoService(
+      supabase: serviceLocator<SupabaseClient>(),
+      config: serviceLocator<AppConfig>(),
+    ),
   );
 }

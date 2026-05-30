@@ -194,6 +194,7 @@ class LapinFormScreen extends HookConsumerWidget {
           }
           final service = ref.read(lapinPhotoServiceProvider);
           final url = await service.uploadLapinPhoto(
+            userId: userId,
             lapinId: currentLapinId,
             filePath: newPhotoPath.value!,
           );
@@ -238,12 +239,16 @@ class LapinFormScreen extends HookConsumerWidget {
         context.pop();
       } catch (e) {
         if (!context.mounted) return;
+        final raw = e.toString();
+        final extra = raw.contains('row-level security policy') || raw.contains('statusCode: 403')
+            ? '\n\nUpload refusé par Storage (RLS). Vérifie les policies du bucket "lapins" (chemin attendu: "$userId/$currentLapinId.jpg").'
+            : '';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               e is LapinPhotoException && e.error == LapinPhotoError.tooLarge
                   ? l10n.photoTooLarge
-                  : e.toString(),
+                  : '${e.toString()}$extra',
             ),
           ),
         );

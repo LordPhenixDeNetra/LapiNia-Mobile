@@ -58,11 +58,11 @@ class SyncManager {
         );
 
     if (connectivityChecker.isOnline) {
-      await _processQueue();
+      await _processQueue(rethrowTargetId: key);
     }
   }
 
-  Future<void> _processQueue() async {
+  Future<void> _processQueue({String? rethrowTargetId}) async {
     if (_isSyncing) return;
 
     _isSyncing = true;
@@ -102,6 +102,9 @@ class SyncManager {
                 lastError: Value(e.toString()),
               ),
             );
+            if (row.id == rethrowTargetId) {
+              rethrow;
+            }
             await Future.delayed(_retryDelayBase * nextRetries);
           }
         }
