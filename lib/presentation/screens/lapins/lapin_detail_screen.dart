@@ -15,7 +15,6 @@ import '../../../core/models/lapin.dart';
 import '../../../core/models/pesel.dart';
 import '../../../domain/services/lapin_photo_service.dart';
 import '../../providers/core_providers.dart';
-import '../../providers/growth_provider.dart';
 import '../../providers/lapin_provider.dart';
 import '../../providers/pesee_provider.dart';
 import '../../widgets/common/connectivity_banner.dart';
@@ -645,6 +644,26 @@ Future<void> _showGrowthPrediction({
   required Lapin lapin,
   required List<Pesee> pesees,
 }) async {
+  final supabase = ref.read(supabaseClientProvider);
+  final userId = supabase.auth.currentUser?.id;
+  final raceId = lapin.raceId;
+  final poidsActuelG = lapin.poidsActuelG;
+  final ageJours = lapin.ageJours;
+
+  final Future<GrowthPrediction> predictionFuture;
+  if (userId == null) {
+    predictionFuture = Future.error(Exception('User not authenticated'));
+  } else if (raceId == null || poidsActuelG == null || ageJours == null) {
+    predictionFuture = Future.error(Exception('Missing lapin data for prediction'));
+  } else {
+    predictionFuture = ref.read(growthPredictionServiceProvider).predictGrowth(
+          userId: userId,
+          raceId: raceId,
+          poidsActuelG: poidsActuelG,
+          ageJours: ageJours,
+        );
+  }
+
   await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -655,20 +674,29 @@ Future<void> _showGrowthPrediction({
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Consumer(
-            builder: (context, ref, _) {
-              final predAsync = ref.watch(growthPredictionProvider(lapin.id));
-
-              return predAsync.when(
-                loading: () => const SizedBox(
+          child: FutureBuilder<GrowthPrediction>(
+            future: predictionFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
                   height: 220,
                   child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (e, _) => SizedBox(
+                );
+              }
+              if (snapshot.hasError) {
+                return SizedBox(
                   height: 220,
-                  child: Center(child: Text(e.toString())),
-                ),
-                data: (pred) {
+                  child: Center(child: Text(snapshot.error.toString())),
+                );
+              }
+              final pred = snapshot.data;
+              if (pred == null) {
+                return SizedBox(
+                  height: 220,
+                  child: Center(child: Text(l10n.errorGeneric)),
+                );
+              }
+
                   GrowthPredictionPoint? p10;
                   GrowthPredictionPoint? p12;
                   GrowthPredictionPoint? p14;
@@ -743,8 +771,6 @@ Future<void> _showGrowthPrediction({
                       const SizedBox(height: 8),
                     ],
                   );
-                },
-              );
             },
           ),
         ),
