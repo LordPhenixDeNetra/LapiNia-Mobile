@@ -306,10 +306,33 @@ final porteesProvider =
 final porteeDetailProvider =
     FutureProvider.family<Portee, String>((ref, id) async {
   final supabase = ref.read(supabaseClientProvider);
-  final response = await supabase
-      .from('portees')
-      .select('*, lapins_mere:lapins!mere_id(*), lapins_pere:lapins!pere_id(*)')
-      .eq('id', id)
-      .single();
-  return Portee.fromJson(response);
+  final userId = supabase.auth.currentUser?.id;
+  if (userId == null) {
+    throw Exception('User not authenticated');
+  }
+
+  final connectivity = ref.read(connectivityCheckerProvider);
+  final cache = ref.read(localCacheServiceProvider);
+
+  if (!connectivity.isOnline) {
+    final cached = await cache.getPorteeById(userId: userId, porteeId: id);
+    if (cached != null) return cached;
+    throw Exception('Portée introuvable hors ligne');
+  }
+
+  try {
+    final response = await supabase
+        .from('portees')
+        .select('*, lapins_mere:lapins!mere_id(*), lapins_pere:lapins!pere_id(*)')
+        .eq('id', id)
+        .single()
+        .timeout(const Duration(seconds: 10));
+    final portee = Portee.fromJson(response);
+    await cache.upsertPortee(portee);
+    return portee;
+  } catch (e) {
+    final cached = await cache.getPorteeById(userId: userId, porteeId: id);
+    if (cached != null) return cached;
+    throw humanizeError(e);
+  }
 });

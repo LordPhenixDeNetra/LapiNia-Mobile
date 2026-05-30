@@ -189,6 +189,22 @@ class LocalCacheService {
         .toList();
   }
 
+  Future<Portee?> getPorteeById({
+    required String userId,
+    required String porteeId,
+  }) async {
+    final row = await (db.select(db.porteesLocal)
+          ..where(
+            (t) =>
+                t.id.equals(porteeId) &
+                t.userId.equals(userId) &
+                t.isDeleted.equals(false),
+          ))
+        .getSingleOrNull();
+    if (row == null) return null;
+    return Portee.fromJson(jsonDecode(row.data) as Map<String, dynamic>);
+  }
+
   Future<void> upsertPortee(Portee portee) async {
     await db.into(db.porteesLocal).insert(
           PorteesLocalCompanion.insert(
