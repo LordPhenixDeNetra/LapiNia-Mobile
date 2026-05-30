@@ -473,5 +473,19 @@
         "type": "int"
       }
     }
-  }
+  },
+  "porteesHelpTitle": "Guide de test (Portées)",
+  "porteesHelpSubtitle": "Suivez ces étapes pour tester rapidement les nouvelles fonctionnalités.",
+  "porteesHelpStep1": "Créez une saillie (bouton +) : choisissez une femelle au repos et un mâle.",
+  "porteesHelpStep2": "Ouvrez la portée : vérifiez la timeline et la progression de gestation.",
+  "porteesHelpStep3": "À partir de J25 : cochez la checklist pré‑mise bas (elle est sauvegardée en local).",
+  "porteesHelpStep4": "Enregistrez la mise bas : cela crée automatiquement les lapereaux.",
+  "porteesHelpStep5": "Ouvrez “Lapereaux” : modifiez sexe/statut/poids, puis enregistrez le sevrage.",
+  "porteesHelpCtaNewSaillie": "Créer une saillie",
+  "porteeNextStepTitle": "Étape suivante",
+  "porteeNextStepGestation": "Vous êtes en gestation : suivez la timeline, et enregistrez la mise bas quand elle a lieu.",
+  "porteeNextStepMiseBas": "Mise bas en cours : enregistrez la mise bas puis gérez les lapereaux.",
+  "porteeNextStepLactation": "Lactation : gérez les lapereaux, puis enregistrez le sevrage quand c’est prêt.",
+  "porteeNextStepSevrage": "Sevrage : vérifiez la destination des lapereaux et ajustez si besoin.",
+  "porteeNextStepTerminee": "Portée terminée : consultez l’historique des lapereaux."
 }

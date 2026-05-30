@@ -114,6 +114,20 @@ class PorteeDetailScreen extends HookConsumerWidget {
         final pere = portee.pere?.nom ?? l10n.fatherFallback;
         final dateText = formatDate(context, portee.dateSaillie);
         final gestationDays = portee.joursGestationEcoules;
+        final nextStep = () {
+          switch (portee.statut) {
+            case StatutPortee.enGestation:
+              return l10n.porteeNextStepGestation;
+            case StatutPortee.miseBas:
+              return l10n.porteeNextStepMiseBas;
+            case StatutPortee.lactation:
+              return l10n.porteeNextStepLactation;
+            case StatutPortee.sevrage:
+              return l10n.porteeNextStepSevrage;
+            case StatutPortee.terminee:
+              return l10n.porteeNextStepTerminee;
+          }
+        }();
 
         return Scaffold(
           appBar: AppBar(
@@ -135,6 +149,71 @@ class PorteeDetailScreen extends HookConsumerWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.porteeNextStepTitle, style: AppTypography.subtitle1),
+                      const SizedBox(height: 8),
+                      Text(nextStep, style: AppTypography.body2),
+                      const SizedBox(height: 12),
+                      if (portee.statut == StatutPortee.enGestation) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.tonal(
+                                onPressed: isSaving.value
+                                    ? null
+                                    : () => context.push('/portee/${portee.id}/mise-bas'),
+                                child: Text(l10n.recordMiseBasCta),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      if (portee.statut == StatutPortee.lactation) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.tonal(
+                                onPressed: isSaving.value
+                                    ? null
+                                    : () => context.push('/portee/${portee.id}/lapereaux'),
+                                child: Text(l10n.lapereauxCta),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: FilledButton.tonal(
+                                onPressed: isSaving.value ? null : () => recordSevrage(portee),
+                                child: Text(l10n.recordSevrageCta),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      if (portee.statut == StatutPortee.sevrage ||
+                          portee.statut == StatutPortee.terminee) ...[
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.tonal(
+                                onPressed: isSaving.value
+                                    ? null
+                                    : () => context.push('/portee/${portee.id}/lapereaux'),
+                                child: Text(l10n.lapereauxCta),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),

@@ -473,5 +473,19 @@
         "type": "int"
       }
     }
-  }
+  },
+  "porteesHelpTitle": "Test guide (Litters)",
+  "porteesHelpSubtitle": "Follow these steps to quickly test the new features.",
+  "porteesHelpStep1": "Create a mating (+ button): pick a resting female and a male.",
+  "porteesHelpStep2": "Open the litter: check the timeline and gestation progress.",
+  "porteesHelpStep3": "From day 25: tick the pre-birth checklist (saved locally).",
+  "porteesHelpStep4": "Record the birth: this automatically creates the kits.",
+  "porteesHelpStep5": "Open “Kits”: edit sex/status/weight, then record weaning.",
+  "porteesHelpCtaNewSaillie": "Create mating",
+  "porteeNextStepTitle": "Next step",
+  "porteeNextStepGestation": "Gestation: follow the timeline and record the birth when it happens.",
+  "porteeNextStepMiseBas": "Birth in progress: record the birth, then manage the kits.",
+  "porteeNextStepLactation": "Lactation: manage the kits, then record weaning when ready.",
+  "porteeNextStepSevrage": "Weaning: review kit destinations and adjust if needed.",
+  "porteeNextStepTerminee": "Completed: review the kit history."
 }

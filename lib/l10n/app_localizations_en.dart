@@ -1046,4 +1046,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String porteeGestationProgressLabel(int elapsed, int remaining) {
     return 'D$elapsed — $remaining days left';
   }
+
+  @override
+  String get porteesHelpTitle => 'Test guide (Litters)';
+
+  @override
+  String get porteesHelpSubtitle =>
+      'Follow these steps to quickly test the new features.';
+
+  @override
+  String get porteesHelpStep1 =>
+      'Create a mating (+ button): pick a resting female and a male.';
+
+  @override
+  String get porteesHelpStep2 =>
+      'Open the litter: check the timeline and gestation progress.';
+
+  @override
+  String get porteesHelpStep3 =>
+      'From day 25: tick the pre-birth checklist (saved locally).';
+
+  @override
+  String get porteesHelpStep4 =>
+      'Record the birth: this automatically creates the kits.';
+
+  @override
+  String get porteesHelpStep5 =>
+      'Open “Kits”: edit sex/status/weight, then record weaning.';
+
+  @override
+  String get porteesHelpCtaNewSaillie => 'Create mating';
+
+  @override
+  String get porteeNextStepTitle => 'Next step';
+
+  @override
+  String get porteeNextStepGestation =>
+      'Gestation: follow the timeline and record the birth when it happens.';
+
+  @override
+  String get porteeNextStepMiseBas =>
+      'Birth in progress: record the birth, then manage the kits.';
+
+  @override
+  String get porteeNextStepLactation =>
+      'Lactation: manage the kits, then record weaning when ready.';
+
+  @override
+  String get porteeNextStepSevrage =>
+      'Weaning: review kit destinations and adjust if needed.';
+
+  @override
+  String get porteeNextStepTerminee => 'Completed: review the kit history.';
 }

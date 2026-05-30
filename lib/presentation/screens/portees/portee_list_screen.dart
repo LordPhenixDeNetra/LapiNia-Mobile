@@ -22,6 +22,54 @@ class PorteeListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.porteesTitle),
+        actions: [
+          IconButton(
+            tooltip: l10n.porteesHelpTitle,
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l10n.porteesHelpTitle, style: AppTypography.subtitle1),
+                          const SizedBox(height: 8),
+                          Text(l10n.porteesHelpSubtitle, style: AppTypography.body2),
+                          const SizedBox(height: 12),
+                          _helpStep(context, '1', l10n.porteesHelpStep1),
+                          _helpStep(context, '2', l10n.porteesHelpStep2),
+                          _helpStep(context, '3', l10n.porteesHelpStep3),
+                          _helpStep(context, '4', l10n.porteesHelpStep4),
+                          _helpStep(context, '5', l10n.porteesHelpStep5),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: FilledButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    context.push('/saillie/new');
+                                  },
+                                  child: Text(l10n.porteesHelpCtaNewSaillie),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/saillie/new'),
@@ -68,6 +116,34 @@ class PorteeListScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+Widget _helpStep(BuildContext context, String number, String text) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 22,
+          height: 22,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(11),
+          ),
+          child: Text(
+            number,
+            style: AppTypography.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(child: Text(text, style: AppTypography.body2)),
+      ],
+    ),
+  );
 }
 
 class _PorteeCard extends StatelessWidget {

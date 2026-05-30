@@ -2071,6 +2071,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'J{elapsed} — {remaining} jours restants'**
   String porteeGestationProgressLabel(int elapsed, int remaining);
+
+  /// No description provided for @porteesHelpTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Guide de test (Portées)'**
+  String get porteesHelpTitle;
+
+  /// No description provided for @porteesHelpSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivez ces étapes pour tester rapidement les nouvelles fonctionnalités.'**
+  String get porteesHelpSubtitle;
+
+  /// No description provided for @porteesHelpStep1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créez une saillie (bouton +) : choisissez une femelle au repos et un mâle.'**
+  String get porteesHelpStep1;
+
+  /// No description provided for @porteesHelpStep2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez la portée : vérifiez la timeline et la progression de gestation.'**
+  String get porteesHelpStep2;
+
+  /// No description provided for @porteesHelpStep3.
+  ///
+  /// In fr, this message translates to:
+  /// **'À partir de J25 : cochez la checklist pré‑mise bas (elle est sauvegardée en local).'**
+  String get porteesHelpStep3;
+
+  /// No description provided for @porteesHelpStep4.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrez la mise bas : cela crée automatiquement les lapereaux.'**
+  String get porteesHelpStep4;
+
+  /// No description provided for @porteesHelpStep5.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvrez “Lapereaux” : modifiez sexe/statut/poids, puis enregistrez le sevrage.'**
+  String get porteesHelpStep5;
+
+  /// No description provided for @porteesHelpCtaNewSaillie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer une saillie'**
+  String get porteesHelpCtaNewSaillie;
+
+  /// No description provided for @porteeNextStepTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape suivante'**
+  String get porteeNextStepTitle;
+
+  /// No description provided for @porteeNextStepGestation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous êtes en gestation : suivez la timeline, et enregistrez la mise bas quand elle a lieu.'**
+  String get porteeNextStepGestation;
+
+  /// No description provided for @porteeNextStepMiseBas.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise bas en cours : enregistrez la mise bas puis gérez les lapereaux.'**
+  String get porteeNextStepMiseBas;
+
+  /// No description provided for @porteeNextStepLactation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lactation : gérez les lapereaux, puis enregistrez le sevrage quand c’est prêt.'**
+  String get porteeNextStepLactation;
+
+  /// No description provided for @porteeNextStepSevrage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sevrage : vérifiez la destination des lapereaux et ajustez si besoin.'**
+  String get porteeNextStepSevrage;
+
+  /// No description provided for @porteeNextStepTerminee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portée terminée : consultez l’historique des lapereaux.'**
+  String get porteeNextStepTerminee;
 }
 
 class _AppLocalizationsDelegate

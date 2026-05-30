@@ -1053,4 +1053,57 @@ class AppLocalizationsFr extends AppLocalizations {
   String porteeGestationProgressLabel(int elapsed, int remaining) {
     return 'J$elapsed — $remaining jours restants';
   }
+
+  @override
+  String get porteesHelpTitle => 'Guide de test (Portées)';
+
+  @override
+  String get porteesHelpSubtitle =>
+      'Suivez ces étapes pour tester rapidement les nouvelles fonctionnalités.';
+
+  @override
+  String get porteesHelpStep1 =>
+      'Créez une saillie (bouton +) : choisissez une femelle au repos et un mâle.';
+
+  @override
+  String get porteesHelpStep2 =>
+      'Ouvrez la portée : vérifiez la timeline et la progression de gestation.';
+
+  @override
+  String get porteesHelpStep3 =>
+      'À partir de J25 : cochez la checklist pré‑mise bas (elle est sauvegardée en local).';
+
+  @override
+  String get porteesHelpStep4 =>
+      'Enregistrez la mise bas : cela crée automatiquement les lapereaux.';
+
+  @override
+  String get porteesHelpStep5 =>
+      'Ouvrez “Lapereaux” : modifiez sexe/statut/poids, puis enregistrez le sevrage.';
+
+  @override
+  String get porteesHelpCtaNewSaillie => 'Créer une saillie';
+
+  @override
+  String get porteeNextStepTitle => 'Étape suivante';
+
+  @override
+  String get porteeNextStepGestation =>
+      'Vous êtes en gestation : suivez la timeline, et enregistrez la mise bas quand elle a lieu.';
+
+  @override
+  String get porteeNextStepMiseBas =>
+      'Mise bas en cours : enregistrez la mise bas puis gérez les lapereaux.';
+
+  @override
+  String get porteeNextStepLactation =>
+      'Lactation : gérez les lapereaux, puis enregistrez le sevrage quand c’est prêt.';
+
+  @override
+  String get porteeNextStepSevrage =>
+      'Sevrage : vérifiez la destination des lapereaux et ajustez si besoin.';
+
+  @override
+  String get porteeNextStepTerminee =>
+      'Portée terminée : consultez l’historique des lapereaux.';
 }
