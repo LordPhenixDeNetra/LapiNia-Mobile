@@ -8,7 +8,7 @@ class PorteeNotificationsService {
   int _baseId(String porteeId) {
     final hex = porteeId.replaceAll('-', '');
     final head = hex.length >= 8 ? hex.substring(0, 8) : hex.padRight(8, '0');
-    return int.parse(head, radix: 16);
+    return int.parse(head, radix: 16) & 0x7fffffff;
   }
 
   Future<void> scheduleGestationReminders({
@@ -17,6 +17,8 @@ class PorteeNotificationsService {
     required DateTime dateMiseBasPrevue,
   }) async {
     final base = _baseId(porteeId);
+    final idJ3 = base;
+    final idJ1 = (base + 1) & 0x7fffffff;
     final now = DateTime.now();
 
     final d3 = DateTime(
@@ -34,7 +36,7 @@ class PorteeNotificationsService {
 
     if (d3.isAfter(now)) {
       await notifications.schedule(
-        id: base,
+        id: idJ3,
         title: 'Mise bas bientôt',
         body: '$mereName : mise bas prévue dans 3 jours.',
         dateTimeLocal: d3,
@@ -43,7 +45,7 @@ class PorteeNotificationsService {
     }
     if (d1.isAfter(now)) {
       await notifications.schedule(
-        id: base + 1,
+        id: idJ1,
         title: 'Mise bas demain',
         body: '$mereName : mise bas prévue demain.',
         dateTimeLocal: d1,
@@ -55,6 +57,6 @@ class PorteeNotificationsService {
   Future<void> cancelGestationReminders({required String porteeId}) async {
     final base = _baseId(porteeId);
     await notifications.cancel(base);
-    await notifications.cancel(base + 1);
+    await notifications.cancel((base + 1) & 0x7fffffff);
   }
 }

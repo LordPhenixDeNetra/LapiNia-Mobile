@@ -37,9 +37,19 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      final portees = (response as List).map((e) => Portee.fromJson(e)).toList();
-      await cache.cachePortees(userId: userId, portees: portees);
-      return portees;
+      final serverPortees = (response as List).map((e) => Portee.fromJson(e)).toList();
+      await cache.cachePortees(userId: userId, portees: serverPortees);
+
+      final localPortees = await cache.getPortees(userId: userId);
+      final byId = <String, Portee>{
+        for (final p in serverPortees) p.id: p,
+      };
+      for (final p in localPortees) {
+        byId.putIfAbsent(p.id, () => p);
+      }
+      final merged = byId.values.toList()
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      return merged;
     } catch (e) {
       await connectivity.checkConnectivity();
       if (!connectivity.isOnline) {
@@ -66,8 +76,10 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     final syncManager = ref.read(syncManagerProvider);
 
     final now = DateTime.now();
+    final dateMiseBasPrevue = portee.dateSaillie.add(const Duration(days: 31));
     final optimistic = portee.copyWith(
       userId: userId,
+      dateMiseBasPrevue: dateMiseBasPrevue,
       updatedAt: now,
     );
     state = AsyncValue.data([
@@ -76,18 +88,18 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     ]);
     await cache.upsertPortee(optimistic);
 
-    final dateMiseBasPrevue = portee.dateSaillie.add(const Duration(days: 31));
-
     final lapins = ref.read(lapinsProvider).asData?.value.items ?? const [];
     final mereMatch = lapins.where((l) => l.id == optimistic.mereId).toList();
     final mereName = mereMatch.isEmpty ? null : mereMatch.first.nom;
 
     if (mereName != null) {
-      await ref.read(porteeNotificationsServiceProvider).scheduleGestationReminders(
-            porteeId: optimistic.id,
-            mereName: mereName,
-            dateMiseBasPrevue: dateMiseBasPrevue,
-          );
+      try {
+        await ref.read(porteeNotificationsServiceProvider).scheduleGestationReminders(
+              porteeId: optimistic.id,
+              mereName: mereName,
+              dateMiseBasPrevue: dateMiseBasPrevue,
+            );
+      } catch (_) {}
     }
 
     final data = {
