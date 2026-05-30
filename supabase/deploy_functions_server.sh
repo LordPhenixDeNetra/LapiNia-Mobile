@@ -554,17 +554,26 @@ class ClaudeProvider implements AIProvider {
   }
 }
 
-class MistralProvider implements AIProvider {
+class OpenAIChatProvider implements AIProvider {
   private client: any;
+  private model: string;
+  private defaultMaxTokens: number;
 
-  constructor(apiKey: string) {
-    this.client = new OpenAI({ apiKey: apiKey, baseURL: 'https://api.mistral.ai/v1' });
+  constructor(options: {
+    apiKey: string;
+    baseURL: string;
+    model: string;
+    defaultMaxTokens: number;
+  }) {
+    this.client = new OpenAI({ apiKey: options.apiKey, baseURL: options.baseURL });
+    this.model = options.model;
+    this.defaultMaxTokens = options.defaultMaxTokens;
   }
 
-  async complete(prompt: string, maxTokens: number = 900): Promise<string> {
+  async complete(prompt: string, maxTokens?: number): Promise<string> {
     const chat = await this.client.chat.completions.create({
-      model: 'mistral-small-latest',
-      max_tokens: maxTokens,
+      model: this.model,
+      max_tokens: maxTokens ?? this.defaultMaxTokens,
       messages: [{ role: 'user', content: prompt }],
     });
     return chat.choices[0]?.message?.content ?? '';
@@ -668,18 +677,53 @@ serve(async (req: Request) => {
     }
 
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
+    const openaiKey = Deno.env.get('OPENAI_API_KEY');
     const mistralKey = Deno.env.get('MISTRAL_API_KEY');
+    const deepseekKey = Deno.env.get('DEEPSEEK_API_KEY');
+    const kimiKey = Deno.env.get('KIMI_API_KEY') ?? Deno.env.get('MOONSHOT_API_KEY');
     const provider: AIProvider | null = anthropicKey
       ? new ClaudeProvider(anthropicKey)
-      : mistralKey
-        ? new MistralProvider(mistralKey)
-        : null;
+      : openaiKey
+        ? new OpenAIChatProvider({
+            apiKey: openaiKey,
+            baseURL: 'https://api.openai.com/v1',
+            model: 'gpt-4o-mini',
+            defaultMaxTokens: 900,
+          })
+        : mistralKey
+        ? new OpenAIChatProvider({
+            apiKey: mistralKey,
+            baseURL: 'https://api.mistral.ai/v1',
+            model: 'mistral-small-latest',
+            defaultMaxTokens: 900,
+          })
+        : deepseekKey
+          ? new OpenAIChatProvider({
+              apiKey: deepseekKey,
+              baseURL: 'https://api.deepseek.com/v1',
+              model: 'deepseek-chat',
+              defaultMaxTokens: 900,
+            })
+          : kimiKey
+            ? new OpenAIChatProvider({
+                apiKey: kimiKey,
+                baseURL: 'https://api.moonshot.cn/v1',
+                model: 'moonshot-v1-8k',
+                defaultMaxTokens: 900,
+              })
+            : null;
 
     if (!provider) {
-      return new Response(JSON.stringify({ error: 'IA non configurée (ANTHROPIC_API_KEY ou MISTRAL_API_KEY manquante)' }), {
-        status: 501,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          error:
+            'IA non configurée (définir au moins une des variables: ANTHROPIC_API_KEY, OPENAI_API_KEY, MISTRAL_API_KEY, DEEPSEEK_API_KEY, KIMI_API_KEY)',
+        }),
+        {
+          status: 501,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      );
     }
 
     const racesList = (races as any[])

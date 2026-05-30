@@ -23,17 +23,26 @@ class ClaudeProvider implements AIProvider {
   }
 }
 
-class MistralProvider implements AIProvider {
+class OpenAIChatProvider implements AIProvider {
   private client: any;
+  private model: string;
+  private defaultMaxTokens: number;
   
-  constructor(apiKey: string) {
-    this.client = new OpenAI({ apiKey: apiKey, baseURL: 'https://api.mistral.ai/v1' });
+  constructor(options: {
+    apiKey: string;
+    baseURL: string;
+    model: string;
+    defaultMaxTokens: number;
+  }) {
+    this.client = new OpenAI({ apiKey: options.apiKey, baseURL: options.baseURL });
+    this.model = options.model;
+    this.defaultMaxTokens = options.defaultMaxTokens;
   }
   
-  async complete(prompt: string, maxTokens: number = 500): Promise<string> {
+  async complete(prompt: string, maxTokens?: number): Promise<string> {
     const chat = await this.client.chat.completions.create({
-      model: 'mistral-small-latest',
-      max_tokens: maxTokens,
+      model: this.model,
+      max_tokens: maxTokens ?? this.defaultMaxTokens,
       messages: [{ role: 'user', content: prompt }],
     });
     return chat.choices[0]?.message?.content ?? '';
@@ -55,17 +64,52 @@ Utilise des unités métriques (grammes, kg, °C).
 
 class AIRouter {
   private claude: ClaudeProvider | null = null;
-  private mistral: MistralProvider | null = null;
+  private openai: OpenAIChatProvider | null = null;
+  private mistral: OpenAIChatProvider | null = null;
+  private deepseek: OpenAIChatProvider | null = null;
+  private kimi: OpenAIChatProvider | null = null;
   
   constructor() {
     const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
+    const openaiKey = Deno.env.get('OPENAI_API_KEY');
     const mistralKey = Deno.env.get('MISTRAL_API_KEY');
+    const deepseekKey = Deno.env.get('DEEPSEEK_API_KEY');
+    const kimiKey = Deno.env.get('KIMI_API_KEY') ?? Deno.env.get('MOONSHOT_API_KEY');
     
     if (anthropicKey) {
       this.claude = new ClaudeProvider(anthropicKey);
     }
+    if (openaiKey) {
+      this.openai = new OpenAIChatProvider({
+        apiKey: openaiKey,
+        baseURL: 'https://api.openai.com/v1',
+        model: 'gpt-4o-mini',
+        defaultMaxTokens: 800,
+      });
+    }
     if (mistralKey) {
-      this.mistral = new MistralProvider(mistralKey);
+      this.mistral = new OpenAIChatProvider({
+        apiKey: mistralKey,
+        baseURL: 'https://api.mistral.ai/v1',
+        model: 'mistral-small-latest',
+        defaultMaxTokens: 800,
+      });
+    }
+    if (deepseekKey) {
+      this.deepseek = new OpenAIChatProvider({
+        apiKey: deepseekKey,
+        baseURL: 'https://api.deepseek.com/v1',
+        model: 'deepseek-chat',
+        defaultMaxTokens: 800,
+      });
+    }
+    if (kimiKey) {
+      this.kimi = new OpenAIChatProvider({
+        apiKey: kimiKey,
+        baseURL: 'https://api.moonshot.cn/v1',
+        model: 'moonshot-v1-8k',
+        defaultMaxTokens: 800,
+      });
     }
   }
   
@@ -78,6 +122,18 @@ class AIRouter {
     
     if (this.mistral) {
       return await this.mistral.complete(fullPrompt, 800);
+    }
+
+    if (this.openai) {
+      return await this.openai.complete(fullPrompt, 800);
+    }
+
+    if (this.deepseek) {
+      return await this.deepseek.complete(fullPrompt, 800);
+    }
+
+    if (this.kimi) {
+      return await this.kimi.complete(fullPrompt, 800);
     }
     
     if (this.claude) {
@@ -119,7 +175,7 @@ Réponds en JSON: {diagnostics: [{maladie, probabilite, traitement, medicament, 
   }
   
   async calculateRation(lapinInfo: any, temperature: number): Promise<any> {
-    if (!this.mistral && !this.claude) {
+    if (!this.mistral && !this.openai && !this.deepseek && !this.kimi && !this.claude) {
       throw new Error('No AI provider configured');
     }
     
@@ -141,7 +197,7 @@ Donne-moi les quantités en grammes pour chaque aliment disponible:
 
 Réponds en JSON: {composants: [{aliment, quantite_g, note}], alertes_stock: [], cout_total_fcfa}`;
 
-    const provider = this.claude || this.mistral;
+    const provider = this.mistral || this.openai || this.deepseek || this.kimi || this.claude;
     const result = await provider!.complete(prompt, 1000);
     
     try {
