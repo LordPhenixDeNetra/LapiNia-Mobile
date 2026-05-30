@@ -223,6 +223,10 @@ Future<dynamic> _apiCall(String table, MutationType op, String payload, String i
       _isSyncFunctionAvailable = false;
       return _postgrestFallback(supabase: supabase, table: table, op: op, payload: payload);
     }
+    if (e is FunctionException && e.status >= 500) {
+      _isSyncFunctionAvailable = false;
+      return _postgrestFallback(supabase: supabase, table: table, op: op, payload: payload);
+    }
     rethrow;
   }
 }
@@ -240,29 +244,47 @@ Future<void> _postgrestFallback({
 
   final data = Map<String, dynamic>.from(decoded);
 
-  switch (op) {
-    case MutationType.insert:
-      if (data.containsKey('id') && data['id'] != null) {
-        await supabase.from(table).upsert(data, onConflict: 'id');
+  Future<void> attempt(Map<String, dynamic> body) async {
+    switch (op) {
+      case MutationType.insert:
+        if (body.containsKey('id') && body['id'] != null) {
+          await supabase.from(table).upsert(body, onConflict: 'id');
+          return;
+        }
+        await supabase.from(table).insert(body);
         return;
-      }
-      await supabase.from(table).insert(data);
-      return;
-    case MutationType.update:
-      final id = data['id'];
-      if (id == null) {
-        throw Exception('Update sans "id" pour "$table"');
-      }
-      final updateData = Map<String, dynamic>.from(data)..remove('id');
-      await supabase.from(table).update(updateData).eq('id', id);
-      return;
-    case MutationType.delete:
-      final id = data['id'];
-      if (id == null) {
-        throw Exception('Delete sans "id" pour "$table"');
-      }
-      await supabase.from(table).delete().eq('id', id);
-      return;
+      case MutationType.update:
+        final id = body['id'];
+        if (id == null) {
+          throw Exception('Update sans "id" pour "$table"');
+        }
+        final updateData = Map<String, dynamic>.from(body)..remove('id');
+        await supabase.from(table).update(updateData).eq('id', id);
+        return;
+      case MutationType.delete:
+        final id = body['id'];
+        if (id == null) {
+          throw Exception('Delete sans "id" pour "$table"');
+        }
+        await supabase.from(table).delete().eq('id', id);
+        return;
+    }
+  }
+
+  try {
+    await attempt(data);
+  } catch (e) {
+    final msg = e.toString();
+    final match = RegExp(r"Could not find the '([^']+)' column").firstMatch(msg);
+    if (match == null) rethrow;
+
+    final missingColumn = match.group(1);
+    if (missingColumn == null) rethrow;
+
+    if (!data.containsKey(missingColumn)) rethrow;
+
+    final trimmed = Map<String, dynamic>.from(data)..remove(missingColumn);
+    await attempt(trimmed);
   }
 }
 
