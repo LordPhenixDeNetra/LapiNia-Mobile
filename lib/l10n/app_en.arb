@@ -243,6 +243,17 @@
   "lapinTabHealth": "Health",
   "lapinTabRepro": "Breeding",
   "lapinTabInfo": "Info",
+  "growthNoWeights": "No weight recorded yet.",
+  "growthLowGmqBadge": "Low ADG",
+  "growthPredictButton": "Predict",
+  "growthPredictTitle": "Growth prediction",
+  "growthPredictNeededGmq": "Required ADG",
+  "growthPredictRaceGmq": "Breed ADG",
+  "growthPredictWeek10": "At 10 weeks",
+  "growthPredictWeek12": "At 12 weeks",
+  "growthPredictWeek14": "At 14 weeks",
+  "growthPredictSaleDate": "Optimal sale date",
+  "growthPredictNoSaleDate": "—",
   "comingSoonLabel": "{title}: coming soon",
   "@comingSoonLabel": {
     "placeholders": {

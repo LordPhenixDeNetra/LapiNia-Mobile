@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import 'app_database.dart';
 import '../../core/models/lapin.dart';
+import '../../core/models/pesel.dart';
 import '../../core/models/portee.dart';
 
 class LocalCacheService {
@@ -93,6 +94,78 @@ class LocalCacheService {
                 userId: userId,
                 data: jsonEncode(l.toJson()),
                 updatedAt: l.updatedAt,
+                isDeleted: const Value(false),
+              ),
+            )
+            .toList(),
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+  }
+
+  Future<List<Pesee>> getPeseesByLapin({
+    required String userId,
+    required String lapinId,
+  }) async {
+    final rows = await (db.select(db.peseesLocal)
+          ..where(
+            (t) =>
+                t.userId.equals(userId) &
+                t.lapinId.equals(lapinId) &
+                t.isDeleted.equals(false),
+          )
+          ..orderBy([(t) => OrderingTerm(expression: t.updatedAt, mode: OrderingMode.desc)]))
+        .get();
+    return rows
+        .map((r) => Pesee.fromJson(jsonDecode(r.data) as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> upsertPesee(Pesee pesee) async {
+    final updatedAt = DateTime(pesee.date.year, pesee.date.month, pesee.date.day);
+    await db.into(db.peseesLocal).insert(
+          PeseesLocalCompanion.insert(
+            id: pesee.id,
+            lapinId: pesee.lapinId,
+            userId: pesee.userId,
+            data: jsonEncode(pesee.toJson()),
+            updatedAt: updatedAt,
+            isDeleted: const Value(false),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+  }
+
+  Future<void> markPeseeDeleted({
+    required String id,
+    required String userId,
+  }) async {
+    final now = DateTime.now();
+    await (db.update(db.peseesLocal)..where((t) => t.id.equals(id))).write(
+      PeseesLocalCompanion(
+        userId: Value(userId),
+        updatedAt: Value(now),
+        isDeleted: const Value(true),
+      ),
+    );
+  }
+
+  Future<void> cachePesees({
+    required String userId,
+    required String lapinId,
+    required List<Pesee> pesees,
+  }) async {
+    await db.batch((batch) {
+      batch.insertAll(
+        db.peseesLocal,
+        pesees
+            .map(
+              (p) => PeseesLocalCompanion.insert(
+                id: p.id,
+                lapinId: lapinId,
+                userId: userId,
+                data: jsonEncode(p.toJson()),
+                updatedAt: DateTime(p.date.year, p.date.month, p.date.day),
                 isDeleted: const Value(false),
               ),
             )

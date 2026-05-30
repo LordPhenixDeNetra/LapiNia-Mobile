@@ -243,6 +243,17 @@
   "lapinTabHealth": "Santé",
   "lapinTabRepro": "Repro",
   "lapinTabInfo": "Infos",
+  "growthNoWeights": "Aucune pesée pour le moment.",
+  "growthLowGmqBadge": "GMQ faible",
+  "growthPredictButton": "Prédire",
+  "growthPredictTitle": "Prédiction de croissance",
+  "growthPredictNeededGmq": "GMQ nécessaire",
+  "growthPredictRaceGmq": "GMQ norme race",
+  "growthPredictWeek10": "À 10 semaines",
+  "growthPredictWeek12": "À 12 semaines",
+  "growthPredictWeek14": "À 14 semaines",
+  "growthPredictSaleDate": "Date vente optimale",
+  "growthPredictNoSaleDate": "—",
   "comingSoonLabel": "{title} : à venir",
   "@comingSoonLabel": {
     "placeholders": {

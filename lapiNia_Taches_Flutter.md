@@ -51,12 +51,6 @@
 
 **Pesées & Croissance**
 
-- [ ] **(Flutter · P1)** Ajouter pesée (`POST /rest/v1/pesees`) — saisie rapide poids en grammes + date + idempotency key
-- [ ] **(Flutter · P1)** Liste pesées (`GET /rest/v1/pesees?lapin_id=eq.{id}&order=date.desc&limit=50`) — offset-based
-- [ ] **(Flutter · P1)** Calcul GMQ automatique — différence poids / nb jours entre deux pesées, calculé localement
-- [ ] **(Flutter · P1)** Graphique croissance (`fl_chart`) — courbe réelle (bleu) vs courbe cible race (vert pointillé) + zones couleur
-- [ ] **(Flutter · P1)** Alerte décrochage GMQ — si GMQ < 80% norme race pendant 7 jours → badge rouge sur fiche + alerte dashboard
-- [ ] **(Flutter · P1)** Prédiction croissance (`POST /functions/v1/predict-growth`) — courbe prévisionnelle à 10/12/14 semaines + date vente optimale
 - [ ] **(Flutter · P2)** Pesée groupée portée — saisie poids total portée avec répartition automatique par lapereau
 
 ***
@@ -333,3 +327,10 @@
 - [x] **(Flutter · P1)** Fix 403 Storage (RLS) upload photo — chemin `lapins/<userId>/<lapinId>.jpg` + policies basées sur `storage.foldername(name)[1]`
 - [x] **(Flutter · P1)** Workaround upload Storage 403 (auto-hébergé) — upload HTTP direct avec headers `Authorization` + `apikey`
 - [x] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)
+- **Pesées & Croissance**
+- [x] **(Flutter · P1)** Ajouter pesée (`POST /rest/v1/pesees`) — saisie rapide poids en grammes + date + idempotency key
+- [x] **(Flutter · P1)** Liste pesées (`GET /rest/v1/pesees?lapin_id=eq.{id}&order=date.desc&limit=50`) — offset-based
+- [x] **(Flutter · P1)** Calcul GMQ automatique — différence poids / nb jours entre deux pesées, calculé localement
+- [x] **(Flutter · P1)** Graphique croissance (`fl_chart`) — courbe réelle (bleu) vs courbe cible race (vert pointillé) + zones couleur
+- [x] **(Flutter · P1)** Alerte décrochage GMQ — si GMQ < 80% norme race pendant 7 jours → badge rouge sur fiche + alerte dashboard
+- [x] **(Flutter · P1)** Prédiction croissance (`POST /functions/v1/predict-growth`) — courbe prévisionnelle à 10/12/14 semaines + date vente optimale

@@ -1184,6 +1184,72 @@ abstract class AppLocalizations {
   /// **'Infos'**
   String get lapinTabInfo;
 
+  /// No description provided for @growthNoWeights.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune pesée pour le moment.'**
+  String get growthNoWeights;
+
+  /// No description provided for @growthLowGmqBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'GMQ faible'**
+  String get growthLowGmqBadge;
+
+  /// No description provided for @growthPredictButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prédire'**
+  String get growthPredictButton;
+
+  /// No description provided for @growthPredictTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prédiction de croissance'**
+  String get growthPredictTitle;
+
+  /// No description provided for @growthPredictNeededGmq.
+  ///
+  /// In fr, this message translates to:
+  /// **'GMQ nécessaire'**
+  String get growthPredictNeededGmq;
+
+  /// No description provided for @growthPredictRaceGmq.
+  ///
+  /// In fr, this message translates to:
+  /// **'GMQ norme race'**
+  String get growthPredictRaceGmq;
+
+  /// No description provided for @growthPredictWeek10.
+  ///
+  /// In fr, this message translates to:
+  /// **'À 10 semaines'**
+  String get growthPredictWeek10;
+
+  /// No description provided for @growthPredictWeek12.
+  ///
+  /// In fr, this message translates to:
+  /// **'À 12 semaines'**
+  String get growthPredictWeek12;
+
+  /// No description provided for @growthPredictWeek14.
+  ///
+  /// In fr, this message translates to:
+  /// **'À 14 semaines'**
+  String get growthPredictWeek14;
+
+  /// No description provided for @growthPredictSaleDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date vente optimale'**
+  String get growthPredictSaleDate;
+
+  /// No description provided for @growthPredictNoSaleDate.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get growthPredictNoSaleDate;
+
   /// No description provided for @comingSoonLabel.
   ///
   /// In fr, this message translates to:

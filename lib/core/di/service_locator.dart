@@ -16,6 +16,7 @@ import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/planned_events_service.dart';
 import '../../domain/services/rentability_service.dart';
 import '../../domain/services/lapin_photo_service.dart';
+import '../../domain/services/growth_prediction_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -69,5 +70,8 @@ Future<void> setupServiceLocator({
       supabase: serviceLocator<SupabaseClient>(),
       config: serviceLocator<AppConfig>(),
     ),
+  );
+  serviceLocator.registerSingleton<GrowthPredictionService>(
+    GrowthPredictionService(supabase: serviceLocator<SupabaseClient>()),
   );
 }

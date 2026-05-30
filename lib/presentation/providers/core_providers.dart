@@ -9,6 +9,7 @@ import '../../data/local_db/app_database.dart';
 import '../../data/local_db/local_cache_service.dart';
 import '../../domain/services/daily_advice_service.dart';
 import '../../domain/services/file_share_service.dart';
+import '../../domain/services/growth_prediction_service.dart';
 import '../../domain/services/lapin_photo_service.dart';
 import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
@@ -67,6 +68,10 @@ final plannedEventsServiceProvider = Provider<PlannedEventsService>((ref) {
 
 final rentabilityServiceProvider = Provider<RentabilityService>((ref) {
   return serviceLocator<RentabilityService>();
+});
+
+final growthPredictionServiceProvider = Provider<GrowthPredictionService>((ref) {
+  return serviceLocator<GrowthPredictionService>();
 });
 
 final connectivityCheckerProvider = Provider<ConnectivityChecker>((ref) {

@@ -580,6 +580,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lapinTabInfo => 'Infos';
 
   @override
+  String get growthNoWeights => 'Aucune pesée pour le moment.';
+
+  @override
+  String get growthLowGmqBadge => 'GMQ faible';
+
+  @override
+  String get growthPredictButton => 'Prédire';
+
+  @override
+  String get growthPredictTitle => 'Prédiction de croissance';
+
+  @override
+  String get growthPredictNeededGmq => 'GMQ nécessaire';
+
+  @override
+  String get growthPredictRaceGmq => 'GMQ norme race';
+
+  @override
+  String get growthPredictWeek10 => 'À 10 semaines';
+
+  @override
+  String get growthPredictWeek12 => 'À 12 semaines';
+
+  @override
+  String get growthPredictWeek14 => 'À 14 semaines';
+
+  @override
+  String get growthPredictSaleDate => 'Date vente optimale';
+
+  @override
+  String get growthPredictNoSaleDate => '—';
+
+  @override
   String comingSoonLabel(String title) {
     return '$title : à venir';
   }

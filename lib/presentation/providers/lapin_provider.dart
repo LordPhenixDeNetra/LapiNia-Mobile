@@ -275,6 +275,34 @@ class LapinsController extends AsyncNotifier<LapinsListState> {
     await cache.upsertLapin(match.first);
   }
 
+  Future<void> setLapinPoidsOptimistic({
+    required String lapinId,
+    required int poidsActuelG,
+  }) async {
+    final current = state.asData?.value;
+    if (current == null) return;
+    final now = DateTime.now();
+
+    final nextItems = [
+      for (final l in current.items)
+        if (l.id == lapinId)
+          l.copyWith(poidsActuelG: poidsActuelG, updatedAt: now)
+        else
+          l,
+    ];
+
+    state = AsyncValue.data(current.copyWith(items: nextItems));
+
+    final supabase = ref.read(supabaseClientProvider);
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
+
+    final cache = ref.read(localCacheServiceProvider);
+    final match = nextItems.where((e) => e.id == lapinId).toList();
+    if (match.isEmpty) return;
+    await cache.upsertLapin(match.first);
+  }
+
   Future<Lapin> create(Lapin lapin) async {
     final supabase = ref.read(supabaseClientProvider);
     final userId = supabase.auth.currentUser?.id;

@@ -57,6 +57,30 @@ class Pesee extends Equatable {
     };
   }
 
+  Pesee copyWith({
+    String? id,
+    String? lapinId,
+    String? userId,
+    DateTime? date,
+    int? poidsG,
+    double? gmqDepuisDerniere,
+    String? notes,
+    DateTime? createdAt,
+    Lapin? lapin,
+  }) {
+    return Pesee(
+      id: id ?? this.id,
+      lapinId: lapinId ?? this.lapinId,
+      userId: userId ?? this.userId,
+      date: date ?? this.date,
+      poidsG: poidsG ?? this.poidsG,
+      gmqDepuisDerniere: gmqDepuisDerniere ?? this.gmqDepuisDerniere,
+      notes: notes ?? this.notes,
+      createdAt: createdAt ?? this.createdAt,
+      lapin: lapin ?? this.lapin,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,
