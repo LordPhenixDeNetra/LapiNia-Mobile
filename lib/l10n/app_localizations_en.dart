@@ -682,4 +682,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationPasswordTooShort => 'Password too short';
+
+  @override
+  String get plusRaces => 'Breeds';
+
+  @override
+  String get racesTitle => 'Breeds';
+
+  @override
+  String get racesSearchHint => 'Search a breed...';
+
+  @override
+  String get racesEmptyTitle => 'No breeds';
+
+  @override
+  String get racesEmptySubtitle =>
+      'Check that the \"races\" table contains data.';
+
+  @override
+  String get racesNoSummary => 'See details';
+
+  @override
+  String racesWeightRange(String min, String max) {
+    return 'Adult weight: $min–$max kg';
+  }
+
+  @override
+  String racesGmqTarget(String gmq) {
+    return 'Target ADG: $gmq g/day';
+  }
+
+  @override
+  String racesHeatScore(String score) {
+    return 'Heat: $score/5';
+  }
+
+  @override
+  String get racesCompareCta => 'Compare';
+
+  @override
+  String get racesCompareTitle => 'Breed comparison';
+
+  @override
+  String get racesCompareMetricColumn => 'Metric';
+
+  @override
+  String get racesComparePickTitle => 'Select 2–3 breeds';
+
+  @override
+  String get racesCompareNeedTwoTitle => 'Select at least 2 breeds';
+
+  @override
+  String get racesCompareNeedTwoSubtitle =>
+      'Choose 2 or 3 breeds to display the comparison table.';
+
+  @override
+  String get racesComparePickMoreCta => 'Pick breeds';
+
+  @override
+  String get racesRecommendCta => 'Recommend';
+
+  @override
+  String get racesRecommendTitle => 'Breed recommendation';
+
+  @override
+  String get racesRecommendFormTitle => 'Your context';
+
+  @override
+  String get racesCountryLabel => 'Country';
+
+  @override
+  String get racesCityLabel => 'City';
+
+  @override
+  String get racesGoalLabel => 'Goal';
+
+  @override
+  String get racesResourcesLabel => 'Available resources';
+
+  @override
+  String get racesAiNotConfigured => 'AI is not configured on the server.';
+
+  @override
+  String get racesRecommendEmptyTitle => 'Recommendation';
+
+  @override
+  String get racesRecommendEmptySubtitle =>
+      'Fill the form and start the recommendation.';
+
+  @override
+  String get racesRecommendNoResultTitle => 'No recommendation';
+
+  @override
+  String get racesRecommendNoResultSubtitle =>
+      'Try again with another goal or resources.';
+
+  @override
+  String get racesRecommendResultTitle => 'Top recommendations';
+
+  @override
+  String get racesRecommendReasonsLabel => 'Why';
+
+  @override
+  String get racesRecommendWarningsLabel => 'Watch-outs';
+
+  @override
+  String get racesGoalMeat => 'Meat';
+
+  @override
+  String get racesGoalBreeding => 'Breeding';
+
+  @override
+  String get racesGoalHeatResilience => 'Hot climate';
+
+  @override
+  String get raceDetailTitle => 'Breed details';
+
+  @override
+  String get raceNotFoundTitle => 'Breed not found';
+
+  @override
+  String get raceNotFoundSubtitle => 'Could not load this breed.';
+
+  @override
+  String get raceSectionPerformance => 'Performance';
+
+  @override
+  String get raceSectionReproduction => 'Breeding';
+
+  @override
+  String get raceSectionClimate => 'Climate';
+
+  @override
+  String get raceSectionHealth => 'Health';
+
+  @override
+  String get raceAdultWeightLabel => 'Adult weight';
+
+  @override
+  String get raceGmqLabel => 'Target ADG';
+
+  @override
+  String raceGmqValue(int gmq) {
+    return '$gmq g/day';
+  }
+
+  @override
+  String get raceLitterSizeLabel => 'Avg litter size';
+
+  @override
+  String raceLitterSizeValue(double value) {
+    return '$value';
+  }
+
+  @override
+  String get raceFirstBirthAgeLabel => 'Age at first birth';
+
+  @override
+  String raceFirstBirthAgeValue(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get raceHeatAdaptationLabel => 'Heat adaptation';
+
+  @override
+  String raceHeatAdaptationValue(int score) {
+    return '$score/5';
+  }
+
+  @override
+  String get raceNoSensitivities => 'No sensitivities provided.';
 }

@@ -284,5 +284,108 @@
   "validationEmailRequired": "Veuillez entrer votre email",
   "validationEmailInvalid": "Email invalide",
   "validationPasswordRequired": "Veuillez entrer votre mot de passe",
-  "validationPasswordTooShort": "Mot de passe trop court"
+  "validationPasswordTooShort": "Mot de passe trop court",
+  "plusRaces": "Races",
+  "racesTitle": "Races",
+  "racesSearchHint": "Rechercher une race...",
+  "racesEmptyTitle": "Aucune race",
+  "racesEmptySubtitle": "Vérifiez que la table \"races\" contient des données.",
+  "racesNoSummary": "Voir les détails",
+  "racesWeightRange": "Poids adulte: {min}–{max} kg",
+  "@racesWeightRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "racesGmqTarget": "GMQ cible: {gmq} g/j",
+  "@racesGmqTarget": {
+    "placeholders": {
+      "gmq": {
+        "type": "String"
+      }
+    }
+  },
+  "racesHeatScore": "Chaleur: {score}/5",
+  "@racesHeatScore": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      }
+    }
+  },
+  "racesCompareCta": "Comparer",
+  "racesCompareTitle": "Comparateur de races",
+  "racesCompareMetricColumn": "Critère",
+  "racesComparePickTitle": "Sélectionnez 2–3 races",
+  "racesCompareNeedTwoTitle": "Sélectionnez au moins 2 races",
+  "racesCompareNeedTwoSubtitle": "Choisissez 2 ou 3 races pour afficher le tableau comparatif.",
+  "racesComparePickMoreCta": "Choisir des races",
+  "racesRecommendCta": "Recommander",
+  "racesRecommendTitle": "Recommandation de race",
+  "racesRecommendFormTitle": "Votre contexte",
+  "racesCountryLabel": "Pays",
+  "racesCityLabel": "Ville",
+  "racesGoalLabel": "Objectif",
+  "racesResourcesLabel": "Ressources disponibles",
+  "racesAiNotConfigured": "IA non configurée sur le serveur.",
+  "racesRecommendEmptyTitle": "Recommandation",
+  "racesRecommendEmptySubtitle": "Remplissez le formulaire puis lancez la recommandation.",
+  "racesRecommendNoResultTitle": "Aucune recommandation",
+  "racesRecommendNoResultSubtitle": "Réessayez avec un autre objectif ou d'autres ressources.",
+  "racesRecommendResultTitle": "Top recommandations",
+  "racesRecommendReasonsLabel": "Pourquoi",
+  "racesRecommendWarningsLabel": "Points d'attention",
+  "racesGoalMeat": "Viande",
+  "racesGoalBreeding": "Reproduction",
+  "racesGoalHeatResilience": "Climat chaud",
+  "raceDetailTitle": "Fiche race",
+  "raceNotFoundTitle": "Race introuvable",
+  "raceNotFoundSubtitle": "Impossible de charger cette race.",
+  "raceSectionPerformance": "Performance",
+  "raceSectionReproduction": "Reproduction",
+  "raceSectionClimate": "Climat",
+  "raceSectionHealth": "Santé",
+  "raceAdultWeightLabel": "Poids adulte",
+  "raceGmqLabel": "GMQ cible",
+  "raceGmqValue": "{gmq} g/j",
+  "@raceGmqValue": {
+    "placeholders": {
+      "gmq": {
+        "type": "int"
+      }
+    }
+  },
+  "raceLitterSizeLabel": "Taille portée moyenne",
+  "raceLitterSizeValue": "{value}",
+  "@raceLitterSizeValue": {
+    "placeholders": {
+      "value": {
+        "type": "double"
+      }
+    }
+  },
+  "raceFirstBirthAgeLabel": "Âge 1ère mise bas",
+  "raceFirstBirthAgeValue": "{days} jours",
+  "@raceFirstBirthAgeValue": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "raceHeatAdaptationLabel": "Adaptation chaleur",
+  "raceHeatAdaptationValue": "{score}/5",
+  "@raceHeatAdaptationValue": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "raceNoSensitivities": "Aucune sensibilité renseignée."
 }

@@ -68,10 +68,6 @@
 
 **Races**
 
-- [ ] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
-- [ ] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques
-- [ ] **(Flutter · P1)** Comparateur de races — sélection 2–3 races + tableau comparatif interactif selon objectif
-- [ ] **(Flutter · P1)** Recommandation de race (`POST /functions/v1/recommend-race`) — basée sur région, objectif, ressources disponibles
 - [ ] **(Flutter · P2)** Reconnaissance race par photo (`POST /functions/v1/recognize-race`) — TFLite on-device + affichage top 3 résultats avec scores de confiance
 
 ***
@@ -327,6 +323,11 @@
 - [x] **(Flutter · P1)** Fix 403 Storage (RLS) upload photo — chemin `lapins/<userId>/<lapinId>.jpg` + policies basées sur `storage.foldername(name)[1]`
 - [x] **(Flutter · P1)** Workaround upload Storage 403 (auto-hébergé) — upload HTTP direct avec headers `Authorization` + `apikey`
 - [x] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)
+- **Races**
+- [x] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
+- [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques
+- [x] **(Flutter · P1)** Comparateur de races — sélection 2–3 races + tableau comparatif interactif selon objectif
+- [x] **(Flutter · P1)** Recommandation de race (`POST /functions/v1/recommend-race`) — basée sur région, objectif, ressources disponibles
 - **Pesées & Croissance**
 - [x] **(Flutter · P1)** Ajouter pesée (`POST /rest/v1/pesees`) — saisie rapide poids en grammes + date + idempotency key
 - [x] **(Flutter · P1)** Liste pesées (`GET /rest/v1/pesees?lapin_id=eq.{id}&order=date.desc&limit=50`) — offset-based

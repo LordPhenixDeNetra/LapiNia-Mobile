@@ -30,6 +30,11 @@ class PlusScreen extends StatelessWidget {
             onTap: () => context.push('/aliments'),
           ),
           _Tile(
+            icon: Icons.pets_outlined,
+            title: l10n.plusRaces,
+            onTap: () => context.push('/races'),
+          ),
+          _Tile(
             icon: Icons.settings_outlined,
             title: l10n.plusSettings,
             onTap: () => context.push('/settings'),
@@ -66,4 +71,3 @@ class _Tile extends StatelessWidget {
     );
   }
 }
-

@@ -6,11 +6,14 @@ import 'app_database.dart';
 import '../../core/models/lapin.dart';
 import '../../core/models/pesel.dart';
 import '../../core/models/portee.dart';
+import '../../core/models/race.dart';
 
 class LocalCacheService {
   final AppDatabase db;
 
   LocalCacheService({required this.db});
+
+  static const String _racesRefId = 'all';
 
   Future<Lapin?> getLapinById({
     required String userId,
@@ -233,5 +236,29 @@ class LocalCacheService {
         mode: InsertMode.insertOrReplace,
       );
     });
+  }
+
+  Future<({List<Race> races, DateTime cachedAt})?> getRacesRef() async {
+    final row = await (db.select(db.racesRef)
+          ..where((t) => t.id.equals(_racesRefId)))
+        .getSingleOrNull();
+    if (row == null) return null;
+    final decoded = jsonDecode(row.data);
+    if (decoded is! List) return null;
+    final races = decoded
+        .map((e) => Race.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList();
+    return (races: races, cachedAt: row.cachedAt);
+  }
+
+  Future<void> setRacesRef(List<Race> races) async {
+    await db.into(db.racesRef).insert(
+          RacesRefCompanion.insert(
+            id: _racesRefId,
+            data: jsonEncode(races.map((r) => r.toJson()).toList()),
+            cachedAt: DateTime.now(),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
   }
 }

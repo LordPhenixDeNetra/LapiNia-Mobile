@@ -1393,6 +1393,312 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Mot de passe trop court'**
   String get validationPasswordTooShort;
+
+  /// No description provided for @plusRaces.
+  ///
+  /// In fr, this message translates to:
+  /// **'Races'**
+  String get plusRaces;
+
+  /// No description provided for @racesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Races'**
+  String get racesTitle;
+
+  /// No description provided for @racesSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une race...'**
+  String get racesSearchHint;
+
+  /// No description provided for @racesEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune race'**
+  String get racesEmptyTitle;
+
+  /// No description provided for @racesEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérifiez que la table \"races\" contient des données.'**
+  String get racesEmptySubtitle;
+
+  /// No description provided for @racesNoSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les détails'**
+  String get racesNoSummary;
+
+  /// No description provided for @racesWeightRange.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids adulte: {min}–{max} kg'**
+  String racesWeightRange(String min, String max);
+
+  /// No description provided for @racesGmqTarget.
+  ///
+  /// In fr, this message translates to:
+  /// **'GMQ cible: {gmq} g/j'**
+  String racesGmqTarget(String gmq);
+
+  /// No description provided for @racesHeatScore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaleur: {score}/5'**
+  String racesHeatScore(String score);
+
+  /// No description provided for @racesCompareCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparer'**
+  String get racesCompareCta;
+
+  /// No description provided for @racesCompareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comparateur de races'**
+  String get racesCompareTitle;
+
+  /// No description provided for @racesCompareMetricColumn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Critère'**
+  String get racesCompareMetricColumn;
+
+  /// No description provided for @racesComparePickTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez 2–3 races'**
+  String get racesComparePickTitle;
+
+  /// No description provided for @racesCompareNeedTwoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez au moins 2 races'**
+  String get racesCompareNeedTwoTitle;
+
+  /// No description provided for @racesCompareNeedTwoSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez 2 ou 3 races pour afficher le tableau comparatif.'**
+  String get racesCompareNeedTwoSubtitle;
+
+  /// No description provided for @racesComparePickMoreCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir des races'**
+  String get racesComparePickMoreCta;
+
+  /// No description provided for @racesRecommendCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommander'**
+  String get racesRecommendCta;
+
+  /// No description provided for @racesRecommendTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommandation de race'**
+  String get racesRecommendTitle;
+
+  /// No description provided for @racesRecommendFormTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre contexte'**
+  String get racesRecommendFormTitle;
+
+  /// No description provided for @racesCountryLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pays'**
+  String get racesCountryLabel;
+
+  /// No description provided for @racesCityLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ville'**
+  String get racesCityLabel;
+
+  /// No description provided for @racesGoalLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif'**
+  String get racesGoalLabel;
+
+  /// No description provided for @racesResourcesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ressources disponibles'**
+  String get racesResourcesLabel;
+
+  /// No description provided for @racesAiNotConfigured.
+  ///
+  /// In fr, this message translates to:
+  /// **'IA non configurée sur le serveur.'**
+  String get racesAiNotConfigured;
+
+  /// No description provided for @racesRecommendEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommandation'**
+  String get racesRecommendEmptyTitle;
+
+  /// No description provided for @racesRecommendEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplissez le formulaire puis lancez la recommandation.'**
+  String get racesRecommendEmptySubtitle;
+
+  /// No description provided for @racesRecommendNoResultTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recommandation'**
+  String get racesRecommendNoResultTitle;
+
+  /// No description provided for @racesRecommendNoResultSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayez avec un autre objectif ou d\'autres ressources.'**
+  String get racesRecommendNoResultSubtitle;
+
+  /// No description provided for @racesRecommendResultTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Top recommandations'**
+  String get racesRecommendResultTitle;
+
+  /// No description provided for @racesRecommendReasonsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pourquoi'**
+  String get racesRecommendReasonsLabel;
+
+  /// No description provided for @racesRecommendWarningsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Points d\'attention'**
+  String get racesRecommendWarningsLabel;
+
+  /// No description provided for @racesGoalMeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Viande'**
+  String get racesGoalMeat;
+
+  /// No description provided for @racesGoalBreeding.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reproduction'**
+  String get racesGoalBreeding;
+
+  /// No description provided for @racesGoalHeatResilience.
+  ///
+  /// In fr, this message translates to:
+  /// **'Climat chaud'**
+  String get racesGoalHeatResilience;
+
+  /// No description provided for @raceDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fiche race'**
+  String get raceDetailTitle;
+
+  /// No description provided for @raceNotFoundTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Race introuvable'**
+  String get raceNotFoundTitle;
+
+  /// No description provided for @raceNotFoundSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger cette race.'**
+  String get raceNotFoundSubtitle;
+
+  /// No description provided for @raceSectionPerformance.
+  ///
+  /// In fr, this message translates to:
+  /// **'Performance'**
+  String get raceSectionPerformance;
+
+  /// No description provided for @raceSectionReproduction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reproduction'**
+  String get raceSectionReproduction;
+
+  /// No description provided for @raceSectionClimate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Climat'**
+  String get raceSectionClimate;
+
+  /// No description provided for @raceSectionHealth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Santé'**
+  String get raceSectionHealth;
+
+  /// No description provided for @raceAdultWeightLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids adulte'**
+  String get raceAdultWeightLabel;
+
+  /// No description provided for @raceGmqLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'GMQ cible'**
+  String get raceGmqLabel;
+
+  /// No description provided for @raceGmqValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{gmq} g/j'**
+  String raceGmqValue(int gmq);
+
+  /// No description provided for @raceLitterSizeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille portée moyenne'**
+  String get raceLitterSizeLabel;
+
+  /// No description provided for @raceLitterSizeValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{value}'**
+  String raceLitterSizeValue(double value);
+
+  /// No description provided for @raceFirstBirthAgeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Âge 1ère mise bas'**
+  String get raceFirstBirthAgeLabel;
+
+  /// No description provided for @raceFirstBirthAgeValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{days} jours'**
+  String raceFirstBirthAgeValue(int days);
+
+  /// No description provided for @raceHeatAdaptationLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adaptation chaleur'**
+  String get raceHeatAdaptationLabel;
+
+  /// No description provided for @raceHeatAdaptationValue.
+  ///
+  /// In fr, this message translates to:
+  /// **'{score}/5'**
+  String raceHeatAdaptationValue(int score);
+
+  /// No description provided for @raceNoSensitivities.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune sensibilité renseignée.'**
+  String get raceNoSensitivities;
 }
 
 class _AppLocalizationsDelegate

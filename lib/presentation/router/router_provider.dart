@@ -23,6 +23,10 @@ import '../screens/aliments/aliments_screen.dart';
 import '../screens/ia/ia_screen.dart';
 import '../screens/plus/plus_screen.dart';
 import '../screens/alertes/alertes_screen.dart';
+import '../screens/races/race_compare_screen.dart';
+import '../screens/races/race_detail_screen.dart';
+import '../screens/races/race_list_screen.dart';
+import '../screens/races/race_recommendation_screen.dart';
 import '../screens/settings/settings_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -201,6 +205,37 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/aliments',
                 pageBuilder: (context, state) => const NoTransitionPage(
                   child: AlimentsScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/races',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: RaceListScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '/race/:id',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return RaceDetailScreen(raceId: id);
+                },
+              ),
+              GoRoute(
+                path: '/races/compare',
+                builder: (context, state) {
+                  final raw = state.uri.queryParameters['ids'] ?? '';
+                  final ids = raw
+                      .split(',')
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
+                      .toList();
+                  return RaceCompareScreen(raceIds: ids);
+                },
+              ),
+              GoRoute(
+                path: '/races/recommend',
+                pageBuilder: (context, state) => const NoTransitionPage(
+                  child: RaceRecommendationScreen(),
                 ),
               ),
             ],

@@ -14,6 +14,7 @@ import '../../domain/services/lapin_photo_service.dart';
 import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/planned_events_service.dart';
+import '../../domain/services/race_recommendation_service.dart';
 import '../../domain/services/rentability_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
@@ -72,6 +73,10 @@ final rentabilityServiceProvider = Provider<RentabilityService>((ref) {
 
 final growthPredictionServiceProvider = Provider<GrowthPredictionService>((ref) {
   return serviceLocator<GrowthPredictionService>();
+});
+
+final raceRecommendationServiceProvider = Provider<RaceRecommendationService>((ref) {
+  return serviceLocator<RaceRecommendationService>();
 });
 
 final connectivityCheckerProvider = Provider<ConnectivityChecker>((ref) {

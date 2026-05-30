@@ -687,4 +687,175 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get validationPasswordTooShort => 'Mot de passe trop court';
+
+  @override
+  String get plusRaces => 'Races';
+
+  @override
+  String get racesTitle => 'Races';
+
+  @override
+  String get racesSearchHint => 'Rechercher une race...';
+
+  @override
+  String get racesEmptyTitle => 'Aucune race';
+
+  @override
+  String get racesEmptySubtitle =>
+      'Vérifiez que la table \"races\" contient des données.';
+
+  @override
+  String get racesNoSummary => 'Voir les détails';
+
+  @override
+  String racesWeightRange(String min, String max) {
+    return 'Poids adulte: $min–$max kg';
+  }
+
+  @override
+  String racesGmqTarget(String gmq) {
+    return 'GMQ cible: $gmq g/j';
+  }
+
+  @override
+  String racesHeatScore(String score) {
+    return 'Chaleur: $score/5';
+  }
+
+  @override
+  String get racesCompareCta => 'Comparer';
+
+  @override
+  String get racesCompareTitle => 'Comparateur de races';
+
+  @override
+  String get racesCompareMetricColumn => 'Critère';
+
+  @override
+  String get racesComparePickTitle => 'Sélectionnez 2–3 races';
+
+  @override
+  String get racesCompareNeedTwoTitle => 'Sélectionnez au moins 2 races';
+
+  @override
+  String get racesCompareNeedTwoSubtitle =>
+      'Choisissez 2 ou 3 races pour afficher le tableau comparatif.';
+
+  @override
+  String get racesComparePickMoreCta => 'Choisir des races';
+
+  @override
+  String get racesRecommendCta => 'Recommander';
+
+  @override
+  String get racesRecommendTitle => 'Recommandation de race';
+
+  @override
+  String get racesRecommendFormTitle => 'Votre contexte';
+
+  @override
+  String get racesCountryLabel => 'Pays';
+
+  @override
+  String get racesCityLabel => 'Ville';
+
+  @override
+  String get racesGoalLabel => 'Objectif';
+
+  @override
+  String get racesResourcesLabel => 'Ressources disponibles';
+
+  @override
+  String get racesAiNotConfigured => 'IA non configurée sur le serveur.';
+
+  @override
+  String get racesRecommendEmptyTitle => 'Recommandation';
+
+  @override
+  String get racesRecommendEmptySubtitle =>
+      'Remplissez le formulaire puis lancez la recommandation.';
+
+  @override
+  String get racesRecommendNoResultTitle => 'Aucune recommandation';
+
+  @override
+  String get racesRecommendNoResultSubtitle =>
+      'Réessayez avec un autre objectif ou d\'autres ressources.';
+
+  @override
+  String get racesRecommendResultTitle => 'Top recommandations';
+
+  @override
+  String get racesRecommendReasonsLabel => 'Pourquoi';
+
+  @override
+  String get racesRecommendWarningsLabel => 'Points d\'attention';
+
+  @override
+  String get racesGoalMeat => 'Viande';
+
+  @override
+  String get racesGoalBreeding => 'Reproduction';
+
+  @override
+  String get racesGoalHeatResilience => 'Climat chaud';
+
+  @override
+  String get raceDetailTitle => 'Fiche race';
+
+  @override
+  String get raceNotFoundTitle => 'Race introuvable';
+
+  @override
+  String get raceNotFoundSubtitle => 'Impossible de charger cette race.';
+
+  @override
+  String get raceSectionPerformance => 'Performance';
+
+  @override
+  String get raceSectionReproduction => 'Reproduction';
+
+  @override
+  String get raceSectionClimate => 'Climat';
+
+  @override
+  String get raceSectionHealth => 'Santé';
+
+  @override
+  String get raceAdultWeightLabel => 'Poids adulte';
+
+  @override
+  String get raceGmqLabel => 'GMQ cible';
+
+  @override
+  String raceGmqValue(int gmq) {
+    return '$gmq g/j';
+  }
+
+  @override
+  String get raceLitterSizeLabel => 'Taille portée moyenne';
+
+  @override
+  String raceLitterSizeValue(double value) {
+    return '$value';
+  }
+
+  @override
+  String get raceFirstBirthAgeLabel => 'Âge 1ère mise bas';
+
+  @override
+  String raceFirstBirthAgeValue(int days) {
+    return '$days jours';
+  }
+
+  @override
+  String get raceHeatAdaptationLabel => 'Adaptation chaleur';
+
+  @override
+  String raceHeatAdaptationValue(int score) {
+    return '$score/5';
+  }
+
+  @override
+  String get raceNoSensitivities => 'Aucune sensibilité renseignée.';
 }

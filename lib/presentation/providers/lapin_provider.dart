@@ -15,6 +15,10 @@ class LapinOfflineNotFoundException implements Exception {
   const LapinOfflineNotFoundException();
 }
 
+class RacesOfflineNotFoundException implements Exception {
+  const RacesOfflineNotFoundException();
+}
+
 class LapinsListState {
   final List<Lapin> items;
   final bool isRefreshing;
@@ -574,8 +578,45 @@ final lapinDetailProvider = FutureProvider.family<Lapin, String>((ref, id) async
 
 final racesProvider = FutureProvider<List<Race>>((ref) async {
   final supabase = ref.read(supabaseClientProvider);
-  final response = await supabase.from('races').select().order('nom');
-  return (response as List).map((e) => Race.fromJson(e)).toList();
+  final connectivity = ref.read(connectivityCheckerProvider);
+  final cache = ref.read(localCacheServiceProvider);
+
+  const ttl = Duration(days: 7);
+  final cached = await cache.getRacesRef();
+
+  if (!connectivity.isOnline) {
+    if (cached != null) return cached.races;
+    throw const RacesOfflineNotFoundException();
+  }
+
+  if (cached != null) {
+    final age = DateTime.now().difference(cached.cachedAt);
+    if (age > ttl) {
+      unawaited(() async {
+        try {
+          final response = await supabase.from('races').select().order('nom');
+          final races = (response as List).map((e) => Race.fromJson(e)).toList();
+          await cache.setRacesRef(races);
+          ref.invalidateSelf();
+        } catch (_) {}
+      }());
+    }
+    return cached.races;
+  }
+
+  try {
+    final response = await supabase.from('races').select().order('nom');
+    final races = (response as List).map((e) => Race.fromJson(e)).toList();
+    await cache.setRacesRef(races);
+    return races;
+  } catch (e) {
+    await connectivity.checkConnectivity();
+    final retryCached = await cache.getRacesRef();
+    if (!connectivity.isOnline && retryCached != null) {
+      return retryCached.races;
+    }
+    throw humanizeError(e);
+  }
 });
 
 final lapinsSelectionProvider = FutureProvider<List<Lapin>>((ref) async {
