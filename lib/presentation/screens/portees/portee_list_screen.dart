@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/models/portee.dart';
+import '../../../core/constants/enums.dart';
 import '../../providers/portee_provider.dart';
 import '../../widgets/common/connectivity_banner.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -74,12 +75,33 @@ class _PorteeCard extends StatelessWidget {
 
   const _PorteeCard({required this.portee});
 
+  Color _statusColor(StatutPortee statut) {
+    switch (statut) {
+      case StatutPortee.enGestation:
+      case StatutPortee.miseBas:
+        return AppColors.statutGestation;
+      case StatutPortee.lactation:
+        return AppColors.statutLactation;
+      case StatutPortee.sevrage:
+        return AppColors.warning;
+      case StatutPortee.terminee:
+        return AppColors.greyMedium;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mere = portee.mere?.nom ?? 'Mère';
+    final l10n = AppLocalizations.of(context)!;
+    final mere = portee.mere?.nom ?? l10n.motherFallback;
     final statut = portee.statut.label;
     final date = portee.dateSaillie;
     final dateText = '${date.day}/${date.month}/${date.year}';
+    final statusColor = _statusColor(portee.statut);
+    final gestationDays = portee.joursGestationEcoules;
+    final gestationProgress = gestationDays != null
+        ? (gestationDays.clamp(0, 31) / 31).toDouble()
+        : null;
+    final remainingDays = gestationDays != null ? (31 - gestationDays).clamp(0, 31) : null;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -94,10 +116,10 @@ class _PorteeCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.statutGestation.withValues(alpha: 0.1),
+                  color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(22),
                 ),
-                child: const Icon(Icons.child_friendly, color: AppColors.statutGestation),
+                child: Icon(Icons.child_friendly, color: statusColor),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -106,14 +128,36 @@ class _PorteeCard extends StatelessWidget {
                   children: [
                     Text(mere, style: AppTypography.subtitle1),
                     const SizedBox(height: 4),
-                    Text('Saillie: $dateText', style: AppTypography.caption),
+                    Text(l10n.porteeSaillieDateLabel(dateText), style: AppTypography.caption),
+                    if (portee.statut == StatutPortee.enGestation && gestationProgress != null) ...[
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: gestationProgress,
+                          minHeight: 6,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
+                              .withValues(alpha: 0.6),
+                          valueColor: AlwaysStoppedAnimation<Color>(statusColor),
+                        ),
+                      ),
+                      if (gestationDays != null && remainingDays != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          l10n.porteeGestationProgressLabel(gestationDays, remainingDays),
+                          style: AppTypography.caption,
+                        ),
+                      ],
+                    ],
                   ],
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: statusColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

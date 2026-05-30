@@ -27,6 +27,8 @@ final onboardingDoneProvider =
 );
 
 final bootstrapProvider = FutureProvider<BootstrapDestination>((ref) async {
+  await ref.read(localNotificationServiceProvider).initialize();
+
   final sessionService = ref.read(sessionServiceProvider);
   await sessionService.restore();
 

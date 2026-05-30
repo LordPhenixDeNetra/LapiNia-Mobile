@@ -1735,6 +1735,342 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucune sensibilité renseignée.'**
   String get raceNoSensitivities;
+
+  /// No description provided for @confirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get confirm;
+
+  /// No description provided for @notes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// No description provided for @motherLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mère'**
+  String get motherLabel;
+
+  /// No description provided for @fatherLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Père'**
+  String get fatherLabel;
+
+  /// No description provided for @motherFallback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mère'**
+  String get motherFallback;
+
+  /// No description provided for @fatherFallback.
+  ///
+  /// In fr, this message translates to:
+  /// **'Père'**
+  String get fatherFallback;
+
+  /// No description provided for @statusLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get statusLabel;
+
+  /// No description provided for @saillieDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de saillie'**
+  String get saillieDateLabel;
+
+  /// No description provided for @expectedBirthDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise bas prévue'**
+  String get expectedBirthDateLabel;
+
+  /// No description provided for @porteeDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails portée'**
+  String get porteeDetailTitle;
+
+  /// No description provided for @porteeInfoSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Infos'**
+  String get porteeInfoSection;
+
+  /// No description provided for @recordMiseBasCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer mise bas'**
+  String get recordMiseBasCta;
+
+  /// No description provided for @lapereauxCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapereaux'**
+  String get lapereauxCta;
+
+  /// No description provided for @recordSevrageCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer sevrage'**
+  String get recordSevrageCta;
+
+  /// No description provided for @sevrageDestinationDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination par défaut au sevrage'**
+  String get sevrageDestinationDialogTitle;
+
+  /// No description provided for @lapereauDestinationConserve.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conservé'**
+  String get lapereauDestinationConserve;
+
+  /// No description provided for @lapereauDestinationVendu.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vendu'**
+  String get lapereauDestinationVendu;
+
+  /// No description provided for @lapereauDestinationConsomme.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consommé'**
+  String get lapereauDestinationConsomme;
+
+  /// No description provided for @selectFemaleAndMaleError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez une femelle et un mâle'**
+  String get selectFemaleAndMaleError;
+
+  /// No description provided for @femaleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Femelle'**
+  String get femaleLabel;
+
+  /// No description provided for @maleLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mâle'**
+  String get maleLabel;
+
+  /// No description provided for @consanguinityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Consanguinité'**
+  String get consanguinityTitle;
+
+  /// No description provided for @consanguinityOk.
+  ///
+  /// In fr, this message translates to:
+  /// **'OK'**
+  String get consanguinityOk;
+
+  /// No description provided for @consanguinityWarn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Avertissement'**
+  String get consanguinityWarn;
+
+  /// No description provided for @consanguinityBlock.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bloquée'**
+  String get consanguinityBlock;
+
+  /// No description provided for @consanguinityUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non vérifiable'**
+  String get consanguinityUnknown;
+
+  /// No description provided for @consanguinityOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vérification indisponible hors-ligne'**
+  String get consanguinityOffline;
+
+  /// No description provided for @consanguinityBlocked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saillie bloquée (consanguinité trop élevée).'**
+  String get consanguinityBlocked;
+
+  /// No description provided for @miseBasTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer mise bas'**
+  String get miseBasTitle;
+
+  /// No description provided for @miseBasDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date de mise bas'**
+  String get miseBasDateLabel;
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nombre invalide'**
+  String get invalidNumber;
+
+  /// No description provided for @nbVivantsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vivants'**
+  String get nbVivantsLabel;
+
+  /// No description provided for @nbMortsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Morts'**
+  String get nbMortsLabel;
+
+  /// No description provided for @poidsTotalPorteeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids total (g)'**
+  String get poidsTotalPorteeLabel;
+
+  /// No description provided for @lapereauxTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapereaux'**
+  String get lapereauxTitle;
+
+  /// No description provided for @lapereauxEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun lapereau'**
+  String get lapereauxEmpty;
+
+  /// No description provided for @lapereauxEmptySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les lapereaux apparaîtront après l\'enregistrement de la mise bas.'**
+  String get lapereauxEmptySubtitle;
+
+  /// No description provided for @lapereauLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapereau'**
+  String get lapereauLabel;
+
+  /// No description provided for @lapereauEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier lapereau'**
+  String get lapereauEditTitle;
+
+  /// No description provided for @lapereauSexeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sexe'**
+  String get lapereauSexeLabel;
+
+  /// No description provided for @lapereauStatutLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut'**
+  String get lapereauStatutLabel;
+
+  /// No description provided for @lapereauPoidsNaissanceLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids naissance (g)'**
+  String get lapereauPoidsNaissanceLabel;
+
+  /// No description provided for @preMiseBasChecklistTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Checklist pré-mise bas (J25)'**
+  String get preMiseBasChecklistTitle;
+
+  /// No description provided for @checklistCageMaternite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cage maternité'**
+  String get checklistCageMaternite;
+
+  /// No description provided for @checklistNid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nid'**
+  String get checklistNid;
+
+  /// No description provided for @checklistTemperature.
+  ///
+  /// In fr, this message translates to:
+  /// **'Température'**
+  String get checklistTemperature;
+
+  /// No description provided for @checklistAliments.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aliments'**
+  String get checklistAliments;
+
+  /// No description provided for @checklistIsolement.
+  ///
+  /// In fr, this message translates to:
+  /// **'Isolement'**
+  String get checklistIsolement;
+
+  /// No description provided for @gestationTimelineTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Timeline gestation'**
+  String get gestationTimelineTitle;
+
+  /// No description provided for @gestationDayProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Jour {day} / 31'**
+  String gestationDayProgress(int day);
+
+  /// No description provided for @gestationMilestoneJ7.
+  ///
+  /// In fr, this message translates to:
+  /// **'Implantation'**
+  String get gestationMilestoneJ7;
+
+  /// No description provided for @gestationMilestoneJ25.
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparer le nid'**
+  String get gestationMilestoneJ25;
+
+  /// No description provided for @gestationMilestoneJ28.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alerte'**
+  String get gestationMilestoneJ28;
+
+  /// No description provided for @gestationMilestoneJ31.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mise bas'**
+  String get gestationMilestoneJ31;
+
+  /// No description provided for @porteeSaillieDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Saillie : {date}'**
+  String porteeSaillieDateLabel(String date);
+
+  /// No description provided for @porteeGestationProgressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'J{elapsed} — {remaining} jours restants'**
+  String porteeGestationProgressLabel(int elapsed, int remaining);
 }
 
 class _AppLocalizationsDelegate

@@ -876,4 +876,181 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get raceNoSensitivities => 'Aucune sensibilité renseignée.';
+
+  @override
+  String get confirm => 'Confirmer';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get motherLabel => 'Mère';
+
+  @override
+  String get fatherLabel => 'Père';
+
+  @override
+  String get motherFallback => 'Mère';
+
+  @override
+  String get fatherFallback => 'Père';
+
+  @override
+  String get statusLabel => 'Statut';
+
+  @override
+  String get saillieDateLabel => 'Date de saillie';
+
+  @override
+  String get expectedBirthDateLabel => 'Mise bas prévue';
+
+  @override
+  String get porteeDetailTitle => 'Détails portée';
+
+  @override
+  String get porteeInfoSection => 'Infos';
+
+  @override
+  String get recordMiseBasCta => 'Enregistrer mise bas';
+
+  @override
+  String get lapereauxCta => 'Lapereaux';
+
+  @override
+  String get recordSevrageCta => 'Enregistrer sevrage';
+
+  @override
+  String get sevrageDestinationDialogTitle =>
+      'Destination par défaut au sevrage';
+
+  @override
+  String get lapereauDestinationConserve => 'Conservé';
+
+  @override
+  String get lapereauDestinationVendu => 'Vendu';
+
+  @override
+  String get lapereauDestinationConsomme => 'Consommé';
+
+  @override
+  String get selectFemaleAndMaleError => 'Sélectionnez une femelle et un mâle';
+
+  @override
+  String get femaleLabel => 'Femelle';
+
+  @override
+  String get maleLabel => 'Mâle';
+
+  @override
+  String get consanguinityTitle => 'Consanguinité';
+
+  @override
+  String get consanguinityOk => 'OK';
+
+  @override
+  String get consanguinityWarn => 'Avertissement';
+
+  @override
+  String get consanguinityBlock => 'Bloquée';
+
+  @override
+  String get consanguinityUnknown => 'Non vérifiable';
+
+  @override
+  String get consanguinityOffline => 'Vérification indisponible hors-ligne';
+
+  @override
+  String get consanguinityBlocked =>
+      'Saillie bloquée (consanguinité trop élevée).';
+
+  @override
+  String get miseBasTitle => 'Enregistrer mise bas';
+
+  @override
+  String get miseBasDateLabel => 'Date de mise bas';
+
+  @override
+  String get invalidNumber => 'Nombre invalide';
+
+  @override
+  String get nbVivantsLabel => 'Vivants';
+
+  @override
+  String get nbMortsLabel => 'Morts';
+
+  @override
+  String get poidsTotalPorteeLabel => 'Poids total (g)';
+
+  @override
+  String get lapereauxTitle => 'Lapereaux';
+
+  @override
+  String get lapereauxEmpty => 'Aucun lapereau';
+
+  @override
+  String get lapereauxEmptySubtitle =>
+      'Les lapereaux apparaîtront après l\'enregistrement de la mise bas.';
+
+  @override
+  String get lapereauLabel => 'Lapereau';
+
+  @override
+  String get lapereauEditTitle => 'Modifier lapereau';
+
+  @override
+  String get lapereauSexeLabel => 'Sexe';
+
+  @override
+  String get lapereauStatutLabel => 'Statut';
+
+  @override
+  String get lapereauPoidsNaissanceLabel => 'Poids naissance (g)';
+
+  @override
+  String get preMiseBasChecklistTitle => 'Checklist pré-mise bas (J25)';
+
+  @override
+  String get checklistCageMaternite => 'Cage maternité';
+
+  @override
+  String get checklistNid => 'Nid';
+
+  @override
+  String get checklistTemperature => 'Température';
+
+  @override
+  String get checklistAliments => 'Aliments';
+
+  @override
+  String get checklistIsolement => 'Isolement';
+
+  @override
+  String get gestationTimelineTitle => 'Timeline gestation';
+
+  @override
+  String gestationDayProgress(int day) {
+    return 'Jour $day / 31';
+  }
+
+  @override
+  String get gestationMilestoneJ7 => 'Implantation';
+
+  @override
+  String get gestationMilestoneJ25 => 'Préparer le nid';
+
+  @override
+  String get gestationMilestoneJ28 => 'Alerte';
+
+  @override
+  String get gestationMilestoneJ31 => 'Mise bas';
+
+  @override
+  String porteeSaillieDateLabel(String date) {
+    return 'Saillie : $date';
+  }
+
+  @override
+  String porteeGestationProgressLabel(int elapsed, int remaining) {
+    return 'J$elapsed — $remaining jours restants';
+  }
 }

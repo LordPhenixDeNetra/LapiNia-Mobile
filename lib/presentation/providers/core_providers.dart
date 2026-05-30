@@ -12,9 +12,13 @@ import '../../domain/services/file_share_service.dart';
 import '../../domain/services/growth_prediction_service.dart';
 import '../../domain/services/lapin_photo_service.dart';
 import '../../domain/services/lapin_identifier_service.dart';
+import '../../domain/services/consanguinity_service.dart';
+import '../../domain/services/local_notification_service.dart';
 import '../../domain/services/onboarding_profile_service.dart';
 import '../../domain/services/onboarding_service.dart';
 import '../../domain/services/planned_events_service.dart';
+import '../../domain/services/portee_notifications_service.dart';
+import '../../domain/services/pre_mise_bas_checklist_service.dart';
 import '../../domain/services/race_recommendation_service.dart';
 import '../../domain/services/rentability_service.dart';
 import '../../domain/services/session_service.dart';
@@ -54,6 +58,22 @@ final lapinPhotoServiceProvider = Provider<LapinPhotoService>((ref) {
 
 final lapinIdentifierServiceProvider = Provider<LapinIdentifierService>((ref) {
   return serviceLocator<LapinIdentifierService>();
+});
+
+final consanguinityServiceProvider = Provider<ConsanguinityService>((ref) {
+  return serviceLocator<ConsanguinityService>();
+});
+
+final localNotificationServiceProvider = Provider<LocalNotificationService>((ref) {
+  return serviceLocator<LocalNotificationService>();
+});
+
+final porteeNotificationsServiceProvider = Provider<PorteeNotificationsService>((ref) {
+  return serviceLocator<PorteeNotificationsService>();
+});
+
+final preMiseBasChecklistServiceProvider = Provider<PreMiseBasChecklistService>((ref) {
+  return serviceLocator<PreMiseBasChecklistService>();
 });
 
 final databaseProvider = Provider<AppDatabase>((ref) {

@@ -70,16 +70,6 @@
 
 **Portées & Reproduction**
 
-- [ ] **(Flutter · P1)** Liste portées (`GET /rest/v1/portees?user_id=eq.{id}&order=date_saillie.desc`) — statut coloré + barre progression gestation
-- [ ] **(Flutter · P1)** Enregistrer une saillie (`POST /rest/v1/portees`) — sélection femelle (filtre statut=REPOS) + sélection mâle + date + observations + idempotency key
-- [ ] **(Flutter · P1)** Vérification consanguinité avant saillie (`POST /functions/v1/consanguinity-check`) — alerte orange si F > 6.25%, blocage rouge si F > 12.5%
-- [ ] **(Flutter · P1)** Timeline gestation visuelle — barre J0–J31 avec jalons (J7 implantation, J25 préparer nid, J28 alerte, J31 mise bas)
-- [ ] **(Flutter · P1)** Checklist pré-mise bas J25 — cage maternité, nid, température, aliments, isolement (stockée en SQLite local)
-- [ ] **(Flutter · P1)** Enregistrer mise bas (`PATCH /rest/v1/portees?id=eq.{id}`) — nb vivants, nb morts, poids total portée, date réelle + mise à jour statut femelle → LACTATION
-- [ ] **(Flutter · P1)** Lapereaux portée (`GET /rest/v1/lapereaux?portee_id=eq.{id}`) — liste individuelle avec poids + statut
-- [ ] **(Flutter · P1)** Mise à jour lapereau (`PATCH /rest/v1/lapereaux?id=eq.{id}`) — poids, statut, destination (conserver / vendre / consommer)
-- [ ] **(Flutter · P1)** Enregistrer sevrage — confirmation J28–J35 + poids final + destination de chaque lapereau + mise à jour statut femelle → REPOS
-- [ ] **(Flutter · P1)** Notifications push mise bas — planifier FCM à J-3 et J-1 via Edge Function après saisie saillie
 - [ ] **(Flutter · P2)** Calendrier production annuel (`POST /functions/v1/production-calendar`) — objectif lapereaux/mois + planification saillies sur 12 mois
 
 ***
@@ -319,6 +309,17 @@
 - [x] **(Flutter · P1)** Fix 403 Storage (RLS) upload photo — chemin `lapins/<userId>/<lapinId>.jpg` + policies basées sur `storage.foldername(name)[1]`
 - [x] **(Flutter · P1)** Workaround upload Storage 403 (auto-hébergé) — upload HTTP direct avec headers `Authorization` + `apikey`
 - [x] **(Flutter · P1)** Statut dynamique lapin — mise à jour automatique selon événements (saillie → EN\_GESTATION, mise bas → LACTATION…)
+- **Portées & Reproduction**
+- [x] **(Flutter · P1)** Liste portées (`GET /rest/v1/portees?user_id=eq.{id}&order=date_saillie.desc`) — statut coloré + barre progression gestation
+- [x] **(Flutter · P1)** Enregistrer une saillie (`POST /rest/v1/portees`) — sélection femelle (filtre statut=REPOS) + sélection mâle + date + notes + idempotency key
+- [x] **(Flutter · P1)** Vérification consanguinité avant saillie (`POST /functions/v1/consanguinity-check`) — alerte orange si F > 6.25%, blocage rouge si F > 12.5%
+- [x] **(Flutter · P1)** Timeline gestation visuelle — barre J0–J31 avec jalons (J7 implantation, J25 préparer nid, J28 alerte, J31 mise bas)
+- [x] **(Flutter · P1)** Checklist pré-mise bas J25 — cage maternité, nid, température, aliments, isolement (stockée en SQLite local)
+- [x] **(Flutter · P1)** Enregistrer mise bas (`PATCH /rest/v1/portees?id=eq.{id}`) — nb vivants, nb morts, poids total portée, date réelle + mise à jour statut femelle → LACTATION
+- [x] **(Flutter · P1)** Lapereaux portée (`GET /rest/v1/lapereaux?portee_id=eq.{id}`) — liste individuelle avec poids + statut
+- [x] **(Flutter · P1)** Mise à jour lapereau (`PATCH /rest/v1/lapereaux?id=eq.{id}`) — poids, statut, destination (conserver / vendre / consommer)
+- [x] **(Flutter · P1)** Enregistrer sevrage — confirmation J28–J35 + destination par défaut + mise à jour statut femelle → REPOS
+- [x] **(Flutter · P1)** Notifications locales mise bas — planifier local à J-3 et J-1 (09:00 locale) après saisie saillie
 - **Races**
 - [x] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
 - [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques

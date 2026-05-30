@@ -393,5 +393,85 @@
       }
     }
   },
-  "raceNoSensitivities": "No sensitivities provided."
+  "raceNoSensitivities": "No sensitivities provided.",
+  "confirm": "Confirm",
+  "notes": "Notes",
+  "motherLabel": "Mother",
+  "fatherLabel": "Father",
+  "motherFallback": "Mother",
+  "fatherFallback": "Father",
+  "statusLabel": "Status",
+  "saillieDateLabel": "Mating date",
+  "expectedBirthDateLabel": "Expected birth",
+  "porteeDetailTitle": "Litter details",
+  "porteeInfoSection": "Info",
+  "recordMiseBasCta": "Record birth",
+  "lapereauxCta": "Kits",
+  "recordSevrageCta": "Record weaning",
+  "sevrageDestinationDialogTitle": "Default destination at weaning",
+  "lapereauDestinationConserve": "Keep",
+  "lapereauDestinationVendu": "Sold",
+  "lapereauDestinationConsomme": "Consumed",
+  "selectFemaleAndMaleError": "Select a female and a male",
+  "femaleLabel": "Female",
+  "maleLabel": "Male",
+  "consanguinityTitle": "Inbreeding",
+  "consanguinityOk": "OK",
+  "consanguinityWarn": "Warning",
+  "consanguinityBlock": "Blocked",
+  "consanguinityUnknown": "Unknown",
+  "consanguinityOffline": "Inbreeding check unavailable offline",
+  "consanguinityBlocked": "Mating blocked (inbreeding too high).",
+  "miseBasTitle": "Record birth",
+  "miseBasDateLabel": "Birth date",
+  "invalidNumber": "Invalid number",
+  "nbVivantsLabel": "Alive",
+  "nbMortsLabel": "Dead",
+  "poidsTotalPorteeLabel": "Total weight (g)",
+  "lapereauxTitle": "Kits",
+  "lapereauxEmpty": "No kits",
+  "lapereauxEmptySubtitle": "Kits will appear after recording the birth.",
+  "lapereauLabel": "Kit",
+  "lapereauEditTitle": "Edit kit",
+  "lapereauSexeLabel": "Sex",
+  "lapereauStatutLabel": "Status",
+  "lapereauPoidsNaissanceLabel": "Birth weight (g)",
+  "preMiseBasChecklistTitle": "Pre-birth checklist (D25)",
+  "checklistCageMaternite": "Maternity cage",
+  "checklistNid": "Nest",
+  "checklistTemperature": "Temperature",
+  "checklistAliments": "Feed",
+  "checklistIsolement": "Isolation",
+  "gestationTimelineTitle": "Gestation timeline",
+  "gestationDayProgress": "Day {day} / 31",
+  "@gestationDayProgress": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "gestationMilestoneJ7": "Implantation",
+  "gestationMilestoneJ25": "Prepare the nest",
+  "gestationMilestoneJ28": "Alert",
+  "gestationMilestoneJ31": "Birth",
+  "porteeSaillieDateLabel": "Mating: {date}",
+  "@porteeSaillieDateLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "porteeGestationProgressLabel": "D{elapsed} — {remaining} days left",
+  "@porteeGestationProgressLabel": {
+    "placeholders": {
+      "elapsed": {
+        "type": "int"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  }
 }

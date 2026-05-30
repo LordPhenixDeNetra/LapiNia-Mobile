@@ -26,6 +26,17 @@ class PorteesLocal extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class LapereauxLocal extends Table {
+  TextColumn get id => text()();
+  TextColumn get porteeId => text()();
+  TextColumn get userId => text()();
+  TextColumn get data => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class PeseesLocal extends Table {
   TextColumn get id => text()();
   TextColumn get lapinId => text()();
@@ -123,6 +134,17 @@ class PlannedEvents extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+class PreMiseBasChecklistLocal extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get porteeId => text()();
+  TextColumn get itemKey => text()();
+  BoolColumn get checked => boolean()();
+  DateTimeColumn get updatedAt => dateTime()();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class SyncQueue extends Table {
   TextColumn get id => text()();
   TextColumn get targetTable => text().named('table_name')();
@@ -140,6 +162,7 @@ class SyncQueue extends Table {
   tables: [
     LapinsLocal,
     PorteesLocal,
+    LapereauxLocal,
     PeseesLocal,
     SanteLocal,
     StocksLocal,
@@ -150,6 +173,7 @@ class SyncQueue extends Table {
     AlimentsLocauxRef,
     DailyAdviceCache,
     PlannedEvents,
+    PreMiseBasChecklistLocal,
     SyncQueue,
   ],
 )
@@ -166,7 +190,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -177,6 +201,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 2) {
             await m.createTable(dailyAdviceCache);
             await m.createTable(plannedEvents);
+          }
+          if (from < 3) {
+            await m.createTable(lapereauxLocal);
+            await m.createTable(preMiseBasChecklistLocal);
           }
         },
       );

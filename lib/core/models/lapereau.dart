@@ -60,6 +60,32 @@ class Lapereau extends Equatable {
     };
   }
 
+  Lapereau copyWith({
+    String? id,
+    String? porteeId,
+    String? userId,
+    SexeLapin? sexe,
+    int? poidsNaissanceG,
+    DateTime? dateSevrage,
+    StatutLapereau? statut,
+    String? lapinId,
+    DateTime? createdAt,
+    Lapin? lapin,
+  }) {
+    return Lapereau(
+      id: id ?? this.id,
+      porteeId: porteeId ?? this.porteeId,
+      userId: userId ?? this.userId,
+      sexe: sexe ?? this.sexe,
+      poidsNaissanceG: poidsNaissanceG ?? this.poidsNaissanceG,
+      dateSevrage: dateSevrage ?? this.dateSevrage,
+      statut: statut ?? this.statut,
+      lapinId: lapinId ?? this.lapinId,
+      createdAt: createdAt ?? this.createdAt,
+      lapin: lapin ?? this.lapin,
+    );
+  }
+
   @override
   List<Object?> get props => [
         id,

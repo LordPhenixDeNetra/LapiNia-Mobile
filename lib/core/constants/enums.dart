@@ -137,7 +137,8 @@ enum StatutLapereau {
   vivant,
   mort,
   vendu,
-  conserve;
+  conserve,
+  consomme;
 
   String get label {
     switch (this) {
@@ -149,6 +150,8 @@ enum StatutLapereau {
         return 'Vendu';
       case StatutLapereau.conserve:
         return 'Conservé';
+      case StatutLapereau.consomme:
+        return 'Consommé';
     }
   }
 
@@ -162,6 +165,8 @@ enum StatutLapereau {
         return 'VENDU';
       case StatutLapereau.conserve:
         return 'CONSERVÉ';
+      case StatutLapereau.consomme:
+        return 'CONSOMMÉ';
     }
   }
 

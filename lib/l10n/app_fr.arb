@@ -393,5 +393,85 @@
       }
     }
   },
-  "raceNoSensitivities": "Aucune sensibilité renseignée."
+  "raceNoSensitivities": "Aucune sensibilité renseignée.",
+  "confirm": "Confirmer",
+  "notes": "Notes",
+  "motherLabel": "Mère",
+  "fatherLabel": "Père",
+  "motherFallback": "Mère",
+  "fatherFallback": "Père",
+  "statusLabel": "Statut",
+  "saillieDateLabel": "Date de saillie",
+  "expectedBirthDateLabel": "Mise bas prévue",
+  "porteeDetailTitle": "Détails portée",
+  "porteeInfoSection": "Infos",
+  "recordMiseBasCta": "Enregistrer mise bas",
+  "lapereauxCta": "Lapereaux",
+  "recordSevrageCta": "Enregistrer sevrage",
+  "sevrageDestinationDialogTitle": "Destination par défaut au sevrage",
+  "lapereauDestinationConserve": "Conservé",
+  "lapereauDestinationVendu": "Vendu",
+  "lapereauDestinationConsomme": "Consommé",
+  "selectFemaleAndMaleError": "Sélectionnez une femelle et un mâle",
+  "femaleLabel": "Femelle",
+  "maleLabel": "Mâle",
+  "consanguinityTitle": "Consanguinité",
+  "consanguinityOk": "OK",
+  "consanguinityWarn": "Avertissement",
+  "consanguinityBlock": "Bloquée",
+  "consanguinityUnknown": "Non vérifiable",
+  "consanguinityOffline": "Vérification indisponible hors-ligne",
+  "consanguinityBlocked": "Saillie bloquée (consanguinité trop élevée).",
+  "miseBasTitle": "Enregistrer mise bas",
+  "miseBasDateLabel": "Date de mise bas",
+  "invalidNumber": "Nombre invalide",
+  "nbVivantsLabel": "Vivants",
+  "nbMortsLabel": "Morts",
+  "poidsTotalPorteeLabel": "Poids total (g)",
+  "lapereauxTitle": "Lapereaux",
+  "lapereauxEmpty": "Aucun lapereau",
+  "lapereauxEmptySubtitle": "Les lapereaux apparaîtront après l'enregistrement de la mise bas.",
+  "lapereauLabel": "Lapereau",
+  "lapereauEditTitle": "Modifier lapereau",
+  "lapereauSexeLabel": "Sexe",
+  "lapereauStatutLabel": "Statut",
+  "lapereauPoidsNaissanceLabel": "Poids naissance (g)",
+  "preMiseBasChecklistTitle": "Checklist pré-mise bas (J25)",
+  "checklistCageMaternite": "Cage maternité",
+  "checklistNid": "Nid",
+  "checklistTemperature": "Température",
+  "checklistAliments": "Aliments",
+  "checklistIsolement": "Isolement",
+  "gestationTimelineTitle": "Timeline gestation",
+  "gestationDayProgress": "Jour {day} / 31",
+  "@gestationDayProgress": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "gestationMilestoneJ7": "Implantation",
+  "gestationMilestoneJ25": "Préparer le nid",
+  "gestationMilestoneJ28": "Alerte",
+  "gestationMilestoneJ31": "Mise bas",
+  "porteeSaillieDateLabel": "Saillie : {date}",
+  "@porteeSaillieDateLabel": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "porteeGestationProgressLabel": "J{elapsed} — {remaining} jours restants",
+  "@porteeGestationProgressLabel": {
+    "placeholders": {
+      "elapsed": {
+        "type": "int"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -8,6 +8,7 @@ import '../../core/models/portee.dart';
 import '../../core/utils/error_mapper.dart';
 import '../../core/utils/sync_manager.dart';
 import 'core_providers.dart';
+import 'lapereau_provider.dart';
 import 'lapin_provider.dart';
 
 class PorteesController extends AsyncNotifier<List<Portee>> {
@@ -77,6 +78,18 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
 
     final dateMiseBasPrevue = portee.dateSaillie.add(const Duration(days: 31));
 
+    final lapins = ref.read(lapinsProvider).asData?.value.items ?? const [];
+    final mereMatch = lapins.where((l) => l.id == optimistic.mereId).toList();
+    final mereName = mereMatch.isEmpty ? null : mereMatch.first.nom;
+
+    if (mereName != null) {
+      await ref.read(porteeNotificationsServiceProvider).scheduleGestationReminders(
+            porteeId: optimistic.id,
+            mereName: mereName,
+            dateMiseBasPrevue: dateMiseBasPrevue,
+          );
+    }
+
     final data = {
       'id': optimistic.id,
       'user_id': userId,
@@ -134,6 +147,10 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
 
     final cache = ref.read(localCacheServiceProvider);
     final syncManager = ref.read(syncManagerProvider);
+
+    await ref
+        .read(porteeNotificationsServiceProvider)
+        .cancelGestationReminders(porteeId: porteeId);
 
     final now = DateTime.now();
     final current = state.asData?.value ?? const [];
@@ -193,6 +210,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
   Future<void> recordSevrage({
     required String porteeId,
     required String mereId,
+    required StatutLapereau defaultDestination,
   }) async {
     final connectivity = ref.read(connectivityCheckerProvider);
     final supabase = ref.read(supabaseClientProvider);
@@ -205,6 +223,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     final syncManager = ref.read(syncManagerProvider);
 
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final current = state.asData?.value ?? const [];
     final index = current.indexWhere((p) => p.id == porteeId);
     if (index != -1) {
@@ -222,6 +241,22 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
           lapinId: mereId,
           statut: StatutLapin.repos,
         );
+
+    final lapereauxInMemory = ref.read(lapereauxProvider(porteeId)).asData?.value;
+    final lapereaux = lapereauxInMemory ?? await cache.getLapereaux(userId: userId, porteeId: porteeId);
+    for (final l in lapereaux) {
+      if (l.statut != StatutLapereau.vivant) continue;
+      final updated = l.copyWith(
+        dateSevrage: today,
+        statut: defaultDestination,
+      );
+      await cache.upsertLapereau(updated);
+      await syncManager.addMutation(
+        tableName: 'lapereaux',
+        operation: MutationType.update,
+        payload: jsonEncode(updated.toJson()),
+      );
+    }
 
     await syncManager.addMutation(
       tableName: 'portees',
@@ -248,6 +283,7 @@ class PorteesController extends AsyncNotifier<List<Portee>> {
     if (connectivity.isOnline) {
       unawaited(refresh());
       unawaited(ref.read(lapinsProvider.notifier).refresh());
+      ref.invalidate(lapereauxProvider(porteeId));
     }
   }
 }

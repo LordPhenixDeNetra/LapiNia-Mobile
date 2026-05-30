@@ -16,6 +16,8 @@ import '../screens/lapins/lapin_form_screen.dart';
 import '../screens/lapins/lapin_list_screen.dart';
 import '../screens/lapins/lapin_qr_screen.dart';
 import '../screens/main_shell_screen.dart';
+import '../screens/portees/lapereaux_screen.dart';
+import '../screens/portees/mise_bas_form_screen.dart';
 import '../screens/portees/portee_detail_screen.dart';
 import '../screens/portees/portee_list_screen.dart';
 import '../screens/portees/saillie_form_screen.dart';
@@ -186,6 +188,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return PorteeDetailScreen(porteeId: id);
+                },
+              ),
+              GoRoute(
+                path: '/portee/:id/mise-bas',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return MiseBasFormScreen(porteeId: id);
+                },
+              ),
+              GoRoute(
+                path: '/portee/:id/lapereaux',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return LapereauxScreen(porteeId: id);
                 },
               ),
             ],

@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import 'app_database.dart';
 import '../../core/models/lapin.dart';
+import '../../core/models/lapereau.dart';
 import '../../core/models/pesel.dart';
 import '../../core/models/portee.dart';
 import '../../core/models/race.dart';
@@ -229,6 +230,65 @@ class LocalCacheService {
                 userId: userId,
                 data: jsonEncode(p.toJson()),
                 updatedAt: p.updatedAt,
+                isDeleted: const Value(false),
+              ),
+            )
+            .toList(),
+        mode: InsertMode.insertOrReplace,
+      );
+    });
+  }
+
+  Future<List<Lapereau>> getLapereaux({
+    required String userId,
+    required String porteeId,
+  }) async {
+    final rows = await (db.select(db.lapereauxLocal)
+          ..where(
+            (t) =>
+                t.userId.equals(userId) &
+                t.porteeId.equals(porteeId) &
+                t.isDeleted.equals(false),
+          )
+          ..orderBy([(t) => OrderingTerm(expression: t.updatedAt, mode: OrderingMode.asc)]))
+        .get();
+    return rows
+        .map((r) => Lapereau.fromJson(jsonDecode(r.data) as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> upsertLapereau(Lapereau lapereau) async {
+    final now = DateTime.now();
+    await db.into(db.lapereauxLocal).insert(
+          LapereauxLocalCompanion.insert(
+            id: lapereau.id,
+            porteeId: lapereau.porteeId,
+            userId: lapereau.userId,
+            data: jsonEncode(lapereau.toJson()),
+            updatedAt: now,
+            isDeleted: const Value(false),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+  }
+
+  Future<void> cacheLapereaux({
+    required String userId,
+    required String porteeId,
+    required List<Lapereau> lapereaux,
+  }) async {
+    final now = DateTime.now();
+    await db.batch((batch) {
+      batch.insertAll(
+        db.lapereauxLocal,
+        lapereaux
+            .map(
+              (l) => LapereauxLocalCompanion.insert(
+                id: l.id,
+                porteeId: porteeId,
+                userId: userId,
+                data: jsonEncode(l.toJson()),
+                updatedAt: now,
                 isDeleted: const Value(false),
               ),
             )

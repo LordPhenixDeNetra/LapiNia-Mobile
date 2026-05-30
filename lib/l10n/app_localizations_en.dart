@@ -871,4 +871,179 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get raceNoSensitivities => 'No sensitivities provided.';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get motherLabel => 'Mother';
+
+  @override
+  String get fatherLabel => 'Father';
+
+  @override
+  String get motherFallback => 'Mother';
+
+  @override
+  String get fatherFallback => 'Father';
+
+  @override
+  String get statusLabel => 'Status';
+
+  @override
+  String get saillieDateLabel => 'Mating date';
+
+  @override
+  String get expectedBirthDateLabel => 'Expected birth';
+
+  @override
+  String get porteeDetailTitle => 'Litter details';
+
+  @override
+  String get porteeInfoSection => 'Info';
+
+  @override
+  String get recordMiseBasCta => 'Record birth';
+
+  @override
+  String get lapereauxCta => 'Kits';
+
+  @override
+  String get recordSevrageCta => 'Record weaning';
+
+  @override
+  String get sevrageDestinationDialogTitle => 'Default destination at weaning';
+
+  @override
+  String get lapereauDestinationConserve => 'Keep';
+
+  @override
+  String get lapereauDestinationVendu => 'Sold';
+
+  @override
+  String get lapereauDestinationConsomme => 'Consumed';
+
+  @override
+  String get selectFemaleAndMaleError => 'Select a female and a male';
+
+  @override
+  String get femaleLabel => 'Female';
+
+  @override
+  String get maleLabel => 'Male';
+
+  @override
+  String get consanguinityTitle => 'Inbreeding';
+
+  @override
+  String get consanguinityOk => 'OK';
+
+  @override
+  String get consanguinityWarn => 'Warning';
+
+  @override
+  String get consanguinityBlock => 'Blocked';
+
+  @override
+  String get consanguinityUnknown => 'Unknown';
+
+  @override
+  String get consanguinityOffline => 'Inbreeding check unavailable offline';
+
+  @override
+  String get consanguinityBlocked => 'Mating blocked (inbreeding too high).';
+
+  @override
+  String get miseBasTitle => 'Record birth';
+
+  @override
+  String get miseBasDateLabel => 'Birth date';
+
+  @override
+  String get invalidNumber => 'Invalid number';
+
+  @override
+  String get nbVivantsLabel => 'Alive';
+
+  @override
+  String get nbMortsLabel => 'Dead';
+
+  @override
+  String get poidsTotalPorteeLabel => 'Total weight (g)';
+
+  @override
+  String get lapereauxTitle => 'Kits';
+
+  @override
+  String get lapereauxEmpty => 'No kits';
+
+  @override
+  String get lapereauxEmptySubtitle =>
+      'Kits will appear after recording the birth.';
+
+  @override
+  String get lapereauLabel => 'Kit';
+
+  @override
+  String get lapereauEditTitle => 'Edit kit';
+
+  @override
+  String get lapereauSexeLabel => 'Sex';
+
+  @override
+  String get lapereauStatutLabel => 'Status';
+
+  @override
+  String get lapereauPoidsNaissanceLabel => 'Birth weight (g)';
+
+  @override
+  String get preMiseBasChecklistTitle => 'Pre-birth checklist (D25)';
+
+  @override
+  String get checklistCageMaternite => 'Maternity cage';
+
+  @override
+  String get checklistNid => 'Nest';
+
+  @override
+  String get checklistTemperature => 'Temperature';
+
+  @override
+  String get checklistAliments => 'Feed';
+
+  @override
+  String get checklistIsolement => 'Isolation';
+
+  @override
+  String get gestationTimelineTitle => 'Gestation timeline';
+
+  @override
+  String gestationDayProgress(int day) {
+    return 'Day $day / 31';
+  }
+
+  @override
+  String get gestationMilestoneJ7 => 'Implantation';
+
+  @override
+  String get gestationMilestoneJ25 => 'Prepare the nest';
+
+  @override
+  String get gestationMilestoneJ28 => 'Alert';
+
+  @override
+  String get gestationMilestoneJ31 => 'Birth';
+
+  @override
+  String porteeSaillieDateLabel(String date) {
+    return 'Mating: $date';
+  }
+
+  @override
+  String porteeGestationProgressLabel(int elapsed, int remaining) {
+    return 'D$elapsed — $remaining days left';
+  }
 }

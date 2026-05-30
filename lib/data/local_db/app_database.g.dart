@@ -722,6 +722,414 @@ class PorteesLocalCompanion extends UpdateCompanion<PorteesLocalData> {
   }
 }
 
+class $LapereauxLocalTable extends LapereauxLocal
+    with TableInfo<$LapereauxLocalTable, LapereauxLocalData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LapereauxLocalTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _porteeIdMeta = const VerificationMeta(
+    'porteeId',
+  );
+  @override
+  late final GeneratedColumn<String> porteeId = GeneratedColumn<String>(
+    'portee_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dataMeta = const VerificationMeta('data');
+  @override
+  late final GeneratedColumn<String> data = GeneratedColumn<String>(
+    'data',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDeletedMeta = const VerificationMeta(
+    'isDeleted',
+  );
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+    'is_deleted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_deleted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    porteeId,
+    userId,
+    data,
+    updatedAt,
+    isDeleted,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'lapereaux_local';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LapereauxLocalData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('portee_id')) {
+      context.handle(
+        _porteeIdMeta,
+        porteeId.isAcceptableOrUnknown(data['portee_id']!, _porteeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_porteeIdMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('data')) {
+      context.handle(
+        _dataMeta,
+        this.data.isAcceptableOrUnknown(data['data']!, _dataMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dataMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(
+        _isDeletedMeta,
+        isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LapereauxLocalData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LapereauxLocalData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      porteeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}portee_id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      data: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}data'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      isDeleted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_deleted'],
+      )!,
+    );
+  }
+
+  @override
+  $LapereauxLocalTable createAlias(String alias) {
+    return $LapereauxLocalTable(attachedDatabase, alias);
+  }
+}
+
+class LapereauxLocalData extends DataClass
+    implements Insertable<LapereauxLocalData> {
+  final String id;
+  final String porteeId;
+  final String userId;
+  final String data;
+  final DateTime updatedAt;
+  final bool isDeleted;
+  const LapereauxLocalData({
+    required this.id,
+    required this.porteeId,
+    required this.userId,
+    required this.data,
+    required this.updatedAt,
+    required this.isDeleted,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['portee_id'] = Variable<String>(porteeId);
+    map['user_id'] = Variable<String>(userId);
+    map['data'] = Variable<String>(data);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    return map;
+  }
+
+  LapereauxLocalCompanion toCompanion(bool nullToAbsent) {
+    return LapereauxLocalCompanion(
+      id: Value(id),
+      porteeId: Value(porteeId),
+      userId: Value(userId),
+      data: Value(data),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+    );
+  }
+
+  factory LapereauxLocalData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LapereauxLocalData(
+      id: serializer.fromJson<String>(json['id']),
+      porteeId: serializer.fromJson<String>(json['porteeId']),
+      userId: serializer.fromJson<String>(json['userId']),
+      data: serializer.fromJson<String>(json['data']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'porteeId': serializer.toJson<String>(porteeId),
+      'userId': serializer.toJson<String>(userId),
+      'data': serializer.toJson<String>(data),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+    };
+  }
+
+  LapereauxLocalData copyWith({
+    String? id,
+    String? porteeId,
+    String? userId,
+    String? data,
+    DateTime? updatedAt,
+    bool? isDeleted,
+  }) => LapereauxLocalData(
+    id: id ?? this.id,
+    porteeId: porteeId ?? this.porteeId,
+    userId: userId ?? this.userId,
+    data: data ?? this.data,
+    updatedAt: updatedAt ?? this.updatedAt,
+    isDeleted: isDeleted ?? this.isDeleted,
+  );
+  LapereauxLocalData copyWithCompanion(LapereauxLocalCompanion data) {
+    return LapereauxLocalData(
+      id: data.id.present ? data.id.value : this.id,
+      porteeId: data.porteeId.present ? data.porteeId.value : this.porteeId,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      data: data.data.present ? data.data.value : this.data,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LapereauxLocalData(')
+          ..write('id: $id, ')
+          ..write('porteeId: $porteeId, ')
+          ..write('userId: $userId, ')
+          ..write('data: $data, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, porteeId, userId, data, updatedAt, isDeleted);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LapereauxLocalData &&
+          other.id == this.id &&
+          other.porteeId == this.porteeId &&
+          other.userId == this.userId &&
+          other.data == this.data &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted);
+}
+
+class LapereauxLocalCompanion extends UpdateCompanion<LapereauxLocalData> {
+  final Value<String> id;
+  final Value<String> porteeId;
+  final Value<String> userId;
+  final Value<String> data;
+  final Value<DateTime> updatedAt;
+  final Value<bool> isDeleted;
+  final Value<int> rowid;
+  const LapereauxLocalCompanion({
+    this.id = const Value.absent(),
+    this.porteeId = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.data = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LapereauxLocalCompanion.insert({
+    required String id,
+    required String porteeId,
+    required String userId,
+    required String data,
+    required DateTime updatedAt,
+    this.isDeleted = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       porteeId = Value(porteeId),
+       userId = Value(userId),
+       data = Value(data),
+       updatedAt = Value(updatedAt);
+  static Insertable<LapereauxLocalData> custom({
+    Expression<String>? id,
+    Expression<String>? porteeId,
+    Expression<String>? userId,
+    Expression<String>? data,
+    Expression<DateTime>? updatedAt,
+    Expression<bool>? isDeleted,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (porteeId != null) 'portee_id': porteeId,
+      if (userId != null) 'user_id': userId,
+      if (data != null) 'data': data,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LapereauxLocalCompanion copyWith({
+    Value<String>? id,
+    Value<String>? porteeId,
+    Value<String>? userId,
+    Value<String>? data,
+    Value<DateTime>? updatedAt,
+    Value<bool>? isDeleted,
+    Value<int>? rowid,
+  }) {
+    return LapereauxLocalCompanion(
+      id: id ?? this.id,
+      porteeId: porteeId ?? this.porteeId,
+      userId: userId ?? this.userId,
+      data: data ?? this.data,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (porteeId.present) {
+      map['portee_id'] = Variable<String>(porteeId.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (data.present) {
+      map['data'] = Variable<String>(data.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LapereauxLocalCompanion(')
+          ..write('id: $id, ')
+          ..write('porteeId: $porteeId, ')
+          ..write('userId: $userId, ')
+          ..write('data: $data, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PeseesLocalTable extends PeseesLocal
     with TableInfo<$PeseesLocalTable, PeseesLocalData> {
   @override
@@ -4156,6 +4564,428 @@ class PlannedEventsCompanion extends UpdateCompanion<PlannedEvent> {
   }
 }
 
+class $PreMiseBasChecklistLocalTable extends PreMiseBasChecklistLocal
+    with
+        TableInfo<
+          $PreMiseBasChecklistLocalTable,
+          PreMiseBasChecklistLocalData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PreMiseBasChecklistLocalTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _porteeIdMeta = const VerificationMeta(
+    'porteeId',
+  );
+  @override
+  late final GeneratedColumn<String> porteeId = GeneratedColumn<String>(
+    'portee_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _itemKeyMeta = const VerificationMeta(
+    'itemKey',
+  );
+  @override
+  late final GeneratedColumn<String> itemKey = GeneratedColumn<String>(
+    'item_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _checkedMeta = const VerificationMeta(
+    'checked',
+  );
+  @override
+  late final GeneratedColumn<bool> checked = GeneratedColumn<bool>(
+    'checked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("checked" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    porteeId,
+    itemKey,
+    checked,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pre_mise_bas_checklist_local';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PreMiseBasChecklistLocalData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('portee_id')) {
+      context.handle(
+        _porteeIdMeta,
+        porteeId.isAcceptableOrUnknown(data['portee_id']!, _porteeIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_porteeIdMeta);
+    }
+    if (data.containsKey('item_key')) {
+      context.handle(
+        _itemKeyMeta,
+        itemKey.isAcceptableOrUnknown(data['item_key']!, _itemKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemKeyMeta);
+    }
+    if (data.containsKey('checked')) {
+      context.handle(
+        _checkedMeta,
+        checked.isAcceptableOrUnknown(data['checked']!, _checkedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_checkedMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PreMiseBasChecklistLocalData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PreMiseBasChecklistLocalData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      porteeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}portee_id'],
+      )!,
+      itemKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_key'],
+      )!,
+      checked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}checked'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $PreMiseBasChecklistLocalTable createAlias(String alias) {
+    return $PreMiseBasChecklistLocalTable(attachedDatabase, alias);
+  }
+}
+
+class PreMiseBasChecklistLocalData extends DataClass
+    implements Insertable<PreMiseBasChecklistLocalData> {
+  final String id;
+  final String userId;
+  final String porteeId;
+  final String itemKey;
+  final bool checked;
+  final DateTime updatedAt;
+  const PreMiseBasChecklistLocalData({
+    required this.id,
+    required this.userId,
+    required this.porteeId,
+    required this.itemKey,
+    required this.checked,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['portee_id'] = Variable<String>(porteeId);
+    map['item_key'] = Variable<String>(itemKey);
+    map['checked'] = Variable<bool>(checked);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  PreMiseBasChecklistLocalCompanion toCompanion(bool nullToAbsent) {
+    return PreMiseBasChecklistLocalCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      porteeId: Value(porteeId),
+      itemKey: Value(itemKey),
+      checked: Value(checked),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory PreMiseBasChecklistLocalData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PreMiseBasChecklistLocalData(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      porteeId: serializer.fromJson<String>(json['porteeId']),
+      itemKey: serializer.fromJson<String>(json['itemKey']),
+      checked: serializer.fromJson<bool>(json['checked']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'porteeId': serializer.toJson<String>(porteeId),
+      'itemKey': serializer.toJson<String>(itemKey),
+      'checked': serializer.toJson<bool>(checked),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  PreMiseBasChecklistLocalData copyWith({
+    String? id,
+    String? userId,
+    String? porteeId,
+    String? itemKey,
+    bool? checked,
+    DateTime? updatedAt,
+  }) => PreMiseBasChecklistLocalData(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    porteeId: porteeId ?? this.porteeId,
+    itemKey: itemKey ?? this.itemKey,
+    checked: checked ?? this.checked,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  PreMiseBasChecklistLocalData copyWithCompanion(
+    PreMiseBasChecklistLocalCompanion data,
+  ) {
+    return PreMiseBasChecklistLocalData(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      porteeId: data.porteeId.present ? data.porteeId.value : this.porteeId,
+      itemKey: data.itemKey.present ? data.itemKey.value : this.itemKey,
+      checked: data.checked.present ? data.checked.value : this.checked,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PreMiseBasChecklistLocalData(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('porteeId: $porteeId, ')
+          ..write('itemKey: $itemKey, ')
+          ..write('checked: $checked, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, userId, porteeId, itemKey, checked, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PreMiseBasChecklistLocalData &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.porteeId == this.porteeId &&
+          other.itemKey == this.itemKey &&
+          other.checked == this.checked &&
+          other.updatedAt == this.updatedAt);
+}
+
+class PreMiseBasChecklistLocalCompanion
+    extends UpdateCompanion<PreMiseBasChecklistLocalData> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> porteeId;
+  final Value<String> itemKey;
+  final Value<bool> checked;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const PreMiseBasChecklistLocalCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.porteeId = const Value.absent(),
+    this.itemKey = const Value.absent(),
+    this.checked = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PreMiseBasChecklistLocalCompanion.insert({
+    required String id,
+    required String userId,
+    required String porteeId,
+    required String itemKey,
+    required bool checked,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userId = Value(userId),
+       porteeId = Value(porteeId),
+       itemKey = Value(itemKey),
+       checked = Value(checked),
+       updatedAt = Value(updatedAt);
+  static Insertable<PreMiseBasChecklistLocalData> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? porteeId,
+    Expression<String>? itemKey,
+    Expression<bool>? checked,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (porteeId != null) 'portee_id': porteeId,
+      if (itemKey != null) 'item_key': itemKey,
+      if (checked != null) 'checked': checked,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PreMiseBasChecklistLocalCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<String>? porteeId,
+    Value<String>? itemKey,
+    Value<bool>? checked,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return PreMiseBasChecklistLocalCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      porteeId: porteeId ?? this.porteeId,
+      itemKey: itemKey ?? this.itemKey,
+      checked: checked ?? this.checked,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (porteeId.present) {
+      map['portee_id'] = Variable<String>(porteeId.value);
+    }
+    if (itemKey.present) {
+      map['item_key'] = Variable<String>(itemKey.value);
+    }
+    if (checked.present) {
+      map['checked'] = Variable<bool>(checked.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PreMiseBasChecklistLocalCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('porteeId: $porteeId, ')
+          ..write('itemKey: $itemKey, ')
+          ..write('checked: $checked, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncQueueTable extends SyncQueue
     with TableInfo<$SyncQueueTable, SyncQueueData> {
   @override
@@ -4684,6 +5514,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $LapinsLocalTable lapinsLocal = $LapinsLocalTable(this);
   late final $PorteesLocalTable porteesLocal = $PorteesLocalTable(this);
+  late final $LapereauxLocalTable lapereauxLocal = $LapereauxLocalTable(this);
   late final $PeseesLocalTable peseesLocal = $PeseesLocalTable(this);
   late final $SanteLocalTable santeLocal = $SanteLocalTable(this);
   late final $StocksLocalTable stocksLocal = $StocksLocalTable(this);
@@ -4697,6 +5528,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $PlannedEventsTable plannedEvents = $PlannedEventsTable(this);
+  late final $PreMiseBasChecklistLocalTable preMiseBasChecklistLocal =
+      $PreMiseBasChecklistLocalTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4705,6 +5538,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     lapinsLocal,
     porteesLocal,
+    lapereauxLocal,
     peseesLocal,
     santeLocal,
     stocksLocal,
@@ -4715,6 +5549,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     alimentsLocauxRef,
     dailyAdviceCache,
     plannedEvents,
+    preMiseBasChecklistLocal,
     syncQueue,
   ];
 }
@@ -5117,6 +5952,231 @@ typedef $$PorteesLocalTableProcessedTableManager =
         BaseReferences<_$AppDatabase, $PorteesLocalTable, PorteesLocalData>,
       ),
       PorteesLocalData,
+      PrefetchHooks Function()
+    >;
+typedef $$LapereauxLocalTableCreateCompanionBuilder =
+    LapereauxLocalCompanion Function({
+      required String id,
+      required String porteeId,
+      required String userId,
+      required String data,
+      required DateTime updatedAt,
+      Value<bool> isDeleted,
+      Value<int> rowid,
+    });
+typedef $$LapereauxLocalTableUpdateCompanionBuilder =
+    LapereauxLocalCompanion Function({
+      Value<String> id,
+      Value<String> porteeId,
+      Value<String> userId,
+      Value<String> data,
+      Value<DateTime> updatedAt,
+      Value<bool> isDeleted,
+      Value<int> rowid,
+    });
+
+class $$LapereauxLocalTableFilterComposer
+    extends Composer<_$AppDatabase, $LapereauxLocalTable> {
+  $$LapereauxLocalTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get porteeId => $composableBuilder(
+    column: $table.porteeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get data => $composableBuilder(
+    column: $table.data,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LapereauxLocalTableOrderingComposer
+    extends Composer<_$AppDatabase, $LapereauxLocalTable> {
+  $$LapereauxLocalTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get porteeId => $composableBuilder(
+    column: $table.porteeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get data => $composableBuilder(
+    column: $table.data,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+    column: $table.isDeleted,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LapereauxLocalTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LapereauxLocalTable> {
+  $$LapereauxLocalTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get porteeId =>
+      $composableBuilder(column: $table.porteeId, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get data =>
+      $composableBuilder(column: $table.data, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+}
+
+class $$LapereauxLocalTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LapereauxLocalTable,
+          LapereauxLocalData,
+          $$LapereauxLocalTableFilterComposer,
+          $$LapereauxLocalTableOrderingComposer,
+          $$LapereauxLocalTableAnnotationComposer,
+          $$LapereauxLocalTableCreateCompanionBuilder,
+          $$LapereauxLocalTableUpdateCompanionBuilder,
+          (
+            LapereauxLocalData,
+            BaseReferences<
+              _$AppDatabase,
+              $LapereauxLocalTable,
+              LapereauxLocalData
+            >,
+          ),
+          LapereauxLocalData,
+          PrefetchHooks Function()
+        > {
+  $$LapereauxLocalTableTableManager(
+    _$AppDatabase db,
+    $LapereauxLocalTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LapereauxLocalTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LapereauxLocalTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LapereauxLocalTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> porteeId = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> data = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<bool> isDeleted = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LapereauxLocalCompanion(
+                id: id,
+                porteeId: porteeId,
+                userId: userId,
+                data: data,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String porteeId,
+                required String userId,
+                required String data,
+                required DateTime updatedAt,
+                Value<bool> isDeleted = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LapereauxLocalCompanion.insert(
+                id: id,
+                porteeId: porteeId,
+                userId: userId,
+                data: data,
+                updatedAt: updatedAt,
+                isDeleted: isDeleted,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LapereauxLocalTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LapereauxLocalTable,
+      LapereauxLocalData,
+      $$LapereauxLocalTableFilterComposer,
+      $$LapereauxLocalTableOrderingComposer,
+      $$LapereauxLocalTableAnnotationComposer,
+      $$LapereauxLocalTableCreateCompanionBuilder,
+      $$LapereauxLocalTableUpdateCompanionBuilder,
+      (
+        LapereauxLocalData,
+        BaseReferences<_$AppDatabase, $LapereauxLocalTable, LapereauxLocalData>,
+      ),
+      LapereauxLocalData,
       PrefetchHooks Function()
     >;
 typedef $$PeseesLocalTableCreateCompanionBuilder =
@@ -7095,6 +8155,244 @@ typedef $$PlannedEventsTableProcessedTableManager =
       PlannedEvent,
       PrefetchHooks Function()
     >;
+typedef $$PreMiseBasChecklistLocalTableCreateCompanionBuilder =
+    PreMiseBasChecklistLocalCompanion Function({
+      required String id,
+      required String userId,
+      required String porteeId,
+      required String itemKey,
+      required bool checked,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$PreMiseBasChecklistLocalTableUpdateCompanionBuilder =
+    PreMiseBasChecklistLocalCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<String> porteeId,
+      Value<String> itemKey,
+      Value<bool> checked,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$PreMiseBasChecklistLocalTableFilterComposer
+    extends Composer<_$AppDatabase, $PreMiseBasChecklistLocalTable> {
+  $$PreMiseBasChecklistLocalTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get porteeId => $composableBuilder(
+    column: $table.porteeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get itemKey => $composableBuilder(
+    column: $table.itemKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get checked => $composableBuilder(
+    column: $table.checked,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PreMiseBasChecklistLocalTableOrderingComposer
+    extends Composer<_$AppDatabase, $PreMiseBasChecklistLocalTable> {
+  $$PreMiseBasChecklistLocalTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get porteeId => $composableBuilder(
+    column: $table.porteeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get itemKey => $composableBuilder(
+    column: $table.itemKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get checked => $composableBuilder(
+    column: $table.checked,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PreMiseBasChecklistLocalTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PreMiseBasChecklistLocalTable> {
+  $$PreMiseBasChecklistLocalTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get porteeId =>
+      $composableBuilder(column: $table.porteeId, builder: (column) => column);
+
+  GeneratedColumn<String> get itemKey =>
+      $composableBuilder(column: $table.itemKey, builder: (column) => column);
+
+  GeneratedColumn<bool> get checked =>
+      $composableBuilder(column: $table.checked, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$PreMiseBasChecklistLocalTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PreMiseBasChecklistLocalTable,
+          PreMiseBasChecklistLocalData,
+          $$PreMiseBasChecklistLocalTableFilterComposer,
+          $$PreMiseBasChecklistLocalTableOrderingComposer,
+          $$PreMiseBasChecklistLocalTableAnnotationComposer,
+          $$PreMiseBasChecklistLocalTableCreateCompanionBuilder,
+          $$PreMiseBasChecklistLocalTableUpdateCompanionBuilder,
+          (
+            PreMiseBasChecklistLocalData,
+            BaseReferences<
+              _$AppDatabase,
+              $PreMiseBasChecklistLocalTable,
+              PreMiseBasChecklistLocalData
+            >,
+          ),
+          PreMiseBasChecklistLocalData,
+          PrefetchHooks Function()
+        > {
+  $$PreMiseBasChecklistLocalTableTableManager(
+    _$AppDatabase db,
+    $PreMiseBasChecklistLocalTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PreMiseBasChecklistLocalTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$PreMiseBasChecklistLocalTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$PreMiseBasChecklistLocalTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> porteeId = const Value.absent(),
+                Value<String> itemKey = const Value.absent(),
+                Value<bool> checked = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PreMiseBasChecklistLocalCompanion(
+                id: id,
+                userId: userId,
+                porteeId: porteeId,
+                itemKey: itemKey,
+                checked: checked,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userId,
+                required String porteeId,
+                required String itemKey,
+                required bool checked,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => PreMiseBasChecklistLocalCompanion.insert(
+                id: id,
+                userId: userId,
+                porteeId: porteeId,
+                itemKey: itemKey,
+                checked: checked,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PreMiseBasChecklistLocalTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PreMiseBasChecklistLocalTable,
+      PreMiseBasChecklistLocalData,
+      $$PreMiseBasChecklistLocalTableFilterComposer,
+      $$PreMiseBasChecklistLocalTableOrderingComposer,
+      $$PreMiseBasChecklistLocalTableAnnotationComposer,
+      $$PreMiseBasChecklistLocalTableCreateCompanionBuilder,
+      $$PreMiseBasChecklistLocalTableUpdateCompanionBuilder,
+      (
+        PreMiseBasChecklistLocalData,
+        BaseReferences<
+          _$AppDatabase,
+          $PreMiseBasChecklistLocalTable,
+          PreMiseBasChecklistLocalData
+        >,
+      ),
+      PreMiseBasChecklistLocalData,
+      PrefetchHooks Function()
+    >;
 typedef $$SyncQueueTableCreateCompanionBuilder =
     SyncQueueCompanion Function({
       required String id,
@@ -7366,6 +8664,8 @@ class $AppDatabaseManager {
       $$LapinsLocalTableTableManager(_db, _db.lapinsLocal);
   $$PorteesLocalTableTableManager get porteesLocal =>
       $$PorteesLocalTableTableManager(_db, _db.porteesLocal);
+  $$LapereauxLocalTableTableManager get lapereauxLocal =>
+      $$LapereauxLocalTableTableManager(_db, _db.lapereauxLocal);
   $$PeseesLocalTableTableManager get peseesLocal =>
       $$PeseesLocalTableTableManager(_db, _db.peseesLocal);
   $$SanteLocalTableTableManager get santeLocal =>
@@ -7386,6 +8686,11 @@ class $AppDatabaseManager {
       $$DailyAdviceCacheTableTableManager(_db, _db.dailyAdviceCache);
   $$PlannedEventsTableTableManager get plannedEvents =>
       $$PlannedEventsTableTableManager(_db, _db.plannedEvents);
+  $$PreMiseBasChecklistLocalTableTableManager get preMiseBasChecklistLocal =>
+      $$PreMiseBasChecklistLocalTableTableManager(
+        _db,
+        _db.preMiseBasChecklistLocal,
+      );
   $$SyncQueueTableTableManager get syncQueue =>
       $$SyncQueueTableTableManager(_db, _db.syncQueue);
 }

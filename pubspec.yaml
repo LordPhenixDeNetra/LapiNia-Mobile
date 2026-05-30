@@ -53,6 +53,8 @@ dependencies:
   # Notifications
   firebase_messaging: ^16.2.2
   flutter_local_notifications: ^21.0.0
+  timezone: ^0.11.0
+  flutter_timezone: ^4.1.0
 
   # Connectivité
   connectivity_plus: ^7.1.1
