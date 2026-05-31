@@ -324,6 +324,8 @@
 - [x] **(Flutter · P1)** Arbre généalogique (`GET /rest/v1/genealogie?lapin_id=eq.{id}`) — visualisation 3 générations, chaque nœud cliquable
 - [x] **(Flutter · P1)** Suggestion mâles pour saillie (`POST /functions/v1/suggest-males`) — classement par score génétique selon objectifs éleveur
 - [x] **(Flutter · P1)** Fix UX Repro — éviter chargements infinis + spinner “score fertilité” qui clignote (providers stabilisés)
+- [x] **(Supabase · P1)** IA optionnelle pour calculs déterministes — `suggest-males` (rerank + justification) + `consanguinity-check` (explication) avec fallback déterministe si IA absente
+- [x] **(Supabase · P1)** Fix Edge Function `fertility-advice` — corrige crash Deno (?? + ||) qui causait HTTP 500 au boot
 - **Races**
 - [x] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
 - [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques

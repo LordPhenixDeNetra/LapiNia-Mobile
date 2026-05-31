@@ -1308,7 +1308,7 @@ Cas: baisse de fertilité chez un lapin d'élevage.
 Contexte (optionnel): ${context || '—'}
 
 Données lapin:
-- id: ${lapin?.id ?? lapinId || '—'}
+- id: ${lapin?.id ?? (lapinId || '—')}
 - nom: ${lapin?.nom ?? '—'}
 - sexe: ${lapin?.sexe ?? '—'}
 - statut: ${lapin?.statut ?? '—'}
@@ -1636,12 +1636,28 @@ curl_status() {
   local data="${3:-}"
 
   if [[ "$method" == "GET" ]]; then
-    curl -s -o /dev/null -w "%{http_code}" "$url" || true
+    local headers=()
+    if [[ -n "${ACCESS_TOKEN:-}" ]]; then
+      headers+=(-H "Authorization: Bearer ${ACCESS_TOKEN}")
+    fi
+    if [[ -n "${SUPABASE_ANON_KEY:-}" ]]; then
+      headers+=(-H "apikey: ${SUPABASE_ANON_KEY}")
+    fi
+    curl -s -o /dev/null -w "%{http_code}" "${headers[@]}" "$url" || true
     return 0
+  fi
+
+  local headers=()
+  if [[ -n "${ACCESS_TOKEN:-}" ]]; then
+    headers+=(-H "Authorization: Bearer ${ACCESS_TOKEN}")
+  fi
+  if [[ -n "${SUPABASE_ANON_KEY:-}" ]]; then
+    headers+=(-H "apikey: ${SUPABASE_ANON_KEY}")
   fi
 
   curl -s -o /dev/null -w "%{http_code}" -X "$method" \
     -H "Content-Type: application/json" \
+    "${headers[@]}" \
     --data "$data" \
     "$url" || true
 }

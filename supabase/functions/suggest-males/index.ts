@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createAIRouter } from '../_shared/ai-router.ts';
 
 type Objective = 'anti-consanguinite' | 'croissance' | 'equilibre';
 type ConsanguinityLevel = 'OK' | 'WARN' | 'BLOCK' | 'UNKNOWN';
@@ -147,6 +148,10 @@ serve(async (req: Request) => {
     const body = (await req.json()) as any;
     const femelleId = (body?.femelleId ?? body?.femelle_id ?? '').toString().trim();
     const objectifRaw = (body?.objectif ?? body?.objective ?? 'equilibre').toString().trim();
+    const useAiRaw = body?.useAi ?? body?.use_ai;
+    const useAi = typeof useAiRaw === 'boolean'
+      ? useAiRaw
+      : (useAiRaw == null ? true : String(useAiRaw).toLowerCase() === 'true');
 
     if (!femelleId) {
       return new Response(JSON.stringify({ error: 'Body must include femelleId' }), {
@@ -266,9 +271,67 @@ serve(async (req: Request) => {
       return (a.maleId as string).localeCompare(b.maleId as string);
     });
 
+    let source: 'ai' | 'deterministic' = 'deterministic';
+    if (useAi) {
+      try {
+        const ai = createAIRouter();
+        if (ai.hasProvider()) {
+          const top = items.slice(0, 10).map((it) => ({
+            maleId: it.maleId,
+            nom: it.nom,
+            raceNom: it.raceNom,
+            score: it.score,
+            consanguinite: it.consanguinite,
+            croissance: it.croissance,
+          }));
+
+          const prompt = [
+            `Objectif éleveur: ${objectif}.`,
+            `Tu dois proposer un ordre final et des justifications courtes (1 phrase) pour chaque mâle.`,
+            `Contraintes:`,
+            `- Ne renvoie que du JSON strict (pas de markdown).`,
+            `- Conserve uniquement les maleId fournis (pas d'invention).`,
+            `- orderedMaleIds doit contenir tous les maleId fournis exactement une fois.`,
+            `- Les justifications doivent être courtes, concrètes, et adaptées au contexte cunicole.`,
+            ``,
+            `Femelle: ${(femelle as any).nom} (id=${(femelle as any).id}).`,
+            `Candidats (top 10 calculé): ${JSON.stringify(top)}`,
+            ``,
+            `Réponds avec: {"orderedMaleIds":["..."],"justifications":{"<maleId>":"..."}}`,
+          ].join('\n');
+
+          const raw = await ai.complete(prompt, 'medium');
+          const parsed = JSON.parse(raw);
+          const ordered = Array.isArray(parsed?.orderedMaleIds) ? parsed.orderedMaleIds.map(String) : null;
+          const justifs = parsed?.justifications && typeof parsed.justifications === 'object'
+            ? parsed.justifications as Record<string, string>
+            : {};
+
+          if (ordered && ordered.length === top.length) {
+            const itemsById = new Map<string, any>(items.map((it) => [String(it.maleId), it]));
+            const reordered: any[] = [];
+            for (const id of ordered) {
+              const it = itemsById.get(String(id));
+              if (!it) continue;
+              const j = justifs[String(id)];
+              if (typeof j === 'string' && j.trim().length > 0) {
+                it.justification = j.trim().slice(0, 200);
+              }
+              reordered.push(it);
+            }
+            if (reordered.length === top.length) {
+              source = 'ai';
+              items.splice(0, reordered.length, ...reordered);
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
     return new Response(
       JSON.stringify({
         objectif,
+        source,
         femelle: { id: (femelle as any).id, nom: (femelle as any).nom },
         items: items.slice(0, 10),
       }),

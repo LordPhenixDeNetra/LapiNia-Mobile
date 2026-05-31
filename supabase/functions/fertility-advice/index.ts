@@ -117,7 +117,7 @@ Cas: baisse de fertilité chez un lapin d'élevage.
 Contexte (optionnel): ${context || '—'}
 
 Données lapin:
-- id: ${lapin?.id ?? lapinId || '—'}
+- id: ${lapin?.id ?? (lapinId || '—')}
 - nom: ${lapin?.nom ?? '—'}
 - sexe: ${lapin?.sexe ?? '—'}
 - statut: ${lapin?.statut ?? '—'}

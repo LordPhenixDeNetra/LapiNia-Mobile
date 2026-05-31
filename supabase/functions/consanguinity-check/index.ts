@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createAIRouter } from '../_shared/ai-router.ts';
 
 type ConsanguinityLevel = 'OK' | 'WARN' | 'BLOCK' | 'UNKNOWN';
 
@@ -32,9 +33,13 @@ serve(async (req: Request) => {
       });
     }
 
-    const body = (await req.json()) as { mereId?: string; pereId?: string };
+    const body = (await req.json()) as { mereId?: string; pereId?: string; useAi?: boolean; use_ai?: boolean | string };
     const mereId = body.mereId?.trim();
     const pereId = body.pereId?.trim();
+    const useAiRaw = (body as any).useAi ?? (body as any).use_ai;
+    const useAi = typeof useAiRaw === 'boolean'
+      ? useAiRaw
+      : (useAiRaw == null ? true : String(useAiRaw).toLowerCase() === 'true');
     if (!mereId || !pereId) {
       return new Response(
         JSON.stringify({ error: 'Body must include mereId and pereId' }),
@@ -71,7 +76,9 @@ serve(async (req: Request) => {
         const { data, error } = await supabase
           .from('genealogie')
           .select('parent_id, lapin_id')
-          .in('lapin_id', ids);
+          .in('lapin_id', ids)
+          .order('lapin_id', { ascending: true })
+          .order('parent_id', { ascending: true });
 
         if (error) throw error;
         const next = new Set<string>();
@@ -109,12 +116,40 @@ serve(async (req: Request) => {
             ? 'WARN'
             : 'OK';
 
+    let explanation: string | null = null;
+    let source: 'ai' | 'deterministic' = 'deterministic';
+    if (useAi) {
+      try {
+        const ai = createAIRouter();
+        if (ai.hasProvider()) {
+          const prompt = [
+            `On a un calcul de consanguinité pour une saillie.`,
+            `Mère id=${mereId}, Père id=${pereId}.`,
+            `Résultat: level=${level}, F=${f.toFixed(3)}, ancêtres_communs=${commonAncestors.length}.`,
+            `Donne une explication en 2-4 phrases max + une recommandation concrète.`,
+            `Réponds en JSON strict: {"explanation":"...","recommendation":"..."}`,
+          ].join('\n');
+          const raw = await ai.complete(prompt, 'low');
+          const parsed = JSON.parse(raw);
+          const e = typeof parsed?.explanation === 'string' ? parsed.explanation.trim() : '';
+          const r = typeof parsed?.recommendation === 'string' ? parsed.recommendation.trim() : '';
+          const merged = [e, r].filter((s) => s.length > 0).join('\n');
+          if (merged.length > 0) {
+            explanation = merged.slice(0, 400);
+            source = 'ai';
+          }
+        }
+      } catch (_) {}
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
         f,
         level,
         commonAncestors,
+        source,
+        explanation,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
@@ -125,4 +160,3 @@ serve(async (req: Request) => {
     });
   }
 });
-
