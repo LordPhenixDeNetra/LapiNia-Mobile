@@ -323,6 +323,7 @@
 - [x] **(Flutter · P1)** Alerte baisse fertilité — si score chute > 20 pts en 3 mois → alerte dashboard + recommandations IA
 - [x] **(Flutter · P1)** Arbre généalogique (`GET /rest/v1/genealogie?lapin_id=eq.{id}`) — visualisation 3 générations, chaque nœud cliquable
 - [x] **(Flutter · P1)** Suggestion mâles pour saillie (`POST /functions/v1/suggest-males`) — classement par score génétique selon objectifs éleveur
+- [x] **(Flutter · P1)** Fix UX Repro — éviter chargements infinis + spinner “score fertilité” qui clignote (providers stabilisés)
 - **Races**
 - [x] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
 - [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques

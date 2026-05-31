@@ -9,7 +9,7 @@ import 'core_providers.dart';
 import 'lapin_provider.dart';
 
 final fertilityScoreProvider = FutureProvider.family<FertilityScoreResult, String>((ref, lapinId) async {
-  final lapin = await ref.watch(lapinDetailProvider(lapinId).future);
+  final lapin = await ref.read(lapinDetailProvider(lapinId).future);
   final service = ref.read(fertilityScoreServiceProvider);
   return service.recalculateAndPersist(lapin: lapin);
 });

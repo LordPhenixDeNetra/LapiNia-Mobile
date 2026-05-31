@@ -560,7 +560,9 @@ final lapinDetailProvider = FutureProvider.family<Lapin, String>((ref, id) async
             .single();
         final remote = Lapin.fromJson(response);
         await cache.upsertLapin(remote);
-        ref.invalidateSelf();
+        if (remote.updatedAt != cached.updatedAt) {
+          ref.invalidateSelf();
+        }
       } catch (_) {}
     }());
     return cached;

@@ -412,6 +412,8 @@ class LapinDetailScreen extends ConsumerWidget {
           ),
         );
       },
+      skipLoadingOnRefresh: true,
+      skipLoadingOnReload: true,
     );
   }
 
@@ -470,7 +472,7 @@ class LapinDetailScreen extends ConsumerWidget {
                         style: AppTypography.subtitle1,
                       ),
                     ),
-                    if (scoreAsync.isLoading)
+                    if (scoreAsync.isLoading && scoreAsync.asData == null)
                       const SizedBox(
                         width: 18,
                         height: 18,
@@ -765,73 +767,87 @@ Future<void> _showFertilityDetails({
     ),
     builder: (context) {
       final async = ref.watch(fertilityScoreProvider(lapinId));
+      final r = async.asData?.value;
       return SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: async.when(
-            loading: () => const SizedBox(height: 220, child: Center(child: CircularProgressIndicator())),
-            error: (e, _) => SizedBox(height: 220, child: Center(child: Text(e.toString()))),
-            data: (r) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.fertilityScoreDetailsTitle, style: AppTypography.subtitle1),
-                  const SizedBox(height: 12),
-                  _scoreRow(
-                    context,
-                    label: l10n.fertilitySubscoreAcceptation,
-                    score: r.breakdown.acceptation,
-                    hint: l10n.fertilitySubscoreAcceptationHint,
-                  ),
-                  _scoreRow(
-                    context,
-                    label: l10n.fertilitySubscoreLitterSize,
-                    score: r.breakdown.taillePortees,
-                    hint: l10n.fertilitySubscoreLitterSizeHint,
-                  ),
-                  _scoreRow(
-                    context,
-                    label: l10n.fertilitySubscoreSurvival,
-                    score: r.breakdown.survieLapereaux,
-                    hint: l10n.fertilitySubscoreSurvivalHint,
-                  ),
-                  _scoreRow(
-                    context,
-                    label: l10n.fertilitySubscoreRegularity,
-                    score: r.breakdown.regularite,
-                    hint: l10n.fertilitySubscoreRegularityHint,
-                  ),
-                  const SizedBox(height: 10),
-                  Divider(color: Theme.of(context).dividerColor.withValues(alpha: 0.4)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.fertilityScoreTotal(r.total),
-                    style: AppTypography.subtitle2,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    l10n.fertilityScoreDetailsHint,
-                    style: AppTypography.body2.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+          child: r == null
+              ? async.when(
+                  loading: () =>
+                      const SizedBox(height: 220, child: Center(child: CircularProgressIndicator())),
+                  error: (e, _) => SizedBox(height: 220, child: Center(child: Text(e.toString()))),
+                  data: (_) => const SizedBox(height: 220),
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(l10n.fertilityScoreDetailsTitle, style: AppTypography.subtitle1),
+                        ),
+                        if (async.isLoading)
+                          const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.fertilityScoreDetailsStats(
-                      r.porteesCount,
-                      r.porteesWithMiseBasCount,
-                      r.avgLitterSize?.toStringAsFixed(1) ?? '—',
-                      r.survivalRate != null ? '${(r.survivalRate! * 100).toStringAsFixed(0)}%' : '—',
-                      r.avgIntervalDays?.toStringAsFixed(0) ?? '—',
+                    const SizedBox(height: 12),
+                    _scoreRow(
+                      context,
+                      label: l10n.fertilitySubscoreAcceptation,
+                      score: r.breakdown.acceptation,
+                      hint: l10n.fertilitySubscoreAcceptationHint,
                     ),
-                    style: AppTypography.body2,
-                  ),
-                  const SizedBox(height: 8),
-                ],
-              );
-            },
-          ),
+                    _scoreRow(
+                      context,
+                      label: l10n.fertilitySubscoreLitterSize,
+                      score: r.breakdown.taillePortees,
+                      hint: l10n.fertilitySubscoreLitterSizeHint,
+                    ),
+                    _scoreRow(
+                      context,
+                      label: l10n.fertilitySubscoreSurvival,
+                      score: r.breakdown.survieLapereaux,
+                      hint: l10n.fertilitySubscoreSurvivalHint,
+                    ),
+                    _scoreRow(
+                      context,
+                      label: l10n.fertilitySubscoreRegularity,
+                      score: r.breakdown.regularite,
+                      hint: l10n.fertilitySubscoreRegularityHint,
+                    ),
+                    const SizedBox(height: 10),
+                    Divider(color: Theme.of(context).dividerColor.withValues(alpha: 0.4)),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.fertilityScoreTotal(r.total),
+                      style: AppTypography.subtitle2,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.fertilityScoreDetailsHint,
+                      style: AppTypography.body2.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.fertilityScoreDetailsStats(
+                        r.porteesCount,
+                        r.porteesWithMiseBasCount,
+                        r.avgLitterSize?.toStringAsFixed(1) ?? '—',
+                        r.survivalRate != null ? '${(r.survivalRate! * 100).toStringAsFixed(0)}%' : '—',
+                        r.avgIntervalDays?.toStringAsFixed(0) ?? '—',
+                      ),
+                      style: AppTypography.body2,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
         ),
       );
     },
