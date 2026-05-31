@@ -8,5 +8,8 @@ export 'evenement_sante.dart';
 export 'stock.dart';
 export 'finance.dart';
 export 'alerte.dart';
+export 'fertility_score.dart';
 export 'genealogie.dart';
+export 'genealogy_tree.dart';
+export 'male_suggestion.dart';
 export 'aliment.dart';

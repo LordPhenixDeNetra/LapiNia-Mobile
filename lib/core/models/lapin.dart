@@ -10,6 +10,7 @@ class Lapin extends Equatable {
   final SexeLapin sexe;
   final DateTime? dateNaissance;
   final int? poidsActuelG;
+  final int? scoreFertilite;
   final StatutLapin statut;
   final String? numeroIdentification;
   final String? photoUrl;
@@ -26,6 +27,7 @@ class Lapin extends Equatable {
     required this.sexe,
     this.dateNaissance,
     this.poidsActuelG,
+    this.scoreFertilite,
     required this.statut,
     this.numeroIdentification,
     this.photoUrl,
@@ -64,6 +66,7 @@ class Lapin extends Equatable {
           ? DateTime.parse(json['date_naissance'] as String)
           : null,
       poidsActuelG: json['poids_actuel_g'] as int?,
+      scoreFertilite: json['score_fertilite'] as int?,
       statut: StatutLapin.fromDbValue(json['statut'] as String),
       numeroIdentification: json['numero_identification'] as String?,
       photoUrl: json['photo_url'] as String?,
@@ -87,6 +90,7 @@ class Lapin extends Equatable {
       'sexe': sexe.dbValue,
       'date_naissance': dateNaissance?.toIso8601String().split('T')[0],
       'poids_actuel_g': poidsActuelG,
+      'score_fertilite': scoreFertilite,
       'statut': statut.dbValue,
       'numero_identification': numeroIdentification,
       'photo_url': photoUrl,
@@ -104,6 +108,7 @@ class Lapin extends Equatable {
     SexeLapin? sexe,
     DateTime? dateNaissance,
     int? poidsActuelG,
+    int? scoreFertilite,
     StatutLapin? statut,
     String? numeroIdentification,
     String? photoUrl,
@@ -120,6 +125,7 @@ class Lapin extends Equatable {
       sexe: sexe ?? this.sexe,
       dateNaissance: dateNaissance ?? this.dateNaissance,
       poidsActuelG: poidsActuelG ?? this.poidsActuelG,
+      scoreFertilite: scoreFertilite ?? this.scoreFertilite,
       statut: statut ?? this.statut,
       numeroIdentification: numeroIdentification ?? this.numeroIdentification,
       photoUrl: photoUrl ?? this.photoUrl,
@@ -139,6 +145,7 @@ class Lapin extends Equatable {
         sexe,
         dateNaissance,
         poidsActuelG,
+        scoreFertilite,
         statut,
         numeroIdentification,
         photoUrl,

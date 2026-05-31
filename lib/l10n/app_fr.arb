@@ -244,6 +244,79 @@
   "lapinTabHealth": "Santé",
   "lapinTabRepro": "Repro",
   "lapinTabInfo": "Infos",
+  "fertilityScoreCardTitle": "Score fertilité",
+  "fertilityScoreUnknown": "Score fertilité : —/100",
+  "fertilityScoreBadge": "Score fertilité : {score}/100",
+  "@fertilityScoreBadge": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreThreeMonthsAgo": "Il y a 3 mois : {score}/100",
+  "@fertilityScoreThreeMonthsAgo": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreThreeMonthsAgoUnknown": "Il y a 3 mois : —/100",
+  "fertilityScoreDetailsButton": "Détails du score",
+  "fertilityScoreDetailsTitle": "Détails du score de fertilité",
+  "fertilitySubscoreAcceptation": "Acceptation",
+  "fertilitySubscoreAcceptationHint": "Basé sur le taux de mises bas après saillie (acceptation de la reproduction).",
+  "fertilitySubscoreLitterSize": "Taille des portées",
+  "fertilitySubscoreLitterSizeHint": "Basé sur le nombre moyen de lapereaux par portée.",
+  "fertilitySubscoreSurvival": "Survie des lapereaux",
+  "fertilitySubscoreSurvivalHint": "Basé sur le taux de survie des lapereaux jusqu’au sevrage (selon données).",
+  "fertilitySubscoreRegularity": "Régularité",
+  "fertilitySubscoreRegularityHint": "Basé sur la régularité des intervalles entre saillies.",
+  "fertilityScoreTotal": "Total : {score}/100",
+  "@fertilityScoreTotal": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreDetailsHint": "Calcul basé sur les 6 derniers mois (si données disponibles).",
+  "fertilityScoreDetailsStats": "Portées: {total} (mise bas: {miseBas})\nTaille moyenne: {avgLitter}\nSurvie: {survival}\nIntervalle moyen: {avgInterval} jours",
+  "@fertilityScoreDetailsStats": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "miseBas": {
+        "type": "int"
+      },
+      "avgLitter": {
+        "type": "String"
+      },
+      "survival": {
+        "type": "String"
+      },
+      "avgInterval": {
+        "type": "String"
+      }
+    }
+  },
+  "genealogyCtaTitle": "Arbre généalogique",
+  "genealogyCtaSubtitle": "Voir les ascendants (3 générations)",
+  "genealogyTitle": "Arbre généalogique",
+  "genealogyUnknown": "Inconnu",
+  "genealogyGeneration1": "Lapin",
+  "genealogyGeneration2": "Parents",
+  "genealogyGeneration3": "Grands-parents",
+  "suggestMalesButton": "Suggérer des mâles",
+  "suggestMalesTitle": "Suggérer des mâles",
+  "suggestMalesObjectiveAnti": "Anti-consanguinité",
+  "suggestMalesObjectiveGrowth": "Croissance",
+  "suggestMalesObjectiveBalanced": "Équilibré",
+  "suggestMalesNoResults": "Aucun résultat pour le moment.",
+  "suggestMalesRequiresOnline": "Cette action nécessite une connexion internet.",
+  "suggestMalesSelectFemaleFirst": "Sélectionnez d'abord une femelle.",
   "growthNoWeights": "Aucune pesée pour le moment.",
   "growthLowGmqBadge": "GMQ faible",
   "growthPredictButton": "Prédire",

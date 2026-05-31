@@ -23,6 +23,9 @@ import '../../domain/services/portee_notifications_service.dart';
 import '../../domain/services/pre_mise_bas_checklist_service.dart';
 import '../../domain/services/growth_prediction_service.dart';
 import '../../domain/services/race_recommendation_service.dart';
+import '../../domain/services/fertility_advice_service.dart';
+import '../../domain/services/fertility_score_service.dart';
+import '../../domain/services/suggest_males_service.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -97,5 +100,20 @@ Future<void> setupServiceLocator({
   );
   serviceLocator.registerSingleton<RaceRecommendationService>(
     RaceRecommendationService(supabase: serviceLocator<SupabaseClient>()),
+  );
+  serviceLocator.registerSingleton<FertilityAdviceService>(
+    FertilityAdviceService(supabase: serviceLocator<SupabaseClient>()),
+  );
+  serviceLocator.registerSingleton<SuggestMalesService>(
+    SuggestMalesService(supabase: serviceLocator<SupabaseClient>()),
+  );
+  serviceLocator.registerSingleton<FertilityScoreService>(
+    FertilityScoreService(
+      cache: serviceLocator<LocalCacheService>(),
+      syncManager: serviceLocator<SyncManager>(),
+      connectivity: serviceLocator<ConnectivityChecker>(),
+      supabase: serviceLocator<SupabaseClient>(),
+      adviceService: serviceLocator<FertilityAdviceService>(),
+    ),
   );
 }

@@ -244,6 +244,79 @@
   "lapinTabHealth": "Health",
   "lapinTabRepro": "Breeding",
   "lapinTabInfo": "Info",
+  "fertilityScoreCardTitle": "Fertility score",
+  "fertilityScoreUnknown": "Fertility score: —/100",
+  "fertilityScoreBadge": "Fertility score: {score}/100",
+  "@fertilityScoreBadge": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreThreeMonthsAgo": "3 months ago: {score}/100",
+  "@fertilityScoreThreeMonthsAgo": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreThreeMonthsAgoUnknown": "3 months ago: —/100",
+  "fertilityScoreDetailsButton": "Score details",
+  "fertilityScoreDetailsTitle": "Fertility score details",
+  "fertilitySubscoreAcceptation": "Acceptance",
+  "fertilitySubscoreAcceptationHint": "Based on the kindling rate after mating (breeding acceptance).",
+  "fertilitySubscoreLitterSize": "Litter size",
+  "fertilitySubscoreLitterSizeHint": "Based on the average number of kits per litter.",
+  "fertilitySubscoreSurvival": "Kit survival",
+  "fertilitySubscoreSurvivalHint": "Based on kit survival rate up to weaning (when available).",
+  "fertilitySubscoreRegularity": "Regularity",
+  "fertilitySubscoreRegularityHint": "Based on how regular the interval between matings is.",
+  "fertilityScoreTotal": "Total: {score}/100",
+  "@fertilityScoreTotal": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "fertilityScoreDetailsHint": "Computed from the last 6 months (if data is available).",
+  "fertilityScoreDetailsStats": "Litters: {total} (kindlings: {miseBas})\nAvg litter size: {avgLitter}\nSurvival: {survival}\nAvg interval: {avgInterval} days",
+  "@fertilityScoreDetailsStats": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "miseBas": {
+        "type": "int"
+      },
+      "avgLitter": {
+        "type": "String"
+      },
+      "survival": {
+        "type": "String"
+      },
+      "avgInterval": {
+        "type": "String"
+      }
+    }
+  },
+  "genealogyCtaTitle": "Family tree",
+  "genealogyCtaSubtitle": "View ancestors (3 generations)",
+  "genealogyTitle": "Family tree",
+  "genealogyUnknown": "Unknown",
+  "genealogyGeneration1": "Rabbit",
+  "genealogyGeneration2": "Parents",
+  "genealogyGeneration3": "Grandparents",
+  "suggestMalesButton": "Suggest males",
+  "suggestMalesTitle": "Suggest males",
+  "suggestMalesObjectiveAnti": "Anti-inbreeding",
+  "suggestMalesObjectiveGrowth": "Growth",
+  "suggestMalesObjectiveBalanced": "Balanced",
+  "suggestMalesNoResults": "No results yet.",
+  "suggestMalesRequiresOnline": "This action requires an internet connection.",
+  "suggestMalesSelectFemaleFirst": "Select a female first.",
   "growthNoWeights": "No weight recorded yet.",
   "growthLowGmqBadge": "Low ADG",
   "growthPredictButton": "Predict",

@@ -11,7 +11,270 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   exit 0
 fi
 
-mkdir -p "$FUNCTIONS_DIR/sync" "$FUNCTIONS_DIR/calculate-ration" "$FUNCTIONS_DIR/diagnose-symptoms" "$FUNCTIONS_DIR/predict-growth" "$FUNCTIONS_DIR/recommend-race" "$FUNCTIONS_DIR/consanguinity-check"
+mkdir -p "$FUNCTIONS_DIR/_shared" "$FUNCTIONS_DIR/sync" "$FUNCTIONS_DIR/calculate-ration" "$FUNCTIONS_DIR/diagnose-symptoms" "$FUNCTIONS_DIR/predict-growth" "$FUNCTIONS_DIR/recommend-race" "$FUNCTIONS_DIR/consanguinity-check" "$FUNCTIONS_DIR/fertility-advice" "$FUNCTIONS_DIR/suggest-males"
+
+cat >"$FUNCTIONS_DIR/_shared/ai-router.ts" <<'EOF'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import OpenAI from 'https://esm.sh/openai@4';
+import Anthropic from 'https://esm.sh/@anthropic-ai/sdk@0';
+
+interface AIProvider {
+  complete(prompt: string, maxTokens?: number): Promise<string>;
+}
+
+class ClaudeProvider implements AIProvider {
+  private client: any;
+  
+  constructor(apiKey: string) {
+    this.client = new Anthropic({ apiKey });
+  }
+  
+  async complete(prompt: string, maxTokens: number = 1000): Promise<string> {
+    const message = await this.client.messages.create({
+      model: 'claude-3-5-sonnet-20241022',
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    return message.content[0].type === 'text' ? message.content[0].text : '';
+  }
+}
+
+class OpenAIChatProvider implements AIProvider {
+  private client: any;
+  private model: string;
+  private defaultMaxTokens: number;
+  
+  constructor(options: {
+    apiKey: string;
+    baseURL: string;
+    model: string;
+    defaultMaxTokens: number;
+  }) {
+    this.client = new OpenAI({ apiKey: options.apiKey, baseURL: options.baseURL });
+    this.model = options.model;
+    this.defaultMaxTokens = options.defaultMaxTokens;
+  }
+  
+  async complete(prompt: string, maxTokens?: number): Promise<string> {
+    const chat = await this.client.chat.completions.create({
+      model: this.model,
+      max_tokens: maxTokens ?? this.defaultMaxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    return chat.choices[0]?.message?.content ?? '';
+  }
+}
+
+export const SYSTEM_PROMPT_CUNICULTURE = `Tu es un expert en élevage cunicole (lapins) en Afrique de l'Ouest. 
+Tu connais parfaitement:
+- Les races de lapins (NZW, Californien, Rex, Géant des Flandres, etc.)
+- La reproduction et la gestation (31 jours)
+- L'alimentation (foin, granulés, luzerne, fanes, moringa)
+- Les maladies courantes (coccidiose, pasteurellose, Gale)
+- La croissance et le GMQ (gain moyen quotidien)
+- Les bonnes pratiques d'élevage en climat chaud
+
+Réponds de manière concise, pratique et adaptée au contexte local (Sénégal, Mali, Côte d'Ivoire).
+Utilise des unités métriques (grammes, kg, °C).
+`;
+
+export class AIRouter {
+  private claude: ClaudeProvider | null = null;
+  private openai: OpenAIChatProvider | null = null;
+  private mistral: OpenAIChatProvider | null = null;
+  private deepseek: OpenAIChatProvider | null = null;
+  private kimi: OpenAIChatProvider | null = null;
+  
+  constructor() {
+    const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
+    const openaiKey = Deno.env.get('OPENAI_API_KEY');
+    const mistralKey = Deno.env.get('MISTRAL_API_KEY');
+    const deepseekKey = Deno.env.get('DEEPSEEK_API_KEY');
+    const kimiKey = Deno.env.get('KIMI_API_KEY') ?? Deno.env.get('MOONSHOT_API_KEY');
+    
+    if (anthropicKey) {
+      this.claude = new ClaudeProvider(anthropicKey);
+    }
+    if (openaiKey) {
+      this.openai = new OpenAIChatProvider({
+        apiKey: openaiKey,
+        baseURL: 'https://api.openai.com/v1',
+        model: 'gpt-4o-mini',
+        defaultMaxTokens: 800,
+      });
+    }
+    if (mistralKey) {
+      this.mistral = new OpenAIChatProvider({
+        apiKey: mistralKey,
+        baseURL: 'https://api.mistral.ai/v1',
+        model: 'mistral-small-latest',
+        defaultMaxTokens: 800,
+      });
+    }
+    if (deepseekKey) {
+      this.deepseek = new OpenAIChatProvider({
+        apiKey: deepseekKey,
+        baseURL: 'https://api.deepseek.com/v1',
+        model: 'deepseek-chat',
+        defaultMaxTokens: 800,
+      });
+    }
+    if (kimiKey) {
+      this.kimi = new OpenAIChatProvider({
+        apiKey: kimiKey,
+        baseURL: 'https://api.moonshot.cn/v1',
+        model: 'moonshot-v1-8k',
+        defaultMaxTokens: 800,
+      });
+    }
+  }
+
+  hasProvider(): boolean {
+    return !!(this.claude || this.openai || this.mistral || this.deepseek || this.kimi);
+  }
+  
+  async complete(prompt: string, complexity: 'low' | 'medium' | 'high' = 'medium'): Promise<string> {
+    const fullPrompt = `${SYSTEM_PROMPT_CUNICULTURE}\n\nQuestion: ${prompt}`;
+    
+    if (complexity === 'high' && this.claude) {
+      return await this.claude.complete(fullPrompt, 1500);
+    }
+    
+    if (this.mistral) {
+      return await this.mistral.complete(fullPrompt, 800);
+    }
+
+    if (this.openai) {
+      return await this.openai.complete(fullPrompt, 800);
+    }
+
+    if (this.deepseek) {
+      return await this.deepseek.complete(fullPrompt, 800);
+    }
+
+    if (this.kimi) {
+      return await this.kimi.complete(fullPrompt, 800);
+    }
+    
+    if (this.claude) {
+      return await this.claude.complete(fullPrompt, 1000);
+    }
+    
+    throw new Error('No AI provider configured');
+  }
+  
+  async diagnose(symptomes: string[], lapinInfo: any): Promise<any> {
+    if (!this.claude) {
+      throw new Error('Claude required for diagnosis');
+    }
+    
+    const prompt = `${SYSTEM_PROMPT_CUNICULTURE}
+
+Analyse ces symptômes pour un lapin:
+- Race: ${lapinInfo.race}
+- Âge: ${lapinInfo.age} jours
+- Poids: ${lapinInfo.poids}g
+- Statut: ${lapinInfo.statut}
+- Symptômes rapportés: ${symptomes.join(', ')}
+
+Donne-moi:
+1. Les 3 diagnostics les plus probables avec %
+2. Le niveau d'urgence (FAIBLE, MODÉRÉ, ÉLEVÉ, CRITIQUE)
+3. Un traitement suggéré
+4. Les médicaments courants (nom, dosage ml/kg, voie)
+
+Réponds en JSON: {diagnostics: [{maladie, probabilite, traitement, medicament, dosage}], urgence, traitement}`;
+
+    const result = await this.claude.complete(prompt, 1500);
+    
+    try {
+      return JSON.parse(result);
+    } catch {
+      return { error: 'Could not parse AI response', raw: result };
+    }
+  }
+  
+  async calculateRation(lapinInfo: any, temperature: number): Promise<any> {
+    if (!this.mistral && !this.openai && !this.deepseek && !this.kimi && !this.claude) {
+      throw new Error('No AI provider configured');
+    }
+    
+    const prompt = `${SYSTEM_PROMPT_CUNICULTURE}
+
+Calcule une ration quotidienne pour:
+- Race: ${lapinInfo.race}
+- Stade: ${lapinInfo.stade} (REPOS, GESTATION, LACTATION, etc.)
+- Poids: ${lapinInfo.poids}g
+- Température ambiante: ${temperature}°C
+
+Donne-moi les quantités en grammes pour chaque aliment disponible:
+- Foin de luzerne
+- Granulés complets
+- Son de mil
+- Fanes de carottes
+- Feuilles de moringa
+- Herbe de Guinée
+
+Réponds en JSON: {composants: [{aliment, quantite_g, note}], alertes_stock: [], cout_total_fcfa}`;
+
+    const provider = this.mistral || this.openai || this.deepseek || this.kimi || this.claude;
+    const result = await provider!.complete(prompt, 1000);
+    
+    try {
+      return JSON.parse(result);
+    } catch {
+      return { error: 'Could not parse AI response', raw: result };
+    }
+  }
+}
+
+export const createAIRouter = () => new AIRouter();
+
+if (import.meta.main) {
+  const aiRouter = new AIRouter();
+
+  serve(async (req: Request) => {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
+    };
+
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    try {
+      const { action, prompt, complexity, symptomes, lapinInfo, temperature } = await req.json() as any;
+      
+      let result: any;
+      
+      switch (action) {
+        case 'complete':
+          result = { response: await aiRouter.complete(prompt, complexity) };
+          break;
+        case 'diagnose':
+          result = await aiRouter.diagnose(symptomes, lapinInfo);
+          break;
+        case 'calculate-ration':
+          result = await aiRouter.calculateRation(lapinInfo, temperature);
+          break;
+        default:
+          throw new Error(`Unknown action: ${action}`);
+      }
+      
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+  });
+}
+EOF
 
 cat >"$FUNCTIONS_DIR/sync/index.ts" <<'EOF'
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
@@ -925,6 +1188,444 @@ serve(async (req: Request) => {
 });
 EOF
 
+cat >"$FUNCTIONS_DIR/fertility-advice/index.ts" <<'EOF'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createAIRouter } from '../_shared/ai-router.ts';
+
+function safeParseJson(text: string): any | null {
+  try {
+    return JSON.parse(text);
+  } catch {
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      try {
+        return JSON.parse(text.slice(start, end + 1));
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+
+function fallbackRecommendations(): string[] {
+  return [
+    "Vérifier l'état corporel et ajuster l'alimentation (foin à volonté + granulés de qualité, eau propre permanente).",
+    "Réduire le stress (chaleur, bruit, manipulations) et améliorer la ventilation: viser < 30°C si possible.",
+    "Contrôler la santé reproductive (gale, coccidiose, pasteurellose) et isoler/traiter tout sujet suspect.",
+    'Éviter la sur-utilisation: respecter des temps de repos entre saillies et surveiller les performances sur 2–3 portées.',
+    "Vérifier l'âge et renouveler les reproducteurs si baisse persistante (mâles souvent moins performants après 18–24 mois selon conduite).",
+  ];
+}
+
+function normalizeRecommendations(value: any): string[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.map((e) => e?.toString?.() ?? '').map((s) => s.trim()).filter((s) => s.length > 0);
+  }
+
+  if (typeof value === 'object') {
+    const arr = value.recommendations ?? value.recommandations ?? value.items ?? value.advice ?? null;
+    if (Array.isArray(arr)) {
+      return arr.map((e) => e?.toString?.() ?? '').map((s) => s.trim()).filter((s) => s.length > 0);
+    }
+  }
+
+  return [];
+}
+
+serve(async (req: Request) => {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return new Response(JSON.stringify({ error: 'Missing Supabase env' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const authorization = req.headers.get('Authorization') ?? '';
+    if (!authorization) {
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authorization } },
+    });
+
+    const userRes = await supabase.auth.getUser();
+    const user = userRes.data.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Invalid user session' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const body = (await req.json()) as any;
+    const lapinId = (body?.lapinId ?? body?.lapin_id ?? '').toString().trim();
+    const scoreNow = body?.scoreNow ?? body?.score_now ?? body?.score ?? null;
+    const scoreBefore = body?.scoreBefore ?? body?.score_before ?? null;
+    const context = (body?.context ?? body?.contexte ?? '').toString().trim();
+
+    let lapin: any = null;
+    if (lapinId) {
+      const { data } = await supabase
+        .from('lapins')
+        .select('id, nom, sexe, date_naissance, statut, score_fertilite, race_id, races(nom, gmq_cible_g)')
+        .eq('id', lapinId)
+        .maybeSingle();
+      lapin = data ?? null;
+    }
+
+    const ai = createAIRouter();
+    if (!ai.hasProvider()) {
+      return new Response(
+        JSON.stringify({ recommendations: fallbackRecommendations(), source: 'fallback' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    const prompt = `
+Cas: baisse de fertilité chez un lapin d'élevage.
+
+Contexte (optionnel): ${context || '—'}
+
+Données lapin:
+- id: ${lapin?.id ?? lapinId || '—'}
+- nom: ${lapin?.nom ?? '—'}
+- sexe: ${lapin?.sexe ?? '—'}
+- statut: ${lapin?.statut ?? '—'}
+- race: ${lapin?.races?.nom ?? '—'}
+- score actuel: ${scoreNow ?? lapin?.score_fertilite ?? '—'}/100
+- score il y a 3 mois: ${scoreBefore ?? '—'}/100
+
+Tu dois proposer 3 à 6 recommandations concrètes, actionnables et adaptées à l'Afrique de l'Ouest (climat chaud), en français.
+Retourne UNIQUEMENT du JSON valide, sans texte autour, au format:
+{
+  "recommendations": ["...", "..."]
+}
+`;
+
+    const raw = await ai.complete(prompt, 'medium');
+    const parsed = safeParseJson(raw);
+    const recs = normalizeRecommendations(parsed);
+
+    if (!recs.length) {
+      return new Response(
+        JSON.stringify({ recommendations: fallbackRecommendations(), source: 'fallback' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    return new Response(JSON.stringify({ recommendations: recs.slice(0, 6), source: 'ai' }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
+EOF
+
+cat >"$FUNCTIONS_DIR/suggest-males/index.ts" <<'EOF'
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+type Objective = 'anti-consanguinite' | 'croissance' | 'equilibre';
+type ConsanguinityLevel = 'OK' | 'WARN' | 'BLOCK' | 'UNKNOWN';
+
+const OBJECTIVES: Objective[] = ['anti-consanguinite', 'croissance', 'equilibre'];
+
+function objectiveWeights(objectif: Objective): { wCons: number; wGrowth: number } {
+  switch (objectif) {
+    case 'anti-consanguinite':
+      return { wCons: 0.7, wGrowth: 0.3 };
+    case 'croissance':
+      return { wCons: 0.3, wGrowth: 0.7 };
+    case 'equilibre':
+    default:
+      return { wCons: 0.5, wGrowth: 0.5 };
+  }
+}
+
+async function getAncestors(
+  supabase: any,
+  lapinId: string,
+  maxDepth: number,
+): Promise<Map<string, number>> {
+  const distances = new Map<string, number>();
+  let frontier = new Set<string>([lapinId]);
+
+  for (let depth = 1; depth <= maxDepth; depth += 1) {
+    const ids = Array.from(frontier);
+    if (!ids.length) break;
+
+    const { data, error } = await supabase
+      .from('genealogie')
+      .select('parent_id, lapin_id')
+      .in('lapin_id', ids);
+
+    if (error) throw error;
+
+    const next = new Set<string>();
+    for (const row of data ?? []) {
+      const parentId = (row as any).parent_id as string | null;
+      if (!parentId) continue;
+      if (!distances.has(parentId)) {
+        distances.set(parentId, depth);
+      }
+      next.add(parentId);
+    }
+    frontier = next;
+  }
+
+  return distances;
+}
+
+function consanguinityLevel(f: number, commonCount: number, hasDataA: boolean, hasDataB: boolean): ConsanguinityLevel {
+  if (commonCount === 0) {
+    if (!hasDataA || !hasDataB) return 'UNKNOWN';
+    return 'OK';
+  }
+  if (f >= 0.125) return 'BLOCK';
+  if (f >= 0.0625) return 'WARN';
+  return 'OK';
+}
+
+function consanguinityScore(level: ConsanguinityLevel, f: number): number {
+  if (level === 'UNKNOWN') return 0.6;
+  const normalized = 1 - Math.min(1, f / 0.125);
+  return Math.max(0, Math.min(1, normalized));
+}
+
+function growthScore(gmqCibleG: number | null, maxGmq: number | null): number {
+  if (!gmqCibleG || !maxGmq || maxGmq <= 0) return 0.5;
+  return Math.max(0, Math.min(1, gmqCibleG / maxGmq));
+}
+
+function buildJustification(params: {
+  level: ConsanguinityLevel;
+  f: number;
+  gmqCibleG: number | null;
+  gScore: number;
+}): string {
+  const parts: string[] = [];
+
+  if (params.level === 'OK') parts.push('Consanguinité faible');
+  if (params.level === 'WARN') parts.push('Consanguinité modérée');
+  if (params.level === 'BLOCK') parts.push('Consanguinité élevée');
+  if (params.level === 'UNKNOWN') parts.push('Consanguinité inconnue');
+
+  if (params.gmqCibleG) {
+    if (params.gScore >= 0.75) parts.push('Bon potentiel de croissance');
+    else if (params.gScore >= 0.55) parts.push('Croissance correcte');
+    else parts.push('Croissance à surveiller');
+  } else {
+    parts.push('Croissance non renseignée');
+  }
+
+  if (params.level !== 'UNKNOWN') {
+    parts.push(`F=${params.f.toFixed(3)}`);
+  }
+
+  return parts.join(' • ');
+}
+
+serve(async (req: Request) => {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return new Response(JSON.stringify({ error: 'Missing Supabase env' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const authorization = req.headers.get('Authorization') ?? '';
+    if (!authorization) {
+      return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authorization } },
+    });
+
+    const userRes = await supabase.auth.getUser();
+    const user = userRes.data.user;
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Invalid user session' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const body = (await req.json()) as any;
+    const femelleId = (body?.femelleId ?? body?.femelle_id ?? '').toString().trim();
+    const objectifRaw = (body?.objectif ?? body?.objective ?? 'equilibre').toString().trim();
+
+    if (!femelleId) {
+      return new Response(JSON.stringify({ error: 'Body must include femelleId' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const objectif = (OBJECTIVES.includes(objectifRaw as Objective)
+      ? (objectifRaw as Objective)
+      : 'equilibre') as Objective;
+
+    const { data: femelle } = await supabase
+      .from('lapins')
+      .select('id, nom, sexe, race_id')
+      .eq('id', femelleId)
+      .maybeSingle();
+
+    if (!femelle) {
+      return new Response(JSON.stringify({ error: 'Femelle not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if ((femelle as any).sexe !== 'F') {
+      return new Response(JSON.stringify({ error: 'Lapin femelleId must be a female (sexe=F)' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const candidateQuery = supabase
+      .from('lapins')
+      .select('id, nom, sexe, statut, race_id, races(nom, gmq_cible_g)')
+      .eq('sexe', 'M')
+      .in('statut', ['REPOS', 'DISPONIBLE_SAILLIE'])
+      .limit(50);
+
+    let { data: males, error: malesError } = await candidateQuery;
+    if (malesError) throw malesError;
+
+    if (!males?.length) {
+      const r = await supabase
+        .from('lapins')
+        .select('id, nom, sexe, statut, race_id, races(nom, gmq_cible_g)')
+        .eq('sexe', 'M')
+        .not('statut', 'in', '("MORT","VENDU")')
+        .limit(50);
+      males = r.data ?? [];
+      if (r.error) throw r.error;
+    }
+
+    const maxDepth = 3;
+    const ancestorsFemelle = await getAncestors(supabase, femelleId, maxDepth);
+
+    let maxGmq: number | null = null;
+    for (const m of males ?? []) {
+      const g = (m as any)?.races?.gmq_cible_g ?? null;
+      if (typeof g === 'number') {
+        maxGmq = maxGmq === null ? g : Math.max(maxGmq, g);
+      }
+    }
+
+    const weights = objectiveWeights(objectif);
+
+    const items: any[] = [];
+    for (const m of males ?? []) {
+      const maleId = (m as any).id as string;
+      const ancestorsMale = await getAncestors(supabase, maleId, maxDepth);
+
+      const commonAncestors: string[] = [];
+      let f = 0;
+      for (const [ancestorId, d1] of ancestorsFemelle.entries()) {
+        const d2 = ancestorsMale.get(ancestorId);
+        if (!d2) continue;
+        commonAncestors.push(ancestorId);
+        f += 0.5 * Math.pow(0.5, d1 + d2);
+      }
+
+      const level = consanguinityLevel(
+        f,
+        commonAncestors.length,
+        ancestorsFemelle.size > 0,
+        ancestorsMale.size > 0,
+      );
+
+      const consScore = consanguinityScore(level, f);
+      const gmqCibleG = ((m as any)?.races?.gmq_cible_g ?? null) as number | null;
+      const gScore = growthScore(gmqCibleG, maxGmq);
+      const total = weights.wCons * consScore + weights.wGrowth * gScore;
+      const score = Math.round(total * 100);
+
+      items.push({
+        maleId,
+        nom: (m as any).nom,
+        raceId: (m as any).race_id ?? null,
+        raceNom: (m as any)?.races?.nom ?? null,
+        score,
+        justification: buildJustification({ level, f, gmqCibleG, gScore }),
+        consanguinite: {
+          f,
+          level,
+          commonAncestors,
+        },
+        croissance: {
+          gmqCibleG,
+        },
+      });
+    }
+
+    items.sort((a, b) => b.score - a.score);
+
+    return new Response(
+      JSON.stringify({
+        objectif,
+        femelle: { id: (femelle as any).id, nom: (femelle as any).nom },
+        items: items.slice(0, 10),
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
+EOF
+
 docker restart "$FUNCTIONS_CONTAINER" >/dev/null
 
 sleep 2
@@ -973,3 +1674,5 @@ echo "diagnose-symptoms: $(curl_status POST "$BASE_URL/functions/v1/diagnose-sym
 echo "predict-growth: $(curl_status POST "$BASE_URL/functions/v1/predict-growth" '{"raceId":"test","poidsActuelG":2000,"ageJours":60,"userId":"test"}')"
 echo "recommend-race: $(curl_status GET "$BASE_URL/functions/v1/recommend-race")"
 echo "consanguinity-check: $(curl_status POST "$BASE_URL/functions/v1/consanguinity-check" '{"mereId":"test","pereId":"test"}')"
+echo "fertility-advice: $(curl_status POST "$BASE_URL/functions/v1/fertility-advice" '{"lapinId":"test","scoreNow":60,"scoreBefore":85,"context":"chaleur"}')"
+echo "suggest-males: $(curl_status POST "$BASE_URL/functions/v1/suggest-males" '{"femelleId":"test","objectif":"equilibre"}')"

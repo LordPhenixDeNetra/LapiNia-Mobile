@@ -76,11 +76,6 @@
 
 **Fertilité & Génétique**
 
-- [ ] **(Flutter · P1)** Score fertilité lapin (`GET /rest/v1/lapins?id=eq.{id}&select=score_fertilite`) — badge /100 + explications sur fiche
-- [ ] **(Flutter · P1)** Calcul score fertilité local — taux acceptation × 25 + taille portées × 25 + survie lapereaux × 25 + régularité × 25
-- [ ] **(Flutter · P1)** Alerte baisse fertilité — si score chute > 20 pts en 3 mois → alerte dashboard + recommandations IA
-- [ ] **(Flutter · P1)** Arbre généalogique (`GET /rest/v1/genealogie?lapin_id=eq.{id}`) — visualisation 3 générations, chaque nœud cliquable
-- [ ] **(Flutter · P1)** Suggestion mâles pour saillie (`POST /functions/v1/suggest-males`) — classement par score génétique selon objectifs éleveur
 - [ ] **(Flutter · P2)** Plan amélioration génétique (`POST /functions/v1/genetic-plan`) — objectifs sélection + plan Claude sur 3 générations
 - [ ] **(Flutter · P2)** Export pedigree PDF (`POST /functions/v1/generate-pedigree`) — document certifié pour vente reproducteurs + download
 
@@ -322,6 +317,12 @@
 - [x] **(Flutter · P1)** Mise à jour lapereau (`PATCH /rest/v1/lapereaux?id=eq.{id}`) — poids, statut, destination (conserver / vendre / consommer)
 - [x] **(Flutter · P1)** Enregistrer sevrage — confirmation J28–J35 + destination par défaut + mise à jour statut femelle → REPOS
 - [x] **(Flutter · P1)** Notifications locales mise bas — planifier local à J-3 et J-1 (09:00 locale) après saisie saillie
+- **Fertilité & Génétique**
+- [x] **(Flutter · P1)** Score fertilité lapin (`GET /rest/v1/lapins?id=eq.{id}&select=score_fertilite`) — badge /100 + explications sur fiche
+- [x] **(Flutter · P1)** Calcul score fertilité local — taux acceptation × 25 + taille portées × 25 + survie lapereaux × 25 + régularité × 25
+- [x] **(Flutter · P1)** Alerte baisse fertilité — si score chute > 20 pts en 3 mois → alerte dashboard + recommandations IA
+- [x] **(Flutter · P1)** Arbre généalogique (`GET /rest/v1/genealogie?lapin_id=eq.{id}`) — visualisation 3 générations, chaque nœud cliquable
+- [x] **(Flutter · P1)** Suggestion mâles pour saillie (`POST /functions/v1/suggest-males`) — classement par score génétique selon objectifs éleveur
 - **Races**
 - [x] **(Flutter · P1)** Liste races (`GET /rest/v1/races`) — données de référence, cache local 7 jours
 - [x] **(Flutter · P1)** Fiche race — poids adulte, GMQ cible, taille portée, adaptation chaleur, sensibilités pathologiques

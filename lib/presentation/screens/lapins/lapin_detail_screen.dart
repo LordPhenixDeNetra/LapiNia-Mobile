@@ -15,6 +15,7 @@ import '../../../core/models/lapin.dart';
 import '../../../core/models/pesel.dart';
 import '../../../domain/services/lapin_photo_service.dart';
 import '../../providers/core_providers.dart';
+import '../../providers/fertility_providers.dart';
 import '../../providers/lapin_provider.dart';
 import '../../providers/pesee_provider.dart';
 import '../../widgets/common/connectivity_banner.dart';
@@ -339,7 +340,7 @@ class LapinDetailScreen extends ConsumerWidget {
                         peseesAsync: peseesAsync,
                       ),
                       _placeholderTab(l10n: l10n, title: l10n.lapinTabHealth),
-                      _placeholderTab(l10n: l10n, title: l10n.lapinTabRepro),
+                      _reproTab(context: context, ref: ref, l10n: l10n, lapin: lapin),
                       ListView(
                         padding: const EdgeInsets.all(16),
                         children: [
@@ -427,6 +428,115 @@ class LapinDetailScreen extends ConsumerWidget {
           textAlign: TextAlign.center,
         ),
       ),
+    );
+  }
+
+  Widget _reproTab({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppLocalizations l10n,
+    required Lapin lapin,
+  }) {
+    final scoreAsync = ref.watch(fertilityScoreProvider(lapin.id));
+    final historyAsync = ref.watch(fertilityScoreHistoryProvider(lapin.id));
+
+    final scoreNow = scoreAsync.asData?.value.total ?? lapin.scoreFertilite;
+
+    final monthMinus3 = DateTime(DateTime.now().year, DateTime.now().month - 3, 1);
+    final monthKey = '${monthMinus3.year}-${monthMinus3.month.toString().padLeft(2, '0')}';
+    int? scoreBefore;
+    final history = historyAsync.asData?.value ?? const [];
+    for (final e in history) {
+      if (e.monthKey == monthKey) {
+        scoreBefore = e.score;
+        break;
+      }
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.fertilityScoreCardTitle,
+                        style: AppTypography.subtitle1,
+                      ),
+                    ),
+                    if (scoreAsync.isLoading)
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        scoreNow != null ? l10n.fertilityScoreBadge(scoreNow) : l10n.fertilityScoreUnknown,
+                        style: AppTypography.subtitle2.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        scoreBefore != null
+                            ? l10n.fertilityScoreThreeMonthsAgo(scoreBefore)
+                            : l10n.fertilityScoreThreeMonthsAgoUnknown,
+                        style: AppTypography.body2.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
+                    onPressed: () => _showFertilityDetails(
+                      context: context,
+                      ref: ref,
+                      l10n: l10n,
+                      lapinId: lapin.id,
+                    ),
+                    icon: const Icon(Icons.info_outline),
+                    label: Text(l10n.fertilityScoreDetailsButton),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.account_tree_outlined),
+            title: Text(l10n.genealogyCtaTitle),
+            subtitle: Text(l10n.genealogyCtaSubtitle),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/lapin/${lapin.id}/genealogy'),
+          ),
+        ),
+      ],
     );
   }
 
@@ -639,6 +749,126 @@ class LapinDetailScreen extends ConsumerWidget {
     );
   }
 
+}
+
+Future<void> _showFertilityDetails({
+  required BuildContext context,
+  required WidgetRef ref,
+  required AppLocalizations l10n,
+  required String lapinId,
+}) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      final async = ref.watch(fertilityScoreProvider(lapinId));
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: async.when(
+            loading: () => const SizedBox(height: 220, child: Center(child: CircularProgressIndicator())),
+            error: (e, _) => SizedBox(height: 220, child: Center(child: Text(e.toString()))),
+            data: (r) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.fertilityScoreDetailsTitle, style: AppTypography.subtitle1),
+                  const SizedBox(height: 12),
+                  _scoreRow(
+                    context,
+                    label: l10n.fertilitySubscoreAcceptation,
+                    score: r.breakdown.acceptation,
+                    hint: l10n.fertilitySubscoreAcceptationHint,
+                  ),
+                  _scoreRow(
+                    context,
+                    label: l10n.fertilitySubscoreLitterSize,
+                    score: r.breakdown.taillePortees,
+                    hint: l10n.fertilitySubscoreLitterSizeHint,
+                  ),
+                  _scoreRow(
+                    context,
+                    label: l10n.fertilitySubscoreSurvival,
+                    score: r.breakdown.survieLapereaux,
+                    hint: l10n.fertilitySubscoreSurvivalHint,
+                  ),
+                  _scoreRow(
+                    context,
+                    label: l10n.fertilitySubscoreRegularity,
+                    score: r.breakdown.regularite,
+                    hint: l10n.fertilitySubscoreRegularityHint,
+                  ),
+                  const SizedBox(height: 10),
+                  Divider(color: Theme.of(context).dividerColor.withValues(alpha: 0.4)),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.fertilityScoreTotal(r.total),
+                    style: AppTypography.subtitle2,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    l10n.fertilityScoreDetailsHint,
+                    style: AppTypography.body2.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.fertilityScoreDetailsStats(
+                      r.porteesCount,
+                      r.porteesWithMiseBasCount,
+                      r.avgLitterSize?.toStringAsFixed(1) ?? '—',
+                      r.survivalRate != null ? '${(r.survivalRate! * 100).toStringAsFixed(0)}%' : '—',
+                      r.avgIntervalDays?.toStringAsFixed(0) ?? '—',
+                    ),
+                    style: AppTypography.body2,
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              );
+            },
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Widget _scoreRow(
+  BuildContext context, {
+  required String label,
+  required int score,
+  required String hint,
+}) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(label, style: AppTypography.body2),
+            ),
+            Text(
+              '$score/25',
+              style: AppTypography.subtitle2.copyWith(color: colorScheme.primary),
+            ),
+          ],
+        ),
+        const SizedBox(height: 2),
+        Text(
+          hint,
+          style: AppTypography.caption.copyWith(color: colorScheme.onSurfaceVariant),
+        ),
+      ],
+    ),
+  );
 }
 
 Future<void> _showGrowthPrediction({

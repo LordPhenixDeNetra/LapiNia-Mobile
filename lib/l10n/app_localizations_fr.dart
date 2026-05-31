@@ -583,6 +583,126 @@ class AppLocalizationsFr extends AppLocalizations {
   String get lapinTabInfo => 'Infos';
 
   @override
+  String get fertilityScoreCardTitle => 'Score fertilité';
+
+  @override
+  String get fertilityScoreUnknown => 'Score fertilité : —/100';
+
+  @override
+  String fertilityScoreBadge(int score) {
+    return 'Score fertilité : $score/100';
+  }
+
+  @override
+  String fertilityScoreThreeMonthsAgo(int score) {
+    return 'Il y a 3 mois : $score/100';
+  }
+
+  @override
+  String get fertilityScoreThreeMonthsAgoUnknown => 'Il y a 3 mois : —/100';
+
+  @override
+  String get fertilityScoreDetailsButton => 'Détails du score';
+
+  @override
+  String get fertilityScoreDetailsTitle => 'Détails du score de fertilité';
+
+  @override
+  String get fertilitySubscoreAcceptation => 'Acceptation';
+
+  @override
+  String get fertilitySubscoreAcceptationHint =>
+      'Basé sur le taux de mises bas après saillie (acceptation de la reproduction).';
+
+  @override
+  String get fertilitySubscoreLitterSize => 'Taille des portées';
+
+  @override
+  String get fertilitySubscoreLitterSizeHint =>
+      'Basé sur le nombre moyen de lapereaux par portée.';
+
+  @override
+  String get fertilitySubscoreSurvival => 'Survie des lapereaux';
+
+  @override
+  String get fertilitySubscoreSurvivalHint =>
+      'Basé sur le taux de survie des lapereaux jusqu’au sevrage (selon données).';
+
+  @override
+  String get fertilitySubscoreRegularity => 'Régularité';
+
+  @override
+  String get fertilitySubscoreRegularityHint =>
+      'Basé sur la régularité des intervalles entre saillies.';
+
+  @override
+  String fertilityScoreTotal(int score) {
+    return 'Total : $score/100';
+  }
+
+  @override
+  String get fertilityScoreDetailsHint =>
+      'Calcul basé sur les 6 derniers mois (si données disponibles).';
+
+  @override
+  String fertilityScoreDetailsStats(
+    int total,
+    int miseBas,
+    String avgLitter,
+    String survival,
+    String avgInterval,
+  ) {
+    return 'Portées: $total (mise bas: $miseBas)\nTaille moyenne: $avgLitter\nSurvie: $survival\nIntervalle moyen: $avgInterval jours';
+  }
+
+  @override
+  String get genealogyCtaTitle => 'Arbre généalogique';
+
+  @override
+  String get genealogyCtaSubtitle => 'Voir les ascendants (3 générations)';
+
+  @override
+  String get genealogyTitle => 'Arbre généalogique';
+
+  @override
+  String get genealogyUnknown => 'Inconnu';
+
+  @override
+  String get genealogyGeneration1 => 'Lapin';
+
+  @override
+  String get genealogyGeneration2 => 'Parents';
+
+  @override
+  String get genealogyGeneration3 => 'Grands-parents';
+
+  @override
+  String get suggestMalesButton => 'Suggérer des mâles';
+
+  @override
+  String get suggestMalesTitle => 'Suggérer des mâles';
+
+  @override
+  String get suggestMalesObjectiveAnti => 'Anti-consanguinité';
+
+  @override
+  String get suggestMalesObjectiveGrowth => 'Croissance';
+
+  @override
+  String get suggestMalesObjectiveBalanced => 'Équilibré';
+
+  @override
+  String get suggestMalesNoResults => 'Aucun résultat pour le moment.';
+
+  @override
+  String get suggestMalesRequiresOnline =>
+      'Cette action nécessite une connexion internet.';
+
+  @override
+  String get suggestMalesSelectFemaleFirst =>
+      'Sélectionnez d\'abord une femelle.';
+
+  @override
   String get growthNoWeights => 'Aucune pesée pour le moment.';
 
   @override

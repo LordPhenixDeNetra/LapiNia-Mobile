@@ -1,0 +1,10 @@
+- [x] Migration Supabase ajoute `lapins.score_fertilite` et `alertes.type = FERTILITE` sans casser RLS
+- [x] `fertility-advice` renvoie un JSON utilisable et fonctionne sans clés IA (fallback)
+- [x] `suggest-males` renvoie un top N cohérent et stable pour les 3 objectifs
+- [x] Calcul local du score produit une valeur 0..100 et des sous-scores 0..25
+- [x] Le score s’affiche sur la fiche lapin (onglet Repro) et le détail explique le calcul
+- [x] La baisse > 20 pts en 3 mois crée une alerte visible sur Dashboard / Alertes
+- [x] L’arbre généalogique 3 générations s’affiche, gère les “Inconnu”, et chaque nœud est cliquable
+- [x] “Suggérer des mâles” permet de sélectionner un mâle et remplit le formulaire sans crash
+- [x] i18n FR/EN complet pour le flux Fertilité & Génétique
+- [x] `flutter gen-l10n`, `flutter analyze`, `flutter test` passent

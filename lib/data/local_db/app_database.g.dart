@@ -36,6 +36,17 @@ class $LapinsLocalTable extends LapinsLocal
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _scoreFertiliteMeta = const VerificationMeta(
+    'scoreFertilite',
+  );
+  @override
+  late final GeneratedColumn<int> scoreFertilite = GeneratedColumn<int>(
+    'score_fertilite',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
   );
@@ -67,6 +78,7 @@ class $LapinsLocalTable extends LapinsLocal
     id,
     userId,
     data,
+    scoreFertilite,
     updatedAt,
     isDeleted,
   ];
@@ -103,6 +115,15 @@ class $LapinsLocalTable extends LapinsLocal
     } else if (isInserting) {
       context.missing(_dataMeta);
     }
+    if (data.containsKey('score_fertilite')) {
+      context.handle(
+        _scoreFertiliteMeta,
+        scoreFertilite.isAcceptableOrUnknown(
+          data['score_fertilite']!,
+          _scoreFertiliteMeta,
+        ),
+      );
+    }
     if (data.containsKey('updated_at')) {
       context.handle(
         _updatedAtMeta,
@@ -138,6 +159,10 @@ class $LapinsLocalTable extends LapinsLocal
         DriftSqlType.string,
         data['${effectivePrefix}data'],
       )!,
+      scoreFertilite: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}score_fertilite'],
+      ),
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
@@ -159,12 +184,14 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
   final String id;
   final String userId;
   final String data;
+  final int? scoreFertilite;
   final DateTime updatedAt;
   final bool isDeleted;
   const LapinsLocalData({
     required this.id,
     required this.userId,
     required this.data,
+    this.scoreFertilite,
     required this.updatedAt,
     required this.isDeleted,
   });
@@ -174,6 +201,9 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
     map['id'] = Variable<String>(id);
     map['user_id'] = Variable<String>(userId);
     map['data'] = Variable<String>(data);
+    if (!nullToAbsent || scoreFertilite != null) {
+      map['score_fertilite'] = Variable<int>(scoreFertilite);
+    }
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
     return map;
@@ -184,6 +214,9 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
       id: Value(id),
       userId: Value(userId),
       data: Value(data),
+      scoreFertilite: scoreFertilite == null && nullToAbsent
+          ? const Value.absent()
+          : Value(scoreFertilite),
       updatedAt: Value(updatedAt),
       isDeleted: Value(isDeleted),
     );
@@ -198,6 +231,7 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
       id: serializer.fromJson<String>(json['id']),
       userId: serializer.fromJson<String>(json['userId']),
       data: serializer.fromJson<String>(json['data']),
+      scoreFertilite: serializer.fromJson<int?>(json['scoreFertilite']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
     );
@@ -209,6 +243,7 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
       'id': serializer.toJson<String>(id),
       'userId': serializer.toJson<String>(userId),
       'data': serializer.toJson<String>(data),
+      'scoreFertilite': serializer.toJson<int?>(scoreFertilite),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
     };
@@ -218,12 +253,16 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
     String? id,
     String? userId,
     String? data,
+    Value<int?> scoreFertilite = const Value.absent(),
     DateTime? updatedAt,
     bool? isDeleted,
   }) => LapinsLocalData(
     id: id ?? this.id,
     userId: userId ?? this.userId,
     data: data ?? this.data,
+    scoreFertilite: scoreFertilite.present
+        ? scoreFertilite.value
+        : this.scoreFertilite,
     updatedAt: updatedAt ?? this.updatedAt,
     isDeleted: isDeleted ?? this.isDeleted,
   );
@@ -232,6 +271,9 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
       id: data.id.present ? data.id.value : this.id,
       userId: data.userId.present ? data.userId.value : this.userId,
       data: data.data.present ? data.data.value : this.data,
+      scoreFertilite: data.scoreFertilite.present
+          ? data.scoreFertilite.value
+          : this.scoreFertilite,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
     );
@@ -243,6 +285,7 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('data: $data, ')
+          ..write('scoreFertilite: $scoreFertilite, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted')
           ..write(')'))
@@ -250,7 +293,8 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, data, updatedAt, isDeleted);
+  int get hashCode =>
+      Object.hash(id, userId, data, scoreFertilite, updatedAt, isDeleted);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -258,6 +302,7 @@ class LapinsLocalData extends DataClass implements Insertable<LapinsLocalData> {
           other.id == this.id &&
           other.userId == this.userId &&
           other.data == this.data &&
+          other.scoreFertilite == this.scoreFertilite &&
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted);
 }
@@ -266,6 +311,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
   final Value<String> id;
   final Value<String> userId;
   final Value<String> data;
+  final Value<int?> scoreFertilite;
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
   final Value<int> rowid;
@@ -273,6 +319,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
     this.id = const Value.absent(),
     this.userId = const Value.absent(),
     this.data = const Value.absent(),
+    this.scoreFertilite = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -281,6 +328,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
     required String id,
     required String userId,
     required String data,
+    this.scoreFertilite = const Value.absent(),
     required DateTime updatedAt,
     this.isDeleted = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -292,6 +340,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
     Expression<String>? id,
     Expression<String>? userId,
     Expression<String>? data,
+    Expression<int>? scoreFertilite,
     Expression<DateTime>? updatedAt,
     Expression<bool>? isDeleted,
     Expression<int>? rowid,
@@ -300,6 +349,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
       if (id != null) 'id': id,
       if (userId != null) 'user_id': userId,
       if (data != null) 'data': data,
+      if (scoreFertilite != null) 'score_fertilite': scoreFertilite,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
       if (rowid != null) 'rowid': rowid,
@@ -310,6 +360,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
     Value<String>? id,
     Value<String>? userId,
     Value<String>? data,
+    Value<int?>? scoreFertilite,
     Value<DateTime>? updatedAt,
     Value<bool>? isDeleted,
     Value<int>? rowid,
@@ -318,6 +369,7 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
       id: id ?? this.id,
       userId: userId ?? this.userId,
       data: data ?? this.data,
+      scoreFertilite: scoreFertilite ?? this.scoreFertilite,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
       rowid: rowid ?? this.rowid,
@@ -335,6 +387,9 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
     }
     if (data.present) {
       map['data'] = Variable<String>(data.value);
+    }
+    if (scoreFertilite.present) {
+      map['score_fertilite'] = Variable<int>(scoreFertilite.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
@@ -354,8 +409,466 @@ class LapinsLocalCompanion extends UpdateCompanion<LapinsLocalData> {
           ..write('id: $id, ')
           ..write('userId: $userId, ')
           ..write('data: $data, ')
+          ..write('scoreFertilite: $scoreFertilite, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FertilityScoresLocalTable extends FertilityScoresLocal
+    with TableInfo<$FertilityScoresLocalTable, FertilityScoresLocalData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FertilityScoresLocalTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lapinIdMeta = const VerificationMeta(
+    'lapinId',
+  );
+  @override
+  late final GeneratedColumn<String> lapinId = GeneratedColumn<String>(
+    'lapin_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _monthKeyMeta = const VerificationMeta(
+    'monthKey',
+  );
+  @override
+  late final GeneratedColumn<String> monthKey = GeneratedColumn<String>(
+    'month_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scoreMeta = const VerificationMeta('score');
+  @override
+  late final GeneratedColumn<int> score = GeneratedColumn<int>(
+    'score',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dataMeta = const VerificationMeta('data');
+  @override
+  late final GeneratedColumn<String> data = GeneratedColumn<String>(
+    'data',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    lapinId,
+    monthKey,
+    score,
+    data,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'fertility_scores_local';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FertilityScoresLocalData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('lapin_id')) {
+      context.handle(
+        _lapinIdMeta,
+        lapinId.isAcceptableOrUnknown(data['lapin_id']!, _lapinIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lapinIdMeta);
+    }
+    if (data.containsKey('month_key')) {
+      context.handle(
+        _monthKeyMeta,
+        monthKey.isAcceptableOrUnknown(data['month_key']!, _monthKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthKeyMeta);
+    }
+    if (data.containsKey('score')) {
+      context.handle(
+        _scoreMeta,
+        score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scoreMeta);
+    }
+    if (data.containsKey('data')) {
+      context.handle(
+        _dataMeta,
+        this.data.isAcceptableOrUnknown(data['data']!, _dataMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FertilityScoresLocalData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FertilityScoresLocalData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      lapinId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lapin_id'],
+      )!,
+      monthKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}month_key'],
+      )!,
+      score: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}score'],
+      )!,
+      data: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}data'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FertilityScoresLocalTable createAlias(String alias) {
+    return $FertilityScoresLocalTable(attachedDatabase, alias);
+  }
+}
+
+class FertilityScoresLocalData extends DataClass
+    implements Insertable<FertilityScoresLocalData> {
+  final String id;
+  final String userId;
+  final String lapinId;
+  final String monthKey;
+  final int score;
+  final String? data;
+  final DateTime createdAt;
+  const FertilityScoresLocalData({
+    required this.id,
+    required this.userId,
+    required this.lapinId,
+    required this.monthKey,
+    required this.score,
+    this.data,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['lapin_id'] = Variable<String>(lapinId);
+    map['month_key'] = Variable<String>(monthKey);
+    map['score'] = Variable<int>(score);
+    if (!nullToAbsent || data != null) {
+      map['data'] = Variable<String>(data);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  FertilityScoresLocalCompanion toCompanion(bool nullToAbsent) {
+    return FertilityScoresLocalCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      lapinId: Value(lapinId),
+      monthKey: Value(monthKey),
+      score: Value(score),
+      data: data == null && nullToAbsent ? const Value.absent() : Value(data),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory FertilityScoresLocalData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FertilityScoresLocalData(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      lapinId: serializer.fromJson<String>(json['lapinId']),
+      monthKey: serializer.fromJson<String>(json['monthKey']),
+      score: serializer.fromJson<int>(json['score']),
+      data: serializer.fromJson<String?>(json['data']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'lapinId': serializer.toJson<String>(lapinId),
+      'monthKey': serializer.toJson<String>(monthKey),
+      'score': serializer.toJson<int>(score),
+      'data': serializer.toJson<String?>(data),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  FertilityScoresLocalData copyWith({
+    String? id,
+    String? userId,
+    String? lapinId,
+    String? monthKey,
+    int? score,
+    Value<String?> data = const Value.absent(),
+    DateTime? createdAt,
+  }) => FertilityScoresLocalData(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    lapinId: lapinId ?? this.lapinId,
+    monthKey: monthKey ?? this.monthKey,
+    score: score ?? this.score,
+    data: data.present ? data.value : this.data,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  FertilityScoresLocalData copyWithCompanion(
+    FertilityScoresLocalCompanion data,
+  ) {
+    return FertilityScoresLocalData(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      lapinId: data.lapinId.present ? data.lapinId.value : this.lapinId,
+      monthKey: data.monthKey.present ? data.monthKey.value : this.monthKey,
+      score: data.score.present ? data.score.value : this.score,
+      data: data.data.present ? data.data.value : this.data,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FertilityScoresLocalData(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('lapinId: $lapinId, ')
+          ..write('monthKey: $monthKey, ')
+          ..write('score: $score, ')
+          ..write('data: $data, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, userId, lapinId, monthKey, score, data, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FertilityScoresLocalData &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.lapinId == this.lapinId &&
+          other.monthKey == this.monthKey &&
+          other.score == this.score &&
+          other.data == this.data &&
+          other.createdAt == this.createdAt);
+}
+
+class FertilityScoresLocalCompanion
+    extends UpdateCompanion<FertilityScoresLocalData> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> lapinId;
+  final Value<String> monthKey;
+  final Value<int> score;
+  final Value<String?> data;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const FertilityScoresLocalCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.lapinId = const Value.absent(),
+    this.monthKey = const Value.absent(),
+    this.score = const Value.absent(),
+    this.data = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FertilityScoresLocalCompanion.insert({
+    required String id,
+    required String userId,
+    required String lapinId,
+    required String monthKey,
+    required int score,
+    this.data = const Value.absent(),
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userId = Value(userId),
+       lapinId = Value(lapinId),
+       monthKey = Value(monthKey),
+       score = Value(score),
+       createdAt = Value(createdAt);
+  static Insertable<FertilityScoresLocalData> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? lapinId,
+    Expression<String>? monthKey,
+    Expression<int>? score,
+    Expression<String>? data,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (lapinId != null) 'lapin_id': lapinId,
+      if (monthKey != null) 'month_key': monthKey,
+      if (score != null) 'score': score,
+      if (data != null) 'data': data,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FertilityScoresLocalCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<String>? lapinId,
+    Value<String>? monthKey,
+    Value<int>? score,
+    Value<String?>? data,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return FertilityScoresLocalCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      lapinId: lapinId ?? this.lapinId,
+      monthKey: monthKey ?? this.monthKey,
+      score: score ?? this.score,
+      data: data ?? this.data,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (lapinId.present) {
+      map['lapin_id'] = Variable<String>(lapinId.value);
+    }
+    if (monthKey.present) {
+      map['month_key'] = Variable<String>(monthKey.value);
+    }
+    if (score.present) {
+      map['score'] = Variable<int>(score.value);
+    }
+    if (data.present) {
+      map['data'] = Variable<String>(data.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FertilityScoresLocalCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('lapinId: $lapinId, ')
+          ..write('monthKey: $monthKey, ')
+          ..write('score: $score, ')
+          ..write('data: $data, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5513,6 +6026,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $LapinsLocalTable lapinsLocal = $LapinsLocalTable(this);
+  late final $FertilityScoresLocalTable fertilityScoresLocal =
+      $FertilityScoresLocalTable(this);
   late final $PorteesLocalTable porteesLocal = $PorteesLocalTable(this);
   late final $LapereauxLocalTable lapereauxLocal = $LapereauxLocalTable(this);
   late final $PeseesLocalTable peseesLocal = $PeseesLocalTable(this);
@@ -5537,6 +6052,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     lapinsLocal,
+    fertilityScoresLocal,
     porteesLocal,
     lapereauxLocal,
     peseesLocal,
@@ -5559,6 +6075,7 @@ typedef $$LapinsLocalTableCreateCompanionBuilder =
       required String id,
       required String userId,
       required String data,
+      Value<int?> scoreFertilite,
       required DateTime updatedAt,
       Value<bool> isDeleted,
       Value<int> rowid,
@@ -5568,6 +6085,7 @@ typedef $$LapinsLocalTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> userId,
       Value<String> data,
+      Value<int?> scoreFertilite,
       Value<DateTime> updatedAt,
       Value<bool> isDeleted,
       Value<int> rowid,
@@ -5594,6 +6112,11 @@ class $$LapinsLocalTableFilterComposer
 
   ColumnFilters<String> get data => $composableBuilder(
     column: $table.data,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get scoreFertilite => $composableBuilder(
+    column: $table.scoreFertilite,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5632,6 +6155,11 @@ class $$LapinsLocalTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get scoreFertilite => $composableBuilder(
+    column: $table.scoreFertilite,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -5660,6 +6188,11 @@ class $$LapinsLocalTableAnnotationComposer
 
   GeneratedColumn<String> get data =>
       $composableBuilder(column: $table.data, builder: (column) => column);
+
+  GeneratedColumn<int> get scoreFertilite => $composableBuilder(
+    column: $table.scoreFertilite,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
@@ -5702,6 +6235,7 @@ class $$LapinsLocalTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> userId = const Value.absent(),
                 Value<String> data = const Value.absent(),
+                Value<int?> scoreFertilite = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<bool> isDeleted = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -5709,6 +6243,7 @@ class $$LapinsLocalTableTableManager
                 id: id,
                 userId: userId,
                 data: data,
+                scoreFertilite: scoreFertilite,
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 rowid: rowid,
@@ -5718,6 +6253,7 @@ class $$LapinsLocalTableTableManager
                 required String id,
                 required String userId,
                 required String data,
+                Value<int?> scoreFertilite = const Value.absent(),
                 required DateTime updatedAt,
                 Value<bool> isDeleted = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -5725,6 +6261,7 @@ class $$LapinsLocalTableTableManager
                 id: id,
                 userId: userId,
                 data: data,
+                scoreFertilite: scoreFertilite,
                 updatedAt: updatedAt,
                 isDeleted: isDeleted,
                 rowid: rowid,
@@ -5752,6 +6289,260 @@ typedef $$LapinsLocalTableProcessedTableManager =
         BaseReferences<_$AppDatabase, $LapinsLocalTable, LapinsLocalData>,
       ),
       LapinsLocalData,
+      PrefetchHooks Function()
+    >;
+typedef $$FertilityScoresLocalTableCreateCompanionBuilder =
+    FertilityScoresLocalCompanion Function({
+      required String id,
+      required String userId,
+      required String lapinId,
+      required String monthKey,
+      required int score,
+      Value<String?> data,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$FertilityScoresLocalTableUpdateCompanionBuilder =
+    FertilityScoresLocalCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<String> lapinId,
+      Value<String> monthKey,
+      Value<int> score,
+      Value<String?> data,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+class $$FertilityScoresLocalTableFilterComposer
+    extends Composer<_$AppDatabase, $FertilityScoresLocalTable> {
+  $$FertilityScoresLocalTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lapinId => $composableBuilder(
+    column: $table.lapinId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get monthKey => $composableBuilder(
+    column: $table.monthKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get data => $composableBuilder(
+    column: $table.data,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FertilityScoresLocalTableOrderingComposer
+    extends Composer<_$AppDatabase, $FertilityScoresLocalTable> {
+  $$FertilityScoresLocalTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lapinId => $composableBuilder(
+    column: $table.lapinId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get monthKey => $composableBuilder(
+    column: $table.monthKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get data => $composableBuilder(
+    column: $table.data,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FertilityScoresLocalTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FertilityScoresLocalTable> {
+  $$FertilityScoresLocalTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get lapinId =>
+      $composableBuilder(column: $table.lapinId, builder: (column) => column);
+
+  GeneratedColumn<String> get monthKey =>
+      $composableBuilder(column: $table.monthKey, builder: (column) => column);
+
+  GeneratedColumn<int> get score =>
+      $composableBuilder(column: $table.score, builder: (column) => column);
+
+  GeneratedColumn<String> get data =>
+      $composableBuilder(column: $table.data, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$FertilityScoresLocalTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FertilityScoresLocalTable,
+          FertilityScoresLocalData,
+          $$FertilityScoresLocalTableFilterComposer,
+          $$FertilityScoresLocalTableOrderingComposer,
+          $$FertilityScoresLocalTableAnnotationComposer,
+          $$FertilityScoresLocalTableCreateCompanionBuilder,
+          $$FertilityScoresLocalTableUpdateCompanionBuilder,
+          (
+            FertilityScoresLocalData,
+            BaseReferences<
+              _$AppDatabase,
+              $FertilityScoresLocalTable,
+              FertilityScoresLocalData
+            >,
+          ),
+          FertilityScoresLocalData,
+          PrefetchHooks Function()
+        > {
+  $$FertilityScoresLocalTableTableManager(
+    _$AppDatabase db,
+    $FertilityScoresLocalTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FertilityScoresLocalTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FertilityScoresLocalTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$FertilityScoresLocalTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> lapinId = const Value.absent(),
+                Value<String> monthKey = const Value.absent(),
+                Value<int> score = const Value.absent(),
+                Value<String?> data = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FertilityScoresLocalCompanion(
+                id: id,
+                userId: userId,
+                lapinId: lapinId,
+                monthKey: monthKey,
+                score: score,
+                data: data,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userId,
+                required String lapinId,
+                required String monthKey,
+                required int score,
+                Value<String?> data = const Value.absent(),
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => FertilityScoresLocalCompanion.insert(
+                id: id,
+                userId: userId,
+                lapinId: lapinId,
+                monthKey: monthKey,
+                score: score,
+                data: data,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FertilityScoresLocalTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FertilityScoresLocalTable,
+      FertilityScoresLocalData,
+      $$FertilityScoresLocalTableFilterComposer,
+      $$FertilityScoresLocalTableOrderingComposer,
+      $$FertilityScoresLocalTableAnnotationComposer,
+      $$FertilityScoresLocalTableCreateCompanionBuilder,
+      $$FertilityScoresLocalTableUpdateCompanionBuilder,
+      (
+        FertilityScoresLocalData,
+        BaseReferences<
+          _$AppDatabase,
+          $FertilityScoresLocalTable,
+          FertilityScoresLocalData
+        >,
+      ),
+      FertilityScoresLocalData,
       PrefetchHooks Function()
     >;
 typedef $$PorteesLocalTableCreateCompanionBuilder =
@@ -8662,6 +9453,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$LapinsLocalTableTableManager get lapinsLocal =>
       $$LapinsLocalTableTableManager(_db, _db.lapinsLocal);
+  $$FertilityScoresLocalTableTableManager get fertilityScoresLocal =>
+      $$FertilityScoresLocalTableTableManager(_db, _db.fertilityScoresLocal);
   $$PorteesLocalTableTableManager get porteesLocal =>
       $$PorteesLocalTableTableManager(_db, _db.porteesLocal);
   $$LapereauxLocalTableTableManager get lapereauxLocal =>

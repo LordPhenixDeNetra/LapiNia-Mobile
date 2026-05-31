@@ -49,7 +49,7 @@ class OpenAIChatProvider implements AIProvider {
   }
 }
 
-const SYSTEM_PROMPT_CUNICULTURE = `Tu es un expert en élevage cunicole (lapins) en Afrique de l'Ouest. 
+export const SYSTEM_PROMPT_CUNICULTURE = `Tu es un expert en élevage cunicole (lapins) en Afrique de l'Ouest. 
 Tu connais parfaitement:
 - Les races de lapins (NZW, Californien, Rex, Géant des Flandres, etc.)
 - La reproduction et la gestation (31 jours)
@@ -62,7 +62,7 @@ Réponds de manière concise, pratique et adaptée au contexte local (Sénégal,
 Utilise des unités métriques (grammes, kg, °C).
 `;
 
-class AIRouter {
+export class AIRouter {
   private claude: ClaudeProvider | null = null;
   private openai: OpenAIChatProvider | null = null;
   private mistral: OpenAIChatProvider | null = null;
@@ -111,6 +111,10 @@ class AIRouter {
         defaultMaxTokens: 800,
       });
     }
+  }
+
+  hasProvider(): boolean {
+    return !!(this.claude || this.openai || this.mistral || this.deepseek || this.kimi);
   }
   
   async complete(prompt: string, complexity: 'low' | 'medium' | 'high' = 'medium'): Promise<string> {
@@ -208,45 +212,49 @@ Réponds en JSON: {composants: [{aliment, quantite_g, note}], alertes_stock: [],
   }
 }
 
-const aiRouter = new AIRouter();
+export const createAIRouter = () => new AIRouter();
 
-serve(async (req: Request) => {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
-  };
+if (import.meta.main) {
+  const aiRouter = new AIRouter();
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+  serve(async (req: Request) => {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Idempotency-Key',
+    };
 
-  try {
-    const { action, prompt, complexity, symptomes, lapinInfo, temperature } = await req.json() as any;
-    
-    let result: any;
-    
-    switch (action) {
-      case 'complete':
-        result = { response: await aiRouter.complete(prompt, complexity) };
-        break;
-      case 'diagnose':
-        result = await aiRouter.diagnose(symptomes, lapinInfo);
-        break;
-      case 'calculate-ration':
-        result = await aiRouter.calculateRation(lapinInfo, temperature);
-        break;
-      default:
-        throw new Error(`Unknown action: ${action}`);
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
-    
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-});
+
+    try {
+      const { action, prompt, complexity, symptomes, lapinInfo, temperature } = await req.json() as any;
+      
+      let result: any;
+      
+      switch (action) {
+        case 'complete':
+          result = { response: await aiRouter.complete(prompt, complexity) };
+          break;
+        case 'diagnose':
+          result = await aiRouter.diagnose(symptomes, lapinInfo);
+          break;
+        case 'calculate-ration':
+          result = await aiRouter.calculateRation(lapinInfo, temperature);
+          break;
+        default:
+          throw new Error(`Unknown action: ${action}`);
+      }
+      
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+  });
+}

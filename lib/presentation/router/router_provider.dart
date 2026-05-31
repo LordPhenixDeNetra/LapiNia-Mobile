@@ -12,6 +12,7 @@ import '../screens/auth/welcome_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/onboarding/onboarding_advice_screen.dart';
 import '../screens/lapins/lapin_detail_screen.dart';
+import '../screens/lapins/lapin_genealogy_screen.dart';
 import '../screens/lapins/lapin_form_screen.dart';
 import '../screens/lapins/lapin_list_screen.dart';
 import '../screens/lapins/lapin_qr_screen.dart';
@@ -170,6 +171,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = state.pathParameters['id']!;
                   return LapinDetailScreen(lapinId: id);
+                },
+              ),
+              GoRoute(
+                path: '/lapin/:id/genealogy',
+                builder: (context, state) {
+                  final id = state.pathParameters['id']!;
+                  return LapinGenealogyScreen(lapinId: id);
                 },
               ),
             ],

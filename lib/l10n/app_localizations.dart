@@ -1190,6 +1190,210 @@ abstract class AppLocalizations {
   /// **'Infos'**
   String get lapinTabInfo;
 
+  /// No description provided for @fertilityScoreCardTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Score fertilité'**
+  String get fertilityScoreCardTitle;
+
+  /// No description provided for @fertilityScoreUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Score fertilité : —/100'**
+  String get fertilityScoreUnknown;
+
+  /// No description provided for @fertilityScoreBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Score fertilité : {score}/100'**
+  String fertilityScoreBadge(int score);
+
+  /// No description provided for @fertilityScoreThreeMonthsAgo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il y a 3 mois : {score}/100'**
+  String fertilityScoreThreeMonthsAgo(int score);
+
+  /// No description provided for @fertilityScoreThreeMonthsAgoUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il y a 3 mois : —/100'**
+  String get fertilityScoreThreeMonthsAgoUnknown;
+
+  /// No description provided for @fertilityScoreDetailsButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails du score'**
+  String get fertilityScoreDetailsButton;
+
+  /// No description provided for @fertilityScoreDetailsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détails du score de fertilité'**
+  String get fertilityScoreDetailsTitle;
+
+  /// No description provided for @fertilitySubscoreAcceptation.
+  ///
+  /// In fr, this message translates to:
+  /// **'Acceptation'**
+  String get fertilitySubscoreAcceptation;
+
+  /// No description provided for @fertilitySubscoreAcceptationHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Basé sur le taux de mises bas après saillie (acceptation de la reproduction).'**
+  String get fertilitySubscoreAcceptationHint;
+
+  /// No description provided for @fertilitySubscoreLitterSize.
+  ///
+  /// In fr, this message translates to:
+  /// **'Taille des portées'**
+  String get fertilitySubscoreLitterSize;
+
+  /// No description provided for @fertilitySubscoreLitterSizeHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Basé sur le nombre moyen de lapereaux par portée.'**
+  String get fertilitySubscoreLitterSizeHint;
+
+  /// No description provided for @fertilitySubscoreSurvival.
+  ///
+  /// In fr, this message translates to:
+  /// **'Survie des lapereaux'**
+  String get fertilitySubscoreSurvival;
+
+  /// No description provided for @fertilitySubscoreSurvivalHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Basé sur le taux de survie des lapereaux jusqu’au sevrage (selon données).'**
+  String get fertilitySubscoreSurvivalHint;
+
+  /// No description provided for @fertilitySubscoreRegularity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Régularité'**
+  String get fertilitySubscoreRegularity;
+
+  /// No description provided for @fertilitySubscoreRegularityHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Basé sur la régularité des intervalles entre saillies.'**
+  String get fertilitySubscoreRegularityHint;
+
+  /// No description provided for @fertilityScoreTotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total : {score}/100'**
+  String fertilityScoreTotal(int score);
+
+  /// No description provided for @fertilityScoreDetailsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calcul basé sur les 6 derniers mois (si données disponibles).'**
+  String get fertilityScoreDetailsHint;
+
+  /// No description provided for @fertilityScoreDetailsStats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portées: {total} (mise bas: {miseBas})\nTaille moyenne: {avgLitter}\nSurvie: {survival}\nIntervalle moyen: {avgInterval} jours'**
+  String fertilityScoreDetailsStats(
+    int total,
+    int miseBas,
+    String avgLitter,
+    String survival,
+    String avgInterval,
+  );
+
+  /// No description provided for @genealogyCtaTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arbre généalogique'**
+  String get genealogyCtaTitle;
+
+  /// No description provided for @genealogyCtaSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir les ascendants (3 générations)'**
+  String get genealogyCtaSubtitle;
+
+  /// No description provided for @genealogyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arbre généalogique'**
+  String get genealogyTitle;
+
+  /// No description provided for @genealogyUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inconnu'**
+  String get genealogyUnknown;
+
+  /// No description provided for @genealogyGeneration1.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lapin'**
+  String get genealogyGeneration1;
+
+  /// No description provided for @genealogyGeneration2.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parents'**
+  String get genealogyGeneration2;
+
+  /// No description provided for @genealogyGeneration3.
+  ///
+  /// In fr, this message translates to:
+  /// **'Grands-parents'**
+  String get genealogyGeneration3;
+
+  /// No description provided for @suggestMalesButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggérer des mâles'**
+  String get suggestMalesButton;
+
+  /// No description provided for @suggestMalesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggérer des mâles'**
+  String get suggestMalesTitle;
+
+  /// No description provided for @suggestMalesObjectiveAnti.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anti-consanguinité'**
+  String get suggestMalesObjectiveAnti;
+
+  /// No description provided for @suggestMalesObjectiveGrowth.
+  ///
+  /// In fr, this message translates to:
+  /// **'Croissance'**
+  String get suggestMalesObjectiveGrowth;
+
+  /// No description provided for @suggestMalesObjectiveBalanced.
+  ///
+  /// In fr, this message translates to:
+  /// **'Équilibré'**
+  String get suggestMalesObjectiveBalanced;
+
+  /// No description provided for @suggestMalesNoResults.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat pour le moment.'**
+  String get suggestMalesNoResults;
+
+  /// No description provided for @suggestMalesRequiresOnline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action nécessite une connexion internet.'**
+  String get suggestMalesRequiresOnline;
+
+  /// No description provided for @suggestMalesSelectFemaleFirst.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionnez d\'abord une femelle.'**
+  String get suggestMalesSelectFemaleFirst;
+
   /// No description provided for @growthNoWeights.
   ///
   /// In fr, this message translates to:

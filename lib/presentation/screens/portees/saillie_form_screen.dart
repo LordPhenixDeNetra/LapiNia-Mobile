@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/models/consanguinity.dart';
+import '../../../core/models/male_suggestion.dart';
 import '../../../core/models/portee.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/lapin_provider.dart';
@@ -188,6 +189,144 @@ class SaillieFormScreen extends HookConsumerWidget {
       }
     }();
 
+    Future<void> suggestMales() async {
+      final femelleId = selectedMereId.value;
+      if (femelleId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.suggestMalesSelectFemaleFirst)),
+        );
+        return;
+      }
+      if (!connectivity.isOnline) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.suggestMalesRequiresOnline)),
+        );
+        return;
+      }
+
+      final service = ref.read(suggestMalesServiceProvider);
+      MaleSuggestionObjective objective = MaleSuggestionObjective.equilibre;
+      MaleSuggestionResult? result;
+      String? error;
+      var loading = true;
+
+      Future<void> load(MaleSuggestionObjective o, void Function(void Function()) setState) async {
+        setState(() {
+          objective = o;
+          loading = true;
+          error = null;
+        });
+        try {
+          final r = await service.suggest(femelleId: femelleId, objective: o);
+          setState(() {
+            result = r;
+            loading = false;
+          });
+        } catch (e) {
+          setState(() {
+            error = e.toString();
+            loading = false;
+          });
+        }
+      }
+
+      final pickedMaleId = await showModalBottomSheet<String>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              if (loading && result == null && error == null) {
+                unawaited(load(objective, setState));
+              }
+
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.suggestMalesTitle, style: AppTypography.subtitle1),
+                      const SizedBox(height: 10),
+                      SegmentedButton<MaleSuggestionObjective>(
+                        segments: [
+                          ButtonSegment(
+                            value: MaleSuggestionObjective.antiConsanguinite,
+                            label: Text(l10n.suggestMalesObjectiveAnti),
+                          ),
+                          ButtonSegment(
+                            value: MaleSuggestionObjective.croissance,
+                            label: Text(l10n.suggestMalesObjectiveGrowth),
+                          ),
+                          ButtonSegment(
+                            value: MaleSuggestionObjective.equilibre,
+                            label: Text(l10n.suggestMalesObjectiveBalanced),
+                          ),
+                        ],
+                        selected: {objective},
+                        onSelectionChanged: (selection) {
+                          final o = selection.first;
+                          unawaited(load(o, setState));
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      if (loading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (error != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            error!,
+                            style: AppTypography.body2.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                        )
+                      else if (result == null || result!.items.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(l10n.suggestMalesNoResults, style: AppTypography.body2),
+                        )
+                      else
+                        Flexible(
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: result!.items.length,
+                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
+                              final item = result!.items[index];
+                              return Card(
+                                child: ListTile(
+                                  title: Text('${item.nom} (${item.score}/100)'),
+                                  subtitle: Text(item.justification),
+                                  onTap: () => Navigator.pop(context, item.maleId),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      if (pickedMaleId != null) {
+        selectedPereId.value = pickedMaleId;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.newSaillie),
@@ -216,6 +355,16 @@ class SaillieFormScreen extends HookConsumerWidget {
                 decoration: const InputDecoration(prefixIcon: Icon(Icons.male)),
                 items: malesItems,
                 onChanged: (v) => selectedPereId.value = v,
+              ),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(minimumSize: const Size(0, 44)),
+                  onPressed: suggestMales,
+                  icon: const Icon(Icons.auto_awesome),
+                  label: Text(l10n.suggestMalesButton),
+                ),
               ),
               const SizedBox(height: 16),
               Text(l10n.saillieDateLabel, style: AppTypography.headline3),

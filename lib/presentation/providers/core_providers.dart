@@ -23,6 +23,9 @@ import '../../domain/services/race_recommendation_service.dart';
 import '../../domain/services/rentability_service.dart';
 import '../../domain/services/session_service.dart';
 import '../../domain/services/theme_service.dart';
+import '../../domain/services/fertility_score_service.dart';
+import '../../domain/services/fertility_advice_service.dart';
+import '../../domain/services/suggest_males_service.dart';
 
 final appConfigProvider = Provider<AppConfig>((ref) {
   return serviceLocator<AppConfig>();
@@ -102,6 +105,18 @@ final growthPredictionServiceProvider = Provider<GrowthPredictionService>((ref) 
 
 final raceRecommendationServiceProvider = Provider<RaceRecommendationService>((ref) {
   return serviceLocator<RaceRecommendationService>();
+});
+
+final fertilityAdviceServiceProvider = Provider<FertilityAdviceService>((ref) {
+  return serviceLocator<FertilityAdviceService>();
+});
+
+final suggestMalesServiceProvider = Provider<SuggestMalesService>((ref) {
+  return serviceLocator<SuggestMalesService>();
+});
+
+final fertilityScoreServiceProvider = Provider<FertilityScoreService>((ref) {
+  return serviceLocator<FertilityScoreService>();
 });
 
 final connectivityCheckerProvider = Provider<ConnectivityChecker>((ref) {

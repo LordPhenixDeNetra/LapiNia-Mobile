@@ -48,6 +48,7 @@ class LocalCacheService {
             id: lapin.id,
             userId: lapin.userId,
             data: jsonEncode(lapin.toJson()),
+            scoreFertilite: Value(lapin.scoreFertilite),
             updatedAt: lapin.updatedAt,
             isDeleted: const Value(false),
           ),
@@ -97,6 +98,7 @@ class LocalCacheService {
                 id: l.id,
                 userId: userId,
                 data: jsonEncode(l.toJson()),
+                scoreFertilite: Value(l.scoreFertilite),
                 updatedAt: l.updatedAt,
                 isDeleted: const Value(false),
               ),
@@ -105,6 +107,58 @@ class LocalCacheService {
         mode: InsertMode.insertOrReplace,
       );
     });
+  }
+
+  Future<int?> getFertilityScoreForMonth({
+    required String userId,
+    required String lapinId,
+    required String monthKey,
+  }) async {
+    final row = await (db.select(db.fertilityScoresLocal)
+          ..where((t) =>
+              t.userId.equals(userId) & t.lapinId.equals(lapinId) & t.monthKey.equals(monthKey))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+    return row?.score;
+  }
+
+  Future<void> upsertFertilityScoreMonthly({
+    required String userId,
+    required String lapinId,
+    required String monthKey,
+    required int score,
+    String? data,
+  }) async {
+    final id = '${lapinId}_$monthKey';
+    await db.into(db.fertilityScoresLocal).insert(
+          FertilityScoresLocalCompanion.insert(
+            id: id,
+            userId: userId,
+            lapinId: lapinId,
+            monthKey: monthKey,
+            score: score,
+            data: Value(data),
+            createdAt: DateTime.now(),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+  }
+
+  Future<List<FertilityScoresLocalData>> getFertilityScoresHistory({
+    required String userId,
+    required String lapinId,
+    int limit = 12,
+  }) async {
+    return (db.select(db.fertilityScoresLocal)
+          ..where((t) => t.userId.equals(userId) & t.lapinId.equals(lapinId))
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.monthKey, mode: OrderingMode.desc),
+          ])
+          ..limit(limit))
+        .get();
   }
 
   Future<List<Pesee>> getPeseesByLapin({

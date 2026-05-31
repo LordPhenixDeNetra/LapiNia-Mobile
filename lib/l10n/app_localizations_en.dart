@@ -579,6 +579,125 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lapinTabInfo => 'Info';
 
   @override
+  String get fertilityScoreCardTitle => 'Fertility score';
+
+  @override
+  String get fertilityScoreUnknown => 'Fertility score: —/100';
+
+  @override
+  String fertilityScoreBadge(int score) {
+    return 'Fertility score: $score/100';
+  }
+
+  @override
+  String fertilityScoreThreeMonthsAgo(int score) {
+    return '3 months ago: $score/100';
+  }
+
+  @override
+  String get fertilityScoreThreeMonthsAgoUnknown => '3 months ago: —/100';
+
+  @override
+  String get fertilityScoreDetailsButton => 'Score details';
+
+  @override
+  String get fertilityScoreDetailsTitle => 'Fertility score details';
+
+  @override
+  String get fertilitySubscoreAcceptation => 'Acceptance';
+
+  @override
+  String get fertilitySubscoreAcceptationHint =>
+      'Based on the kindling rate after mating (breeding acceptance).';
+
+  @override
+  String get fertilitySubscoreLitterSize => 'Litter size';
+
+  @override
+  String get fertilitySubscoreLitterSizeHint =>
+      'Based on the average number of kits per litter.';
+
+  @override
+  String get fertilitySubscoreSurvival => 'Kit survival';
+
+  @override
+  String get fertilitySubscoreSurvivalHint =>
+      'Based on kit survival rate up to weaning (when available).';
+
+  @override
+  String get fertilitySubscoreRegularity => 'Regularity';
+
+  @override
+  String get fertilitySubscoreRegularityHint =>
+      'Based on how regular the interval between matings is.';
+
+  @override
+  String fertilityScoreTotal(int score) {
+    return 'Total: $score/100';
+  }
+
+  @override
+  String get fertilityScoreDetailsHint =>
+      'Computed from the last 6 months (if data is available).';
+
+  @override
+  String fertilityScoreDetailsStats(
+    int total,
+    int miseBas,
+    String avgLitter,
+    String survival,
+    String avgInterval,
+  ) {
+    return 'Litters: $total (kindlings: $miseBas)\nAvg litter size: $avgLitter\nSurvival: $survival\nAvg interval: $avgInterval days';
+  }
+
+  @override
+  String get genealogyCtaTitle => 'Family tree';
+
+  @override
+  String get genealogyCtaSubtitle => 'View ancestors (3 generations)';
+
+  @override
+  String get genealogyTitle => 'Family tree';
+
+  @override
+  String get genealogyUnknown => 'Unknown';
+
+  @override
+  String get genealogyGeneration1 => 'Rabbit';
+
+  @override
+  String get genealogyGeneration2 => 'Parents';
+
+  @override
+  String get genealogyGeneration3 => 'Grandparents';
+
+  @override
+  String get suggestMalesButton => 'Suggest males';
+
+  @override
+  String get suggestMalesTitle => 'Suggest males';
+
+  @override
+  String get suggestMalesObjectiveAnti => 'Anti-inbreeding';
+
+  @override
+  String get suggestMalesObjectiveGrowth => 'Growth';
+
+  @override
+  String get suggestMalesObjectiveBalanced => 'Balanced';
+
+  @override
+  String get suggestMalesNoResults => 'No results yet.';
+
+  @override
+  String get suggestMalesRequiresOnline =>
+      'This action requires an internet connection.';
+
+  @override
+  String get suggestMalesSelectFemaleFirst => 'Select a female first.';
+
+  @override
   String get growthNoWeights => 'No weight recorded yet.';
 
   @override

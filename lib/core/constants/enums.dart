@@ -265,7 +265,8 @@ enum TypeAlerte {
   pesee,
   sante,
   epidemie,
-  finance;
+  finance,
+  fertilite;
 
   String get label {
     switch (this) {
@@ -283,6 +284,8 @@ enum TypeAlerte {
         return 'Épidémie';
       case TypeAlerte.finance:
         return 'Finance';
+      case TypeAlerte.fertilite:
+        return 'Fertilité';
     }
   }
 
@@ -302,6 +305,8 @@ enum TypeAlerte {
         return 'EPIDEMIE';
       case TypeAlerte.finance:
         return 'FINANCE';
+      case TypeAlerte.fertilite:
+        return 'FERTILITE';
     }
   }
 

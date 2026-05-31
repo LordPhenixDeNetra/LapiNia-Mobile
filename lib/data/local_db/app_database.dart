@@ -10,8 +10,21 @@ class LapinsLocal extends Table {
   TextColumn get id => text()();
   TextColumn get userId => text()();
   TextColumn get data => text()();
+  IntColumn get scoreFertilite => integer().nullable()();
   DateTimeColumn get updatedAt => dateTime()();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+class FertilityScoresLocal extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+  TextColumn get lapinId => text()();
+  TextColumn get monthKey => text()();
+  IntColumn get score => integer()();
+  TextColumn get data => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -161,6 +174,7 @@ class SyncQueue extends Table {
 @DriftDatabase(
   tables: [
     LapinsLocal,
+    FertilityScoresLocal,
     PorteesLocal,
     LapereauxLocal,
     PeseesLocal,
@@ -190,7 +204,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -205,6 +219,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.createTable(lapereauxLocal);
             await m.createTable(preMiseBasChecklistLocal);
+          }
+          if (from < 4) {
+            await m.addColumn(lapinsLocal, lapinsLocal.scoreFertilite);
+            await m.createTable(fertilityScoresLocal);
           }
         },
       );
